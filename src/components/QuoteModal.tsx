@@ -29,7 +29,7 @@ const QuoteModal: React.FC<QuoteModalProps> = ({ isOpen, onClose, planName }) =>
         policy_name: planName || formData.policy_name
       };
 
-      const response = await fetch('http://localhost:3000/api/quotes', {
+      const response = await fetch('https://shiva-be.vercel.app/api/quotes', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

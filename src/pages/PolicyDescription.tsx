@@ -15,7 +15,7 @@ const PolicyDescription = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch(`http://localhost:3000/api/policies/${id}`)
+    fetch(`https://shiva-be.vercel.app/api/policies/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Policy not found');
         return res.json();

@@ -55,7 +55,7 @@ const LeadManagement = () => {
   const fetchLeads = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/leads?type=${typeFilter}`);
+      const res = await fetch(`https://shiva-be.vercel.app/api/leads?type=${typeFilter}`);
       if (res.ok) {
         const data = await res.json();
         setLeads(data);
@@ -78,7 +78,7 @@ const LeadManagement = () => {
 
   const updateStatus = async (id: string, newStatus: 'Pending' | 'Closed' | 'Agreed') => {
     try {
-      const res = await fetch(`http://localhost:3000/api/leads/${id}/status`, {
+      const res = await fetch(`https://shiva-be.vercel.app/api/leads/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

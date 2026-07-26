@@ -20,7 +20,7 @@ const UserLoginModal: React.FC<UserLoginModalProps> = ({ isOpen, onClose, onLogi
     if (!email) return toast.error('Please enter your email');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/users/login', {
+      const response = await fetch('https://shiva-be.vercel.app/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
@@ -41,7 +41,7 @@ const UserLoginModal: React.FC<UserLoginModalProps> = ({ isOpen, onClose, onLogi
     if (!otp) return toast.error('Please enter the OTP');
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/users/verify', {
+      const response = await fetch('https://shiva-be.vercel.app/api/users/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp })

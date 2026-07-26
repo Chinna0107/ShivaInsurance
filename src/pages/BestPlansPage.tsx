@@ -29,7 +29,7 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
     const fetchPlans = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:3000/api/best-plans?category=${activeTab}`);
+        const response = await fetch(`https://shiva-be.vercel.app/api/best-plans?category=${activeTab}`);
         if (response.ok) {
           const data = await response.json();
           setPlans(data);

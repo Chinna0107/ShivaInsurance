@@ -17,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
 
   useEffect(() => {
     // Fetch dynamic policies added by Admin
-    fetch('http://localhost:3000/api/policies')
+    fetch('https://shiva-be.vercel.app/api/policies')
       .then(res => res.json())
       .then(data => setPolicies(data))
       .catch(err => console.error('Failed to load policies in header:', err));

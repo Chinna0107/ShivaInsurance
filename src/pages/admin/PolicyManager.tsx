@@ -39,7 +39,7 @@ const PolicyManager = () => {
   const fetchPolicies = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/policies');
+      const response = await fetch('https://shiva-be.vercel.app/api/policies');
       const data = await response.json();
       setPolicies(data);
     } catch (err) {
@@ -88,7 +88,7 @@ const PolicyManager = () => {
 
       if (editingPolicy) {
         // Update
-        const response = await fetch(`http://localhost:3000/api/policies/${editingPolicy.id}`, {
+        const response = await fetch(`https://shiva-be.vercel.app/api/policies/${editingPolicy.id}`, {
           method: 'PUT',
           body: data
         });
@@ -96,7 +96,7 @@ const PolicyManager = () => {
         toast.success('Policy updated successfully');
       } else {
         // Create
-        const response = await fetch('http://localhost:3000/api/policies', {
+        const response = await fetch('https://shiva-be.vercel.app/api/policies', {
           method: 'POST',
           body: data
         });
@@ -113,7 +113,7 @@ const PolicyManager = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this policy?')) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/policies/${id}`, { method: 'DELETE' });
+      const response = await fetch(`https://shiva-be.vercel.app/api/policies/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Delete failed');
       toast.success('Policy deleted');
       fetchPolicies();

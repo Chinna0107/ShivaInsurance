@@ -20,7 +20,7 @@ const EmployeeQuoteRequests: React.FC = () => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/quotes');
+      const response = await fetch('https://shiva-be.vercel.app/api/quotes');
       if (response.ok) {
         const data = await response.json();
         setRequests(data);
@@ -38,7 +38,7 @@ const EmployeeQuoteRequests: React.FC = () => {
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/quotes/${id}`, {
+      const response = await fetch(`https://shiva-be.vercel.app/api/quotes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

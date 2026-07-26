@@ -343,7 +343,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         setIsSubmitting(true);
         try {
           // Submit to Backend API
-          const response = await fetch('http://localhost:3000/api/leads', {
+          const response = await fetch('https://shiva-be.vercel.app/api/leads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -12,7 +12,7 @@ const CHIME_URL = 'https://actions.google.com/sounds/v1/alarms/digital_watch_ala
 export const useRealTimeLeads = () => {
   useEffect(() => {
     if (!globalSocket) {
-      globalSocket = io('http://localhost:3000');
+      globalSocket = io('https://shiva-be.vercel.app');
     }
 
     const handleConnect = () => {

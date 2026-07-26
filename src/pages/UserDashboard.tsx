@@ -21,8 +21,8 @@ const UserDashboard = () => {
     const fetchData = async () => {
       try {
         const [leadsRes, policiesRes] = await Promise.all([
-          fetch(`http://localhost:3000/api/users/${email}/leads`),
-          fetch('http://localhost:3000/api/policies')
+          fetch(`https://shiva-be.vercel.app/api/users/${email}/leads`),
+          fetch('https://shiva-be.vercel.app/api/policies')
         ]);
         
         if (leadsRes.ok) setLeads(await leadsRes.json());
