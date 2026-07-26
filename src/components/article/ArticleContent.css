@@ -1,0 +1,146 @@
+.article-main-content {
+  color: var(--text-dark);
+}
+
+.content-section {
+  margin-bottom: 3.5rem;
+}
+
+.content-section h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 1.25rem;
+  color: var(--text-dark);
+  scroll-margin-top: 100px;
+}
+
+.content-section p {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-gray);
+  margin-bottom: 1.25rem;
+}
+
+.content-highlight {
+  background-color: var(--primary-light);
+  border-left: 4px solid var(--primary-color);
+  padding: 1.25rem 1.5rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin: 1.5rem 0;
+  font-size: 1.05rem;
+  color: var(--text-dark);
+}
+
+.content-list {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.content-list li {
+  margin-bottom: 0.75rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--text-gray);
+}
+
+.content-list li strong {
+  color: var(--text-dark);
+}
+
+.check-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.check-list li {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.check-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--success-color);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.info-card {
+  background-color: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.info-card h4 {
+  font-size: 1.15rem;
+  color: var(--primary-color);
+  margin-bottom: 0.75rem;
+}
+
+.info-card p {
+  font-size: 0.95rem;
+  margin-bottom: 0;
+}
+
+.chart-placeholder {
+  margin: 2.5rem 0;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.chart-placeholder img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.caption {
+  text-align: center;
+  font-size: 0.9rem !important;
+  color: var(--text-light) !important;
+  padding: 1rem;
+  background-color: var(--background-alt);
+  margin: 0 !important;
+}
+
+.article-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+}
+
+.faq-item h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--text-dark);
+}
+
+.faq-item p {
+  margin-bottom: 0;
+}

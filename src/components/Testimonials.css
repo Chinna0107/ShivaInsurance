@@ -1,0 +1,195 @@
+.testimonials-section {
+  background-color: var(--primary-light); /* Light green from the design */
+  overflow: hidden;
+}
+
+.testimonials-content {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .testimonials-content {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.testimonials-left {
+  flex: 1;
+}
+
+.text-left {
+  text-align: left;
+  margin-bottom: 2rem;
+}
+
+.ratings-grid {
+  display: flex;
+  gap: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.rating-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.rating-score {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.rating-label {
+  color: var(--text-gray);
+}
+
+.read-all-link {
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.read-all-link:hover {
+  text-decoration: underline;
+}
+
+.testimonials-right {
+  flex: 1.5;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  min-height: 500px;
+}
+
+.graphic-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.phone-mockup {
+  width: 260px;
+  height: 520px;
+  background-color: var(--white);
+  border-radius: 40px;
+  box-shadow: var(--shadow-lg);
+  border: 8px solid #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.phone-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 3rem;
+  letter-spacing: -1px;
+}
+
+.phone-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px dashed #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inner-circle {
+  width: 80px;
+  height: 80px;
+  background-color: var(--primary-light);
+  border-radius: 50%;
+  position: relative;
+}
+
+.inner-circle::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--primary-color);
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.phone-badges {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.phone-badges span {
+  background-color: var(--background-alt);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.floating-review {
+  position: absolute;
+  background-color: var(--white);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  width: 250px;
+  z-index: 3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.review-1 {
+  top: 20%;
+  right: -10%;
+  animation-delay: 1s;
+}
+
+.review-2 {
+  bottom: 20%;
+  left: -10%;
+  animation-delay: 3s;
+}
+
+.reviewer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.reviewer-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.reviewer-info strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.reviewer-info .stars {
+  font-size: 0.8rem;
+  letter-spacing: 0;
+}
+
+.floating-review p {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+  line-height: 1.4;
+}

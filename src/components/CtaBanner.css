@@ -1,0 +1,89 @@
+.cta-banner-section {
+  padding: 2rem 0;
+}
+
+.cta-banner {
+  background: linear-gradient(135deg, var(--accent-light), #e0d4fc);
+  border-radius: var(--radius-2xl);
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  border: 1px solid #d8b4fe;
+}
+
+@media (min-width: 768px) {
+  .cta-banner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.cta-content {
+  flex: 1;
+}
+
+.cta-title {
+  font-size: 1.75rem;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.cta-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-gray);
+  margin-bottom: 1.5rem;
+}
+
+.btn-purple {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  border-radius: var(--radius-full);
+}
+
+.calendar-icon {
+  font-size: 1.2rem;
+}
+
+.cta-video-thumb {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.cta-video-thumb:hover {
+  transform: scale(1.02);
+}
+
+.video-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background-color: var(--white);
+  color: var(--accent-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}

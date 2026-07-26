@@ -1,0 +1,54 @@
+.need-help-banner {
+  display: flex;
+  background-color: var(--accent-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin: 3rem 0;
+  align-items: center;
+}
+
+.help-content {
+  flex: 1;
+  padding: 3rem;
+}
+
+.help-content h3 {
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.help-content p {
+  color: var(--text-gray);
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.help-illustration {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.help-illustration img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);
+}
+
+@media (max-width: 768px) {
+  .need-help-banner {
+    flex-direction: column-reverse;
+  }
+  
+  .help-illustration img {
+    clip-path: none;
+    height: 200px;
+  }
+  
+  .help-content {
+    padding: 2rem;
+  }
+}

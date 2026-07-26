@@ -1,0 +1,42 @@
+.article-page {
+  background-color: var(--white);
+  min-height: 100vh;
+  padding-top: 2rem;
+  padding-bottom: 5rem;
+}
+
+.article-container {
+  max-width: 1200px;
+}
+
+.article-layout {
+  display: flex;
+  gap: 4rem;
+  position: relative;
+  margin-top: 3rem;
+}
+
+.article-sidebar {
+  flex: 0 0 300px;
+}
+
+.article-body {
+  flex: 1;
+  min-width: 0; /* Prevent flex overflow */
+}
+
+@media (max-width: 992px) {
+  .article-layout {
+    flex-direction: column;
+  }
+  
+  .article-sidebar {
+    flex: none;
+    width: 100%;
+    margin-bottom: 3rem;
+  }
+  
+  .toc-sidebar {
+    position: static;
+  }
+}
