@@ -6,7 +6,7 @@ import BookCallModal from '../components/BookCallModal';
 import PDFViewerModal from '../components/PDFViewerModal';
 import { FiFileText } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { Shield, Heart, Activity, CheckCircle, Clock, Search, LogOut } from 'lucide-react';
+import { Shield, Heart, Activity, Clock, Search, LogOut } from 'lucide-react';
 import './UserDashboard.css';
 
 const UserDashboard = () => {
