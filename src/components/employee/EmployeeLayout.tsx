@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FiHeart, 
   FiShield, 
@@ -12,7 +12,13 @@ import { useRealTimeLeads } from '../../hooks/useRealTimeLeads';
 
 const EmployeeLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const searchParams = new URLSearchParams(location.search);
+  const typeFilter = searchParams.get('type');
+  const isHealthActive = location.pathname.includes('/leads') && (!typeFilter || typeFilter === 'health');
+  const isLifeActive = location.pathname.includes('/leads') && typeFilter === 'life';
 
   useRealTimeLeads();
 
@@ -51,11 +57,11 @@ const EmployeeLayout = () => {
             to="/employee/dashboard/leads?type=health"
             className="nav-link"
             onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
+            style={() => ({
               padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              color: isHealthActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isHealthActive ? 600 : 400,
+              backgroundColor: isHealthActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isHealthActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
             })}
           >
             <FiHeart size={20} /> <span className="nav-text">Health Insurance</span>
@@ -66,11 +72,11 @@ const EmployeeLayout = () => {
             to="/employee/dashboard/leads?type=life"
             className="nav-link"
             onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
+            style={() => ({
               padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              color: isLifeActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isLifeActive ? 600 : 400,
+              backgroundColor: isLifeActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isLifeActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
             })}
           >
             <FiShield size={20} /> <span className="nav-text">Life Insurance</span>
@@ -104,6 +110,21 @@ const EmployeeLayout = () => {
             })}
           >
             <FiFileText size={20} /> <span className="nav-text">Quote Requests</span>
+          </NavLink>
+
+          {/* Premium Requests Link */}
+          <NavLink 
+            to="/employee/dashboard/premium-requests"
+            className="nav-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={({ isActive }) => ({
+              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+            })}
+          >
+            <FiFileText size={20} /> <span className="nav-text">Premium Requests</span>
           </NavLink>
           </nav>
 

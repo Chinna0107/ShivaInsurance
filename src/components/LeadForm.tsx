@@ -202,14 +202,14 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
       <div className="options-grid">
         <button 
           className="option-card" 
-          onClick={() => { setInsuranceType('Health'); setStep(3); }}
+          onClick={() => { setInsuranceType('Health'); setStep(4); }}
         >
           <div className="option-icon">🏥</div>
           <span>Health Insurance</span>
         </button>
         <button 
           className="option-card" 
-          onClick={() => { setInsuranceType('Life'); setStep(4); }}
+          onClick={() => { setInsuranceType('Life'); setStep(3); }}
         >
           <div className="option-icon">🛡️</div>
           <span>Life Insurance</span>
@@ -243,7 +243,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep4 = () => (
     <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(insuranceType === 'Life' ? 2 : 3)}>← Previous</button>
+      <button className="back-btn" onClick={() => setStep(insuranceType === 'Health' ? 2 : 3)}>← Previous</button>
       <h3 className="step-title">Enter your Location</h3>
       <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '8px' }}>
         <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder=" " className="form-input" />
@@ -343,7 +343,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         setIsSubmitting(true);
         try {
           // Submit to Backend API
-          const response = await fetch('https://shiva-be.vercel.app/api/leads', {
+          const response = await fetch('http://localhost:3000/api/leads', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

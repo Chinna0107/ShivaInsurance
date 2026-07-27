@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import BookCallModal from '../components/BookCallModal';
+import PDFViewerModal from '../components/PDFViewerModal';
+import { FiFileText } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { Shield, Heart, Activity, CheckCircle, Clock, Search, LogOut } from 'lucide-react';
+import './UserDashboard.css';
 
 const UserDashboard = () => {
   const navigate = useNavigate();
@@ -11,6 +16,8 @@ const UserDashboard = () => {
   const [leads, setLeads] = useState<any[]>([]);
   const [policies, setPolicies] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isBookCallModalOpen, setIsBookCallModalOpen] = useState(false);
+  const [viewPdfUrl, setViewPdfUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!email) {
@@ -21,8 +28,8 @@ const UserDashboard = () => {
     const fetchData = async () => {
       try {
         const [leadsRes, policiesRes] = await Promise.all([
-          fetch(`https://shiva-be.vercel.app/api/users/${email}/leads`),
-          fetch('https://shiva-be.vercel.app/api/policies')
+          fetch(`http://localhost:3000/api/users/${email}/leads`),
+          fetch('http://localhost:3000/api/policies')
         ]);
         
         if (leadsRes.ok) setLeads(await leadsRes.json());
@@ -46,77 +53,110 @@ const UserDashboard = () => {
 
   return (
     <>
-      <Header />
-      <div style={{ backgroundColor: '#f9fafb', minHeight: 'calc(100vh - 100px)', paddingTop: '100px', paddingBottom: '4rem' }}>
-        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 1rem' }}>
+      <Header onBookCall={() => setIsBookCallModalOpen(true)} />
+      <div style={{ backgroundColor: '#f9fafb', minHeight: 'calc(100vh - 100px)', paddingTop: '4rem', paddingBottom: '4rem' }}>
+        <div className="dashboard-container">
           
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-            <div>
-              <h1 style={{ fontSize: '2rem', color: '#1f2937', marginBottom: '0.5rem' }}>My Dashboard</h1>
-              <p style={{ color: '#6b7280' }}>Welcome back, {email}</p>
+          <div className="dashboard-header">
+            <div className="dashboard-title">
+              <h1>My Dashboard</h1>
+              <p>Welcome back, {email}</p>
             </div>
-            <button 
-              onClick={handleLogout}
-              style={{ padding: '0.6rem 1.5rem', backgroundColor: '#fee2e2', color: '#b91c1c', border: '1px solid #fca5a5', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-              Logout
+            <button className="logout-btn" onClick={handleLogout}>
+              <LogOut size={16} /> Logout
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '2rem', flexDirection: 'column' }}>
+          <div>
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '1rem' }}>
+            <div className="dashboard-tabs">
               <button 
                 onClick={() => setActiveTab('applications')}
-                style={{ padding: '0.75rem 1.5rem', border: 'none', background: activeTab === 'applications' ? 'var(--primary-color)' : 'transparent', color: activeTab === 'applications' ? 'white' : '#4b5563', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                className={`tab-btn ${activeTab === 'applications' ? 'active' : ''}`}
               >
                 My Applications
               </button>
               <button 
                 onClick={() => setActiveTab('policies')}
-                style={{ padding: '0.75rem 1.5rem', border: 'none', background: activeTab === 'policies' ? 'var(--primary-color)' : 'transparent', color: activeTab === 'policies' ? 'white' : '#4b5563', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                className={`tab-btn ${activeTab === 'policies' ? 'active' : ''}`}
               >
                 All Policies
               </button>
               <button 
                 onClick={() => setActiveTab('profile')}
-                style={{ padding: '0.75rem 1.5rem', border: 'none', background: activeTab === 'profile' ? 'var(--primary-color)' : 'transparent', color: activeTab === 'profile' ? 'white' : '#4b5563', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+                className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
               >
                 My Profile
               </button>
             </div>
 
             {/* Content */}
-            <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', minHeight: '400px' }}>
+            <div style={{ minHeight: '400px' }}>
               {loading ? (
                 <div style={{ textAlign: 'center', padding: '4rem', color: '#6b7280' }}>Loading your dashboard...</div>
               ) : (
                 <>
                   {activeTab === 'applications' && (
                     <div>
-                      <h2 style={{ fontSize: '1.25rem', color: '#1f2937', marginBottom: '1.5rem' }}>Your Applied Forms</h2>
                       {leads.length > 0 ? (
-                        <div style={{ display: 'grid', gap: '1rem' }}>
-                          {leads.map(lead => (
-                            <div key={lead.id} style={{ padding: '1.5rem', border: '1px solid #e5e7eb', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f9fafb' }}>
-                              <div>
-                                <h3 style={{ fontSize: '1.1rem', color: '#374151', marginBottom: '0.25rem' }}>{lead.type} Application</h3>
-                                <p style={{ fontSize: '0.9rem', color: '#6b7280', margin: 0 }}>Applied on {new Date(lead.date || lead.created_at).toLocaleDateString()}</p>
+                        <div className="applications-grid">
+                          {leads.map(lead => {
+                            let Icon = Shield;
+                            if (lead.type?.toLowerCase().includes('health')) Icon = Heart;
+                            if (lead.type?.toLowerCase().includes('ulip') || lead.type?.toLowerCase().includes('life')) Icon = Activity;
+                            
+                            const statusClass = lead.status === 'Agreed' ? 'status-agreed' : lead.status === 'Pending' ? 'status-pending' : 'status-default';
+                            
+                            return (
+                              <div key={lead.id} className="app-card">
+                                <div className="app-header">
+                                  <div className="app-icon-wrapper">
+                                    <Icon size={24} />
+                                  </div>
+                                  <span className={`app-status ${statusClass}`}>
+                                    {lead.status || 'Pending'}
+                                  </span>
+                                </div>
+                                
+                                <div className="app-info">
+                                  <h3>{lead.type} Insurance</h3>
+                                  <p><Clock size={14} /> Applied {new Date(lead.date || lead.created_at).toLocaleDateString()}</p>
+                                </div>
+                                
+                                <div className="app-details">
+                                  <div className="app-details-grid">
+                                    <div className="app-detail-item">
+                                      <span className="app-detail-label">Name</span>
+                                      <span className="app-detail-value">{lead.name || 'N/A'}</span>
+                                    </div>
+                                    <div className="app-detail-item">
+                                      <span className="app-detail-label">Cover</span>
+                                      <span className="app-detail-value">{lead.coverAmount || 'N/A'}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                <div className="app-actions">
+                                  {lead.policy_document_url ? (
+                                    <button onClick={() => setViewPdfUrl(lead.policy_document_url)} className="btn-policy">
+                                      <FiFileText size={18} /> View Policy PDF
+                                    </button>
+                                  ) : (
+                                    <button disabled style={{ opacity: 0.5, cursor: 'not-allowed' }} className="btn-policy">
+                                      <Search size={18} /> Under Review
+                                    </button>
+                                  )}
+                                </div>
                               </div>
-                              <span style={{ 
-                                padding: '0.4rem 1rem', borderRadius: '2rem', fontSize: '0.85rem', fontWeight: 600,
-                                backgroundColor: lead.status === 'Completed' ? '#dcfce7' : lead.status === 'In Progress' ? '#fef9c3' : '#f3f4f6',
-                                color: lead.status === 'Completed' ? '#166534' : lead.status === 'In Progress' ? '#854d0e' : '#4b5563'
-                              }}>
-                                {lead.status || 'Pending'}
-                              </span>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       ) : (
-                        <div style={{ textAlign: 'center', padding: '4rem', color: '#6b7280', border: '1px dashed #d1d5db', borderRadius: '12px' }}>
-                          You haven't submitted any applications yet.
+                        <div className="empty-state">
+                          <Shield size={48} color="#d1d5db" style={{ margin: '0 auto 1rem' }} />
+                          <h3>No applications yet</h3>
+                          <p>You haven't applied for any insurance policies. Explore our products to get started.</p>
+                          <button onClick={() => setActiveTab('policies')} className="btn-policy" style={{ width: 'auto', margin: '0 auto' }}>Explore Policies</button>
                         </div>
                       )}
                     </div>
@@ -141,26 +181,34 @@ const UserDashboard = () => {
                   )}
 
                   {activeTab === 'profile' && (
-                    <div>
-                      <h2 style={{ fontSize: '1.25rem', color: '#1f2937', marginBottom: '1.5rem' }}>Profile Information</h2>
-                      <div style={{ maxWidth: '500px', padding: '2rem', backgroundColor: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                        <div style={{ marginBottom: '1.5rem' }}>
-                          <label style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', fontWeight: 500, marginBottom: '0.25rem' }}>Email Address</label>
-                          <div style={{ fontSize: '1.1rem', color: '#1f2937', fontWeight: 500 }}>{email}</div>
+                    <div className="profile-card">
+                      <div className="profile-header">
+                        <div className="profile-avatar">
+                          {email ? email.charAt(0).toUpperCase() : 'U'}
                         </div>
-                        {leads.length > 0 && leads[0].name && (
-                          <div style={{ marginBottom: '1.5rem' }}>
-                            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', fontWeight: 500, marginBottom: '0.25rem' }}>Full Name (from last application)</label>
-                            <div style={{ fontSize: '1.1rem', color: '#1f2937', fontWeight: 500 }}>{leads[0].name}</div>
-                          </div>
-                        )}
-                        {leads.length > 0 && leads[0].phone && (
-                          <div style={{ marginBottom: '0' }}>
-                            <label style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', fontWeight: 500, marginBottom: '0.25rem' }}>Phone Number (from last application)</label>
-                            <div style={{ fontSize: '1.1rem', color: '#1f2937', fontWeight: 500 }}>{leads[0].phone}</div>
-                          </div>
-                        )}
+                        <div className="profile-info">
+                          <h2>{leads.length > 0 && leads[0].name ? leads[0].name : 'User'}</h2>
+                          <p>{email}</p>
+                        </div>
                       </div>
+                      
+                      <div className="profile-stats">
+                        <div className="stat-box">
+                          <h4>Total Applications</h4>
+                          <p>{leads.length}</p>
+                        </div>
+                        <div className="stat-box">
+                          <h4>Active Policies</h4>
+                          <p>{leads.filter(l => l.status === 'Agreed').length}</p>
+                        </div>
+                      </div>
+
+                      {leads.length > 0 && leads[0].phone && (
+                        <div style={{ marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid #e5e7eb' }}>
+                          <span style={{ display: 'block', fontSize: '0.85rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase' }}>Contact Number</span>
+                          <span style={{ fontSize: '1.1rem', color: '#1f2937', fontWeight: 500 }}>{leads[0].phone}</span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </>
@@ -170,7 +218,17 @@ const UserDashboard = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      <Footer onBookCall={() => setIsBookCallModalOpen(true)} />
+      <BookCallModal isOpen={isBookCallModalOpen} onClose={() => setIsBookCallModalOpen(false)} />
+      
+      {viewPdfUrl && (
+        <PDFViewerModal
+          isOpen={!!viewPdfUrl}
+          onClose={() => setViewPdfUrl(null)}
+          title="Your Policy Document"
+          fileUrl={viewPdfUrl}
+        />
+      )}
     </>
   );
 };

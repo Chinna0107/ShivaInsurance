@@ -101,7 +101,7 @@ const InfoPage: React.FC<InfoPageProps> = ({ data, onBookCall, onGetQuote }) => 
               ))}
 
               <div className="in-content-widget">
-                <PremiumCalculator onGetQuote={onGetQuote} />
+                <PremiumCalculator onGetQuote={onGetQuote} planName={data.title} />
               </div>
 
               <NeedHelpBanner onBookCall={onBookCall} />

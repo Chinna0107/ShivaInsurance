@@ -25,7 +25,7 @@ const EmployeeManager = () => {
 
   const fetchEmployees = async () => {
     try {
-      const res = await fetch('https://shiva-be.vercel.app/api/employees');
+      const res = await fetch('http://localhost:3000/api/employees');
       if (res.ok) {
         const data = await res.json();
         setEmployees(data);
@@ -58,7 +58,7 @@ const EmployeeManager = () => {
     e.preventDefault();
     try {
       if (editingEmployee) {
-        const res = await fetch(`https://shiva-be.vercel.app/api/employees/${editingEmployee.id}`, {
+        const res = await fetch(`http://localhost:3000/api/employees/${editingEmployee.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
@@ -69,7 +69,7 @@ const EmployeeManager = () => {
           handleCloseModal();
         }
       } else {
-        const res = await fetch('https://shiva-be.vercel.app/api/employees', {
+        const res = await fetch('http://localhost:3000/api/employees', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formData)
@@ -89,7 +89,7 @@ const EmployeeManager = () => {
   const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
       try {
-        const res = await fetch(`https://shiva-be.vercel.app/api/employees/${id}`, {
+        const res = await fetch(`http://localhost:3000/api/employees/${id}`, {
           method: 'DELETE'
         });
         if (res.ok) {

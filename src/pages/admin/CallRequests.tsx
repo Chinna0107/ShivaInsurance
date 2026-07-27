@@ -37,7 +37,7 @@ const CallRequests = () => {
   const fetchRequests = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://shiva-be.vercel.app/api/calls');
+      const response = await fetch('http://localhost:3000/api/calls');
       const data = await response.json();
       setRequests(data);
     } catch (err) {
@@ -50,7 +50,7 @@ const CallRequests = () => {
 
   const updateStatus = async (id: string, status: 'Pending' | 'Contacted' | 'Closed') => {
     try {
-      const response = await fetch(`https://shiva-be.vercel.app/api/calls/${id}/status`, {
+      const response = await fetch(`http://localhost:3000/api/calls/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })

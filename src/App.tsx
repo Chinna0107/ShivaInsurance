@@ -15,7 +15,9 @@ import PolicyDescription from './pages/PolicyDescription';
 import UserDashboard from './pages/UserDashboard';
 import ContactPage from './pages/ContactPage';
 import QuoteRequests from './pages/admin/QuoteRequests';
+import PremiumRequests from './pages/admin/PremiumRequests';
 import EmployeeQuoteRequests from './pages/employee/EmployeeQuoteRequests';
+import EmployeePremiumRequests from './pages/employee/EmployeePremiumRequests';
 
 // Employee Imports
 import EmployeeLayout from './components/employee/EmployeeLayout';
@@ -87,6 +89,7 @@ function App() {
             <Route index element={<Navigate to="/admin/dashboard/leads" replace />} />
             <Route path="leads" element={<LeadManagement />} />
             <Route path="quote-requests" element={<QuoteRequests />} />
+            <Route path="premium-requests" element={<PremiumRequests />} />
             <Route path="employees" element={<EmployeeManager />} />
             <Route path="best-plans" element={<BestPlansManager />} />
             <Route path="call-requests" element={<CallRequests />} />
@@ -100,6 +103,7 @@ function App() {
             <Route index element={<Navigate to="/employee/dashboard/leads?type=health" replace />} />
             <Route path="leads" element={<LeadManagement />} />
             <Route path="quote-requests" element={<EmployeeQuoteRequests />} />
+            <Route path="premium-requests" element={<EmployeePremiumRequests />} />
             <Route path="call-requests" element={<CallRequests />} />
           </Route>
 

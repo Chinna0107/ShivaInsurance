@@ -1,0 +1,240 @@
+.pdf-viewer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.85);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(4px);
+}
+
+.pdf-viewer-modal {
+  background-color: white;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 900px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+  animation: modalScaleIn 0.2s ease-out;
+}
+
+@keyframes modalScaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.pdf-header {
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9fafb;
+}
+
+.pdf-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1f2937;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pdf-header-controls {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.pdf-zoom-controls {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  background-color: #e5e7eb;
+  padding: 0.25rem;
+  border-radius: 10px;
+}
+
+.pdf-zoom-btn {
+  padding: 0.5rem;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  color: #4b5563;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.pdf-zoom-btn:hover {
+  background: #f3f4f6;
+  color: #1f2937;
+}
+
+.pdf-zoom-text {
+  font-size: 0.9rem;
+  width: 3.5rem;
+  text-align: center;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.pdf-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  background-color: var(--primary-color, #2e9f68);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(46, 159, 104, 0.2);
+}
+
+.pdf-download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px -1px rgba(46, 159, 104, 0.3);
+}
+
+.pdf-close-btn {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  transition: color 0.2s;
+  border-radius: 8px;
+}
+
+.pdf-close-btn:hover {
+  color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.pdf-body {
+  flex: 1;
+  background-color: #e5e7eb;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+}
+
+.pdf-page-container {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  margin-bottom: 2rem;
+}
+
+.pdf-pagination {
+  position: sticky;
+  bottom: 1.5rem;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  padding: 0.5rem 1.5rem;
+  border-radius: 99px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  border: 1px solid #e5e7eb;
+}
+
+.pdf-pagination button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  color: #1f2937;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.pdf-pagination button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.pdf-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
+.pdf-pagination span {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1f2937;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .pdf-viewer-overlay {
+    padding: 0;
+  }
+  
+  .pdf-viewer-modal {
+    height: 100vh;
+    border-radius: 0;
+  }
+
+  .pdf-header {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .pdf-header h2 {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .pdf-header-controls {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .pdf-zoom-controls {
+    display: none; /* Hide zoom on mobile, users can pinch or just rely on auto-fit */
+  }
+
+  .pdf-download-btn-text {
+    display: none; /* Hide text, keep icon */
+  }
+
+  .pdf-download-btn {
+    padding: 0.75rem;
+    border-radius: 50%;
+  }
+  
+  .pdf-close-btn {
+    padding: 0.75rem;
+    background-color: #f3f4f6;
+  }
+
+  .pdf-body {
+    padding: 1rem;
+  }
+}

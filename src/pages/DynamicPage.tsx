@@ -24,8 +24,12 @@ function DynamicPage() {
   const [quotePlanName, setQuotePlanName] = useState('');
 
   const handleBookCall = () => setIsBookCallOpen(true);
-  const handleGetQuote = (planName?: string) => {
-    setQuotePlanName(planName || '');
+  const handleGetQuote = (planName?: any) => {
+    if (typeof planName === 'string') {
+      setQuotePlanName(planName);
+    } else {
+      setQuotePlanName('');
+    }
     setIsQuoteOpen(true);
   };
 

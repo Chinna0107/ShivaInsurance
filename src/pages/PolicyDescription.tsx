@@ -4,6 +4,8 @@ import toast from 'react-hot-toast';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookCallModal from '../components/BookCallModal';
+import QuoteModal from '../components/QuoteModal';
+import './PolicyDescription.css';
 
 const PolicyDescription = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,10 +14,12 @@ const PolicyDescription = () => {
   const [loading, setLoading] = useState(true);
   const [activeImage, setActiveImage] = useState<string | null>(null);
   const [isBookCallModalOpen, setIsBookCallModalOpen] = useState(false);
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch(`https://shiva-be.vercel.app/api/policies/${id}`)
+    fetch(`http://localhost:3000/api/policies/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Policy not found');
         return res.json();
@@ -48,9 +52,9 @@ const PolicyDescription = () => {
 
   return (
     <>
-      <Header />
+      <Header onBookCall={() => setIsBookCallModalOpen(true)} />
       <div style={{ backgroundColor: '#f9fafb', minHeight: '100vh', paddingTop: '80px', paddingBottom: '4rem' }}>
-        <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+        <div className="policy-desc-container">
         <div style={{ marginBottom: '2rem', fontSize: '0.9rem', color: '#6b7280' }}>
           <span style={{ cursor: 'pointer', color: 'var(--primary-color)' }} onClick={() => navigate('/')}>Home</span>
           <span style={{ margin: '0 0.5rem' }}>/</span>
@@ -59,30 +63,35 @@ const PolicyDescription = () => {
           <span style={{ color: '#374151', fontWeight: 500 }}>{policy.name}</span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', backgroundColor: 'white', padding: '2.5rem', borderRadius: '16px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
-          <div>
+        <div className="policy-desc-grid">
+          <div className="policy-image-gallery">
             {policy.parsedImages && policy.parsedImages.length > 0 ? (
               <>
-                <div style={{ width: '100%', height: '400px', borderRadius: '12px', overflow: 'hidden', marginBottom: '1rem', border: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f9fafb' }}>
-                  <img src={activeImage!} alt={policy.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                <div 
+                  className="policy-main-image" 
+                  onClick={() => setIsImageModalOpen(true)}
+                  style={{ cursor: 'zoom-in' }}
+                >
+                  <img src={activeImage!} alt={policy.name} />
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
+                <div className="policy-thumbnails">
                   {policy.parsedImages.map((img: string, idx: number) => (
                     <div 
                       key={idx} 
+                      className="policy-thumb"
                       onClick={() => setActiveImage(img)}
                       style={{ 
-                        width: '80px', height: '80px', borderRadius: '8px', border: activeImage === img ? '2px solid var(--primary-color)' : '1px solid #e5e7eb',
-                        cursor: 'pointer', overflow: 'hidden', flexShrink: 0, opacity: activeImage === img ? 1 : 0.6, transition: 'all 0.2s'
+                        border: activeImage === img ? '2px solid var(--primary-color)' : '1px solid #e5e7eb',
+                        opacity: activeImage === img ? 1 : 0.6
                       }}
                     >
-                      <img src={img} alt={`thumbnail ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <img src={img} alt={`thumbnail ${idx}`} />
                     </div>
                   ))}
                 </div>
               </>
             ) : (
-              <div style={{ width: '100%', height: '400px', borderRadius: '12px', backgroundColor: '#f3f4f6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#9ca3af', border: '1px dashed #d1d5db' }}>
+              <div className="policy-main-image" style={{ color: '#9ca3af', border: '1px dashed #d1d5db' }}>
                 No images available for this policy
               </div>
             )}
@@ -96,18 +105,26 @@ const PolicyDescription = () => {
             <h1 style={{ fontSize: '2.5rem', color: '#1f2937', marginBottom: '0.5rem', lineHeight: 1.2 }}>{policy.name}</h1>
             <p style={{ fontSize: '1.1rem', color: '#6b7280', marginBottom: '2rem' }}>Provided by <span style={{ fontWeight: 600, color: '#374151' }}>{policy.provider}</span></p>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2rem', padding: '1.5rem', backgroundColor: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
-              <div>
+            <div className="policy-actions-card">
+              <div className="policy-cover-amount">
                 <p style={{ margin: 0, fontSize: '0.9rem', color: '#64748b', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cover Amount</p>
                 <p style={{ margin: '0.25rem 0 0 0', fontSize: '1.5rem', color: '#0f172a', fontWeight: 700 }}>{policy.cover_amount || 'Not Specified'}</p>
               </div>
-              <div style={{ width: '1px', height: '40px', backgroundColor: '#cbd5e1' }}></div>
-              <button 
-                style={{ padding: '0.8rem 2rem', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(46, 159, 104, 0.3)' }}
-                onClick={() => setIsBookCallModalOpen(true)}
-              >
-                Book Call with Expert
-              </button>
+              <div style={{ width: '1px', height: '40px', backgroundColor: '#cbd5e1' }} className="hidden-mobile"></div>
+              <div className="policy-action-buttons">
+                <button 
+                  style={{ padding: '0.8rem 2rem', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(46, 159, 104, 0.3)' }}
+                  onClick={() => setIsQuoteModalOpen(true)}
+                >
+                  Check Premium
+                </button>
+                <button 
+                  style={{ padding: '0.8rem 2rem', backgroundColor: 'white', color: 'var(--primary-color)', border: '1px solid var(--primary-color)', borderRadius: '8px', fontSize: '1rem', fontWeight: 600, cursor: 'pointer' }}
+                  onClick={() => setIsBookCallModalOpen(true)}
+                >
+                  Talk to Expert
+                </button>
+              </div>
             </div>
 
             <div style={{ marginBottom: '2.5rem' }}>
@@ -115,7 +132,7 @@ const PolicyDescription = () => {
               <p style={{ fontSize: '1.05rem', color: '#4b5563', lineHeight: 1.6 }}>{policy.description || 'No detailed description available for this policy.'}</p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <div className="policy-pros-cons">
               <div style={{ backgroundColor: '#f0fdf4', padding: '1.5rem', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                 <h4 style={{ fontSize: '1.1rem', color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', backgroundColor: '#22c55e', color: 'white', borderRadius: '50%', fontSize: '14px' }}>✓</span>
@@ -153,7 +170,32 @@ const PolicyDescription = () => {
         isOpen={isBookCallModalOpen} 
         onClose={() => setIsBookCallModalOpen(false)} 
       />
-      <Footer />
+      <QuoteModal
+        isOpen={isQuoteModalOpen}
+        onClose={() => setIsQuoteModalOpen(false)}
+        planName={policy?.name}
+      />
+      
+      {isImageModalOpen && activeImage && (
+        <div 
+          style={{
+            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, 
+            backgroundColor: 'rgba(0,0,0,0.85)', zIndex: 9999, 
+            display: 'flex', alignItems: 'center', justifyContent: 'center', 
+            cursor: 'zoom-out'
+          }}
+          onClick={() => setIsImageModalOpen(false)}
+        >
+          <img src={activeImage} alt="Enlarged policy view" style={{ maxWidth: '90%', maxHeight: '90%', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }} />
+          <button 
+            style={{ position: 'absolute', top: '20px', right: '30px', background: 'none', border: 'none', color: 'white', fontSize: '2rem', cursor: 'pointer' }}
+            onClick={(e) => { e.stopPropagation(); setIsImageModalOpen(false); }}
+          >
+            &times;
+          </button>
+        </div>
+      )}
+      <Footer onBookCall={() => setIsBookCallModalOpen(true)} />
     </>
   );
 };

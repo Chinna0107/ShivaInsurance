@@ -6,6 +6,8 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { leadEventEmitter } from '../../hooks/useRealTimeLeads';
+import PDFViewerModal from '../../components/PDFViewerModal';
+import { FiUpload, FiFileText } from 'react-icons/fi';
 
 interface Lead {
   id: string;
@@ -22,6 +24,7 @@ interface Lead {
   annual_income?: string;
   education?: string;
   smoker?: string;
+  policy_document_url?: string;
 }
 
 const LeadManagement = () => {
@@ -34,6 +37,8 @@ const LeadManagement = () => {
   const [dateFilter, setDateFilter] = useState<string>('');
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
 
   useEffect(() => {
     fetchLeads();
@@ -55,7 +60,7 @@ const LeadManagement = () => {
   const fetchLeads = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`https://shiva-be.vercel.app/api/leads?type=${typeFilter}`);
+      const res = await fetch(`http://localhost:3000/api/leads?type=${typeFilter}`);
       if (res.ok) {
         const data = await res.json();
         setLeads(data);
@@ -78,13 +83,17 @@ const LeadManagement = () => {
 
   const updateStatus = async (id: string, newStatus: 'Pending' | 'Closed' | 'Agreed') => {
     try {
-      const res = await fetch(`https://shiva-be.vercel.app/api/leads/${id}/status`, {
+      const res = await fetch(`http://localhost:3000/api/leads/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
       });
       if (res.ok) {
-        setLeads(leads.map(lead => lead.id === id ? { ...lead, status: newStatus } : lead));
+        const updatedLead = leads.map(lead => lead.id === id ? { ...lead, status: newStatus } : lead);
+        setLeads(updatedLead);
+        if (selectedLead && selectedLead.id === id) {
+          setSelectedLead({ ...selectedLead, status: newStatus });
+        }
         toast.success(`Status updated to ${newStatus}`);
       } else {
         toast.error('Failed to update status');
@@ -92,6 +101,39 @@ const LeadManagement = () => {
     } catch (err) {
       console.error(err);
       toast.error('Failed to update status');
+    }
+  };
+
+  const handleUploadPolicy = async (id: string, file: File) => {
+    if (!file || file.type !== 'application/pdf') {
+      return toast.error('Please select a valid PDF file');
+    }
+    
+    setUploadingPdf(true);
+    const formData = new FormData();
+    formData.append('document', file);
+    
+    try {
+      const res = await fetch(`http://localhost:3000/api/leads/${id}/document`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (res.ok) {
+        const updatedLead = await res.json();
+        setLeads(leads.map(lead => lead.id === id ? { ...lead, policy_document_url: updatedLead.policy_document_url } : lead));
+        if (selectedLead && selectedLead.id === id) {
+          setSelectedLead({ ...selectedLead, policy_document_url: updatedLead.policy_document_url });
+        }
+        toast.success('Policy document uploaded successfully!');
+      } else {
+        toast.error('Failed to upload document');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error uploading document');
+    } finally {
+      setUploadingPdf(false);
     }
   };
 
@@ -209,10 +251,15 @@ const LeadManagement = () => {
               filteredLeads.map((lead) => (
               <tr key={lead.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
                 <td 
-                  style={{ padding: '1rem 1.5rem', fontWeight: 500, color: 'var(--text-dark, #1f2937)', cursor: 'pointer' }}
+                  style={{ padding: '1rem 1.5rem', cursor: 'pointer' }}
                   onClick={() => setSelectedLead(lead)}
                 >
-                  {lead.name}
+                  <div style={{ fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>{lead.name}</div>
+                  {lead.type === 'life' && lead.specific_plan && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--primary-color, #2e9f68)', marginTop: '0.25rem', fontWeight: 600 }}>
+                      {lead.specific_plan} Insurance
+                    </div>
+                  )}
                 </td>
                 <td style={{ padding: '1rem 1.5rem', fontSize: '0.9rem' }}>
                   <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{lead.email}</div>
@@ -370,18 +417,64 @@ const LeadManagement = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Policy Document Management */}
+              {selectedLead.status === 'Agreed' && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Policy Document</h4>
+                  <div style={{ backgroundColor: '#f9fafb', padding: '1.5rem', borderRadius: '8px', border: '1px dashed #d1d5db', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+                    
+                    {selectedLead.policy_document_url ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%' }}>
+                        <div style={{ color: 'var(--success-color, #10b981)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
+                          <FiFileText size={20} /> Policy PDF is active
+                        </div>
+                        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+                          <button onClick={() => setIsPdfViewerOpen(true)} style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>
+                            <FiEye /> View Document
+                          </button>
+                          <a href={selectedLead.policy_document_url} target="_blank" rel="noopener noreferrer" style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#e5e7eb', color: '#374151', textDecoration: 'none', borderRadius: '6px', fontWeight: 500 }}>
+                            <FiDownload /> Download Original
+                          </a>
+                          <label style={{ cursor: 'pointer', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'transparent', border: '1px solid #d1d5db', color: '#4b5563', borderRadius: '6px', fontWeight: 500 }}>
+                            <FiUpload /> {uploadingPdf ? 'Uploading...' : 'Update PDF'}
+                            <input type="file" accept="application/pdf" style={{ display: 'none' }} disabled={uploadingPdf} onChange={(e) => { if (e.target.files && e.target.files[0]) handleUploadPolicy(selectedLead.id, e.target.files[0]) }} />
+                          </label>
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: 'center' }}>
+                        <p style={{ color: '#4b5563', marginBottom: '1rem', fontSize: '0.9rem' }}>Application is agreed. Please generate and upload the final policy PDF for the customer.</p>
+                        <label style={{ cursor: 'pointer', padding: '0.75rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--primary-color, #2e9f68)', color: 'white', borderRadius: '6px', fontWeight: 600, transition: 'opacity 0.2s' }}>
+                          <FiUpload /> {uploadingPdf ? 'Uploading...' : 'Upload Policy PDF'}
+                          <input type="file" accept="application/pdf" style={{ display: 'none' }} disabled={uploadingPdf} onChange={(e) => { if (e.target.files && e.target.files[0]) handleUploadPolicy(selectedLead.id, e.target.files[0]) }} />
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             
             <div style={{ padding: '1.5rem', borderTop: '1px solid var(--border-color, #e5e7eb)', display: 'flex', justifyContent: 'flex-end' }}>
               <button 
                 onClick={() => setSelectedLead(null)}
-                style={{ padding: '0.75rem 1.5rem', backgroundColor: 'var(--primary-color, #2e9f68)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+                style={{ padding: '0.75rem 1.5rem', backgroundColor: '#e5e7eb', color: '#374151', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}
               >
                 Close Details
               </button>
             </div>
           </div>
         </div>
+      )}
+
+      {selectedLead && selectedLead.policy_document_url && (
+        <PDFViewerModal
+          isOpen={isPdfViewerOpen}
+          onClose={() => setIsPdfViewerOpen(false)}
+          title={`Policy PDF - ${selectedLead.name}`}
+          fileUrl={selectedLead.policy_document_url}
+        />
       )}
     </div>
   );

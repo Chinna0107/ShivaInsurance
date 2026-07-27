@@ -1,32 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { FiUsers, FiClock, FiCheckCircle, FiPhoneCall, FiFilter, FiEye, FiX } from 'react-icons/fi';
-interface QuoteRequest {
+import { leadEventEmitter } from '../../hooks/useRealTimeLeads';
+interface PremiumRequest {
   id: number;
+  name: string;
   age: string;
   cover_amount: string;
   gender: string;
   phone: string;
+  email: string;
   policy_name: string;
   status: string;
   created_at: string;
 }
 
-const EmployeeQuoteRequests: React.FC = () => {
-  const [requests, setRequests] = useState<QuoteRequest[]>([]);
+const EmployeePremiumRequests: React.FC = () => {
+  const [requests, setRequests] = useState<PremiumRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedRequest, setSelectedRequest] = useState<QuoteRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<PremiumRequest | null>(null);
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/quotes');
+      const response = await fetch('http://localhost:3000/api/premium-requests');
       if (response.ok) {
         const data = await response.json();
         setRequests(data);
       }
     } catch (error) {
-      toast.error('Failed to fetch quote requests');
+      toast.error('Failed to fetch premium requests');
     } finally {
       setLoading(false);
     }
@@ -34,11 +37,22 @@ const EmployeeQuoteRequests: React.FC = () => {
 
   useEffect(() => {
     fetchRequests();
+    
+    // Auto refresh on new request
+    const handleNewRequest = () => {
+      fetchRequests();
+    };
+    
+    leadEventEmitter.addEventListener('new-premium-request', handleNewRequest as EventListener);
+    
+    return () => {
+      leadEventEmitter.removeEventListener('new-premium-request', handleNewRequest as EventListener);
+    };
   }, []);
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/quotes/${id}`, {
+      const response = await fetch(`http://localhost:3000/api/premium-requests/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -64,7 +78,7 @@ const EmployeeQuoteRequests: React.FC = () => {
     <div className="admin-page">
       <div className="page-header" style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>Quote Requests</h2>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#111827', marginBottom: '0.25rem' }}>Premium Requests</h2>
           <p style={{ color: '#6b7280' }}>Follow up with customers who requested customized premium quotes</p>
         </div>
         <button className="btn btn-outline" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -125,11 +139,10 @@ const EmployeeQuoteRequests: React.FC = () => {
               <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>ID</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Date</th>
+                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Name</th>
+                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Email</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Phone Number</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Policy Name</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Age</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Gender</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Cover Needed</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Status</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'center' }}>Actions</th>
               </tr>
@@ -137,22 +150,21 @@ const EmployeeQuoteRequests: React.FC = () => {
             <tbody>
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>No quote requests found.</td>
+                  <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>No premium requests found.</td>
                 </tr>
               ) : (
                 requests.map(req => (
                   <tr key={req.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
                     <td onClick={() => setSelectedRequest(req)} style={{ padding: '1rem 1.5rem', cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
                     <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.name}</td>
+                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.email}</td>
                     <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>
                       <a href={`tel:${req.phone}`} style={{ color: 'var(--primary-color, #2e9f68)', textDecoration: 'none' }}>
                         {req.phone}
                       </a>
                     </td>
                     <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.age} Years</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)', textTransform: 'capitalize' }}>{req.gender}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.cover_amount}</td>
                     <td style={{ padding: '1rem 1.5rem' }}>
                       <span style={{ 
                         padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
@@ -214,8 +226,8 @@ const EmployeeQuoteRequests: React.FC = () => {
           }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color, #e5e7eb)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#f9fafb' }}>
               <div>
-                <h2 style={{ margin: '0 0 0.25rem', color: 'var(--text-dark, #1f2937)', fontSize: '1.4rem' }}>Quote Request #{selectedRequest.id}</h2>
-                <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>Submitted: {new Date(selectedRequest.created_at).toLocaleString()}</div>
+                <h2 style={{ margin: '0 0 0.25rem', color: 'var(--text-dark, #1f2937)', fontSize: '1.4rem' }}>Premium Request: {selectedRequest.name}</h2>
+                <div style={{ fontSize: '0.9rem', color: '#6b7280' }}>Submitted: {new Date(selectedRequest.created_at).toLocaleString()} | #{selectedRequest.id}</div>
               </div>
               <button 
                 onClick={() => setSelectedRequest(null)}
@@ -229,7 +241,7 @@ const EmployeeQuoteRequests: React.FC = () => {
               {/* Contact Info */}
               <div style={{ gridColumn: '1 / -1' }}>
                 <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact Information</h4>
-                <div style={{ display: 'grid', gap: '1rem', backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', backgroundColor: '#f9fafb', padding: '1rem', borderRadius: '8px' }}>
                   <div>
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Phone Number</div>
                     <a 
@@ -237,6 +249,15 @@ const EmployeeQuoteRequests: React.FC = () => {
                       style={{ color: 'var(--primary-color, #2e9f68)', fontWeight: 600, textDecoration: 'none' }}
                     >
                       {selectedRequest.phone}
+                    </a>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Email Address</div>
+                    <a 
+                      href={`mailto:${selectedRequest.email}`} 
+                      style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 600, textDecoration: 'none' }}
+                    >
+                      {selectedRequest.email}
                     </a>
                   </div>
                 </div>
@@ -306,4 +327,4 @@ const EmployeeQuoteRequests: React.FC = () => {
   );
 };
 
-export default EmployeeQuoteRequests;
+export default EmployeePremiumRequests;

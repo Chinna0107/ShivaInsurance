@@ -19,6 +19,8 @@ const PolicyManager = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -39,7 +41,7 @@ const PolicyManager = () => {
   const fetchPolicies = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://shiva-be.vercel.app/api/policies');
+      const response = await fetch('http://localhost:3000/api/policies');
       const data = await response.json();
       setPolicies(data);
     } catch (err) {
@@ -75,6 +77,7 @@ const PolicyManager = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const data = new FormData();
       data.append('name', formData.name);
@@ -88,7 +91,7 @@ const PolicyManager = () => {
 
       if (editingPolicy) {
         // Update
-        const response = await fetch(`https://shiva-be.vercel.app/api/policies/${editingPolicy.id}`, {
+        const response = await fetch(`http://localhost:3000/api/policies/${editingPolicy.id}`, {
           method: 'PUT',
           body: data
         });
@@ -96,7 +99,7 @@ const PolicyManager = () => {
         toast.success('Policy updated successfully');
       } else {
         // Create
-        const response = await fetch('https://shiva-be.vercel.app/api/policies', {
+        const response = await fetch('http://localhost:3000/api/policies', {
           method: 'POST',
           body: data
         });
@@ -107,18 +110,23 @@ const PolicyManager = () => {
       fetchPolicies();
     } catch (err) {
       toast.error('Operation failed');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this policy?')) return;
+    setDeletingId(id);
     try {
-      const response = await fetch(`https://shiva-be.vercel.app/api/policies/${id}`, { method: 'DELETE' });
+      const response = await fetch(`http://localhost:3000/api/policies/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Delete failed');
       toast.success('Policy deleted');
       fetchPolicies();
     } catch (err) {
       toast.error('Failed to delete policy');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -193,9 +201,10 @@ const PolicyManager = () => {
                     </button>
                     <button 
                       onClick={() => handleDelete(policy.id)}
-                      style={{ padding: '0.5rem', border: '1px solid #fee2e2', borderRadius: '6px', backgroundColor: '#fef2f2', color: '#ef4444', cursor: 'pointer' }}
+                      disabled={deletingId === policy.id}
+                      style={{ padding: '0.5rem', border: '1px solid #fee2e2', borderRadius: '6px', backgroundColor: '#fef2f2', color: '#ef4444', cursor: deletingId === policy.id ? 'not-allowed' : 'pointer', opacity: deletingId === policy.id ? 0.5 : 1 }}
                     >
-                      <FiTrash2 size={16} />
+                      {deletingId === policy.id ? <span style={{ fontSize: '12px' }}>...</span> : <FiTrash2 size={16} />}
                     </button>
                   </div>
                 </td>
@@ -351,11 +360,11 @@ const PolicyManager = () => {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-                <button type="button" onClick={handleCloseModal} style={{ padding: '0.75rem 1.5rem', backgroundColor: 'white', color: '#4b5563', border: '1px solid var(--border-color, #e5e7eb)', borderRadius: '6px', cursor: 'pointer' }}>
+                <button type="button" onClick={handleCloseModal} disabled={submitting} style={{ padding: '0.75rem 1.5rem', backgroundColor: 'white', color: '#4b5563', border: '1px solid var(--border-color, #e5e7eb)', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', opacity: submitting ? 0.7 : 1 }}>
                   Cancel
                 </button>
-                <button type="submit" style={{ padding: '0.75rem 1.5rem', backgroundColor: 'var(--primary-color, #2e9f68)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>
-                  {editingPolicy ? 'Update Policy' : 'Save Policy'}
+                <button type="submit" disabled={submitting} style={{ padding: '0.75rem 1.5rem', backgroundColor: 'var(--primary-color, #2e9f68)', color: 'white', border: 'none', borderRadius: '6px', cursor: submitting ? 'not-allowed' : 'pointer', fontWeight: 600, opacity: submitting ? 0.7 : 1 }}>
+                  {submitting ? 'Saving...' : (editingPolicy ? 'Update Policy' : 'Save Policy')}
                 </button>
               </div>
             </form>

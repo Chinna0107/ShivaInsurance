@@ -32,7 +32,7 @@ const ArticleContent: React.FC<ArticleContentProps> = ({ onBookCall, onGetQuote,
           <li><strong>Tax Benefits:</strong> Save tax under Section 80D of the Income Tax Act.</li>
         </ul>
         <div className="in-content-widget">
-          <PremiumCalculator onGetQuote={onGetQuote} />
+          <PremiumCalculator onGetQuote={onGetQuote} planName={topic} />
         </div>
       </section>
 
