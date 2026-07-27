@@ -41,7 +41,7 @@ const PolicyManager = () => {
   const fetchPolicies = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/policies');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies`);
       const data = await response.json();
       setPolicies(data);
     } catch (err) {
@@ -91,7 +91,7 @@ const PolicyManager = () => {
 
       if (editingPolicy) {
         // Update
-        const response = await fetch(`http://localhost:3000/api/policies/${editingPolicy.id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/policies/${editingPolicy.id}`, {
           method: 'PUT',
           body: data
         });
@@ -99,7 +99,7 @@ const PolicyManager = () => {
         toast.success('Policy updated successfully');
       } else {
         // Create
-        const response = await fetch('http://localhost:3000/api/policies', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies`, {
           method: 'POST',
           body: data
         });
@@ -119,7 +119,7 @@ const PolicyManager = () => {
     if (!window.confirm('Are you sure you want to delete this policy?')) return;
     setDeletingId(id);
     try {
-      const response = await fetch(`http://localhost:3000/api/policies/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/policies/${id}`, { method: 'DELETE' });
       if (!response.ok) throw new Error('Delete failed');
       toast.success('Policy deleted');
       fetchPolicies();

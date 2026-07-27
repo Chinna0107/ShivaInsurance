@@ -42,7 +42,7 @@ const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ planName }) => {
     }
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/api/premium-requests/send-otp', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/premium-requests/send-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email }),
@@ -68,7 +68,7 @@ const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ planName }) => {
     
     try {
       // 1. Verify OTP
-      const verifyRes = await fetch('http://localhost:3000/api/premium-requests/verify-otp', {
+      const verifyRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/premium-requests/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: formData.email, otp }),
@@ -87,7 +87,7 @@ const PremiumCalculator: React.FC<PremiumCalculatorProps> = ({ planName }) => {
         policy_name: planName || formData.policy_name
       };
 
-      const submitRes = await fetch('http://localhost:3000/api/premium-requests', {
+      const submitRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/premium-requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

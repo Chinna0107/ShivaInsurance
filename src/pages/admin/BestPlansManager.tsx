@@ -35,7 +35,7 @@ const BestPlansManager: React.FC = () => {
   const fetchPlans = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/api/best-plans?category=${activeCategory}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/best-plans?category=${activeCategory}`);
       if (response.ok) {
         const data = await response.json();
         setPlans(data);
@@ -89,8 +89,8 @@ const BestPlansManager: React.FC = () => {
     e.preventDefault();
     try {
       const url = editingPlan 
-        ? `http://localhost:3000/api/best-plans/${editingPlan.id}`
-        : 'http://localhost:3000/api/best-plans';
+        ? `${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/best-plans/${editingPlan.id}`
+        : `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/best-plans`;
         
       const method = editingPlan ? 'PUT' : 'POST';
       
@@ -117,7 +117,7 @@ const BestPlansManager: React.FC = () => {
     if (!window.confirm('Are you sure you want to delete this plan?')) return;
     
     try {
-      const response = await fetch(`http://localhost:3000/api/best-plans/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/best-plans/${id}`, {
         method: 'DELETE'
       });
       

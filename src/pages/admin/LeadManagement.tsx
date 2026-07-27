@@ -60,7 +60,7 @@ const LeadManagement = () => {
   const fetchLeads = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/leads?type=${typeFilter}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/leads?type=${typeFilter}`);
       if (res.ok) {
         const data = await res.json();
         setLeads(data);
@@ -83,7 +83,7 @@ const LeadManagement = () => {
 
   const updateStatus = async (id: string, newStatus: 'Pending' | 'Closed' | 'Agreed') => {
     try {
-      const res = await fetch(`http://localhost:3000/api/leads/${id}/status`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/leads/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -114,7 +114,7 @@ const LeadManagement = () => {
     formData.append('document', file);
     
     try {
-      const res = await fetch(`http://localhost:3000/api/leads/${id}/document`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/leads/${id}/document`, {
         method: 'POST',
         body: formData
       });

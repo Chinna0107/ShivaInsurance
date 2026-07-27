@@ -19,7 +19,7 @@ const PolicyDescription = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch(`http://localhost:3000/api/policies/${id}`)
+    fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/policies/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Policy not found');
         return res.json();

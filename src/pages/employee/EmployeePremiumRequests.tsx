@@ -23,7 +23,7 @@ const EmployeePremiumRequests: React.FC = () => {
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:3000/api/premium-requests');
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/premium-requests`);
       if (response.ok) {
         const data = await response.json();
         setRequests(data);
@@ -52,7 +52,7 @@ const EmployeePremiumRequests: React.FC = () => {
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/premium-requests/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/premium-requests/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

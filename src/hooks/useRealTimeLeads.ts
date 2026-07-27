@@ -30,7 +30,7 @@ if (typeof document !== 'undefined') {
 export const useRealTimeLeads = () => {
   useEffect(() => {
     if (!globalSocket) {
-      globalSocket = io('http://localhost:3000');
+      globalSocket = io(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`);
     }
 
     const handleConnect = () => {

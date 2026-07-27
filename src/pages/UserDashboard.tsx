@@ -28,8 +28,8 @@ const UserDashboard = () => {
     const fetchData = async () => {
       try {
         const [leadsRes, policiesRes] = await Promise.all([
-          fetch(`http://localhost:3000/api/users/${email}/leads`),
-          fetch('http://localhost:3000/api/policies')
+          fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/users/${email}/leads`),
+          fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies`)
         ]);
         
         if (leadsRes.ok) setLeads(await leadsRes.json());
