@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
           </div>
           <div className="cta-bar-right">
             <button className="btn btn-outline" style={{ backgroundColor: 'white' }} onClick={onBookCall}>Book a Call</button>
-            <button className="btn btn-primary" style={{ backgroundColor: '#25d366', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.open('https://wa.me/918885553249', '_blank')}>
+            <button className="btn btn-primary" style={{ backgroundColor: '#25d366', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.open('https://wa.me/918885553249?text=Hello%20InsuranceShiva%20Team%20%2C', '_blank')}>
               <FaWhatsapp size={18} /> WhatsApp Us
             </button>
           </div>
@@ -91,7 +91,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>WhatsApp</div>
-                  <a href="https://wa.me/918885553249" target="_blank" rel="noreferrer" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 88855 53249</a>
+                  <a href="https://wa.me/918885553249?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 88855 53249</a>
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
