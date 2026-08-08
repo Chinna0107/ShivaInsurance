@@ -395,6 +395,237 @@ export const infoPages: Record<string, InfoPageData> = {
     ],
   },
 
+  'know-vehicle': {
+    slug: 'know-vehicle', category: 'Vehicle Insurance', tag: 'Guide',
+    title: 'Know Vehicle Insurance Like a Pro',
+    subtitle: 'Understand every clause, add-on, and trap before you insure your car or bike.',
+    readTime: '12 min', image: '/health_insurance.png',
+    keyStats: [
+      { value: '₹2,094', label: 'Avg. Car Premium/yr' },
+      { value: '3rd Party', label: 'Legally Mandatory' },
+      { value: '24 hrs', label: 'Claim Assistance' },
+    ],
+    tocItems: [
+      { id: 'what-is', label: 'What is Vehicle Insurance?' },
+      { id: 'types', label: 'Types of Plans' },
+      { id: 'what-covers', label: 'What Does It Cover?' },
+      { id: 'exclusions', label: 'Common Exclusions' },
+      { id: 'addons', label: 'Key Add-ons' },
+      { id: 'faq', label: 'FAQs' },
+    ],
+    sections: [
+      {
+        id: 'what-is', heading: 'What is Vehicle Insurance?',
+        content: 'Vehicle insurance (also called motor insurance) is a policy that protects you financially against losses arising from accidents, theft, natural disasters, or third-party liabilities involving your vehicle. In India, at least third-party insurance is mandatory under the Motor Vehicles Act, 1988.',
+        highlight: 'Driving without valid insurance in India can result in a fine of ₹2,000 for the first offence and ₹4,000 for subsequent offences, along with possible imprisonment.',
+      },
+      {
+        id: 'types', heading: 'Types of Vehicle Insurance Plans',
+        content: 'There are three main types of motor insurance in India:',
+        bullets: [
+          { label: 'Third-Party Insurance', desc: 'Legally mandatory. Covers damage or injury caused to a third party (person or property). Does NOT cover your own vehicle.' },
+          { label: 'Comprehensive Insurance', desc: 'Covers both third-party liability AND own damage (accident, theft, fire, natural calamity). Recommended for all vehicles.' },
+          { label: 'Own Damage (OD) Cover', desc: 'Covers only your own vehicle damage. Must be paired with third-party cover. Useful for older vehicles.' },
+        ],
+      },
+      {
+        id: 'what-covers', heading: 'What Does Vehicle Insurance Cover?',
+        content: 'A comprehensive vehicle insurance policy covers:',
+        bullets: [
+          { label: 'Accidental Damage', desc: 'Repair costs for your vehicle after a collision or accident.' },
+          { label: 'Theft', desc: 'Full IDV (Insured Declared Value) paid if your vehicle is stolen.' },
+          { label: 'Natural Calamities', desc: 'Flood, earthquake, cyclone, hailstorm damage to your vehicle.' },
+          { label: 'Fire & Explosion', desc: 'Damage due to fire, self-ignition, or explosion.' },
+          { label: 'Third-Party Liability', desc: 'Legal liability for injury, death, or property damage to a third party.' },
+          { label: 'Personal Accident Cover', desc: 'Compensation for owner-driver in case of accidental death or disability.' },
+        ],
+      },
+      {
+        id: 'exclusions', heading: 'Common Exclusions You Must Know',
+        content: 'These situations are typically NOT covered:',
+        bullets: [
+          { label: 'Driving Without Valid Licence', desc: 'Claims rejected if driver did not hold a valid driving licence at the time of accident.' },
+          { label: 'Drunk Driving', desc: 'Any accident while under the influence of alcohol or drugs is excluded.' },
+          { label: 'Mechanical/Electrical Breakdown', desc: 'General wear and tear or mechanical failure is not covered.' },
+          { label: 'Consequential Loss', desc: 'Damage that occurs as a result of the original damage (e.g., engine damage due to driving in flood water without hydrostatic lock cover).' },
+          { label: 'Outside Geographical Limits', desc: 'Accidents outside India are not covered unless specifically mentioned.' },
+        ],
+        highlight: 'Always read the exclusions section carefully. Engine damage due to waterlogging is one of the most common rejected claims — add the Engine Protection add-on to avoid this.',
+      },
+      {
+        id: 'addons', heading: 'Key Add-ons Worth Buying',
+        content: 'Add-ons significantly enhance your coverage at a small extra premium:',
+        bullets: [
+          { label: 'Zero Depreciation Cover', desc: 'Insurer pays full repair cost without deducting depreciation on parts. Most recommended add-on.' },
+          { label: 'Engine Protection Cover', desc: 'Covers engine damage due to water ingression or oil leakage. Essential in flood-prone areas.' },
+          { label: 'Roadside Assistance', desc: '24x7 help for breakdown, flat tyre, fuel delivery, towing.' },
+          { label: 'Return to Invoice', desc: 'In case of total loss or theft, you get the original invoice value — not the depreciated IDV.' },
+          { label: 'No Claim Bonus Protection', desc: 'Protects your NCB discount even after one claim in a year.' },
+          { label: 'Consumables Cover', desc: 'Covers cost of nuts, bolts, engine oil, coolant replaced during repairs.' },
+        ],
+      },
+    ],
+    faqs: [
+      { q: 'Is vehicle insurance mandatory in India?', a: 'Yes. Third-party insurance is legally mandatory for all vehicles under the Motor Vehicles Act, 1988. Driving without it is a punishable offence.' },
+      { q: 'What is IDV in vehicle insurance?', a: 'IDV (Insured Declared Value) is the current market value of your vehicle. It is the maximum amount the insurer will pay in case of total loss or theft.' },
+      { q: 'What is No Claim Bonus (NCB)?', a: 'NCB is a discount on your renewal premium for every claim-free year. It starts at 20% and can go up to 50% after 5 consecutive claim-free years.' },
+      { q: 'Should I buy zero depreciation cover?', a: 'Yes, especially for new vehicles (up to 5 years old). Without it, you pay the depreciated value of replaced parts out of pocket, which can be significant.' },
+      { q: 'Can I transfer my NCB when I sell my car?', a: 'Yes! NCB belongs to the owner, not the vehicle. You can transfer it to your new vehicle or retain it for up to 3 years.' },
+    ],
+  },
+
+  'compare-vehicle': {
+    slug: 'compare-vehicle', category: 'Vehicle Insurance', tag: 'Comparison',
+    title: 'Compare the Best Vehicle Insurance Plans in India',
+    subtitle: 'Side-by-side analysis of premiums, claim ratios, add-ons, and cashless garages.',
+    readTime: '10 min', image: '/plans_compare.png',
+    keyStats: [
+      { value: '20+', label: 'Plans Compared' },
+      { value: '98.5%', label: 'Best Claim Ratio' },
+      { value: '16,000+', label: 'Cashless Garages' },
+    ],
+    tocItems: [
+      { id: 'top-plans', label: 'Top Plans 2024' },
+      { id: 'claim-ratio', label: 'Claim Settlement Ratio' },
+      { id: 'features', label: 'Feature Comparison' },
+      { id: 'for-bike', label: 'Best for Two-Wheelers' },
+      { id: 'how-to-choose', label: 'How to Choose' },
+      { id: 'faq', label: 'FAQs' },
+    ],
+    sections: [
+      {
+        id: 'top-plans', heading: 'Top Vehicle Insurance Plans in India 2024',
+        content: 'Based on claim settlement ratios, cashless garage network, add-on options, and customer service:',
+        bullets: [
+          { label: 'HDFC Ergo Car Insurance', desc: 'Best overall: 16,000+ cashless garages, 98% CSR, excellent add-on suite.' },
+          { label: 'Bajaj Allianz Car Insurance', desc: 'Best for add-ons: 24x7 motor assistance, zero dep, engine protect. CSR: 98.5%.' },
+          { label: 'ICICI Lombard Car Insurance', desc: 'Best digital experience: Instant policy, app-based claims. CSR: 97.8%.' },
+          { label: 'Tata AIG Car Insurance', desc: 'Best for new cars: Return to invoice, strong brand. CSR: 97%.' },
+          { label: 'New India Assurance', desc: 'Best government-backed: Widest acceptance, PSU trust. CSR: 96%.' },
+        ],
+        highlight: 'Always compare based on cashless garage network in your city, not just premium. A cheaper plan with no nearby cashless garage is a poor deal.',
+      },
+      {
+        id: 'claim-ratio', heading: 'Claim Settlement Ratios (2023-24)',
+        content: 'Motor insurance claim ratios indicate how reliably an insurer settles claims:',
+        bullets: [
+          { label: 'Bajaj Allianz General', desc: 'CSR: 98.5% — Consistently top performer.' },
+          { label: 'HDFC Ergo General', desc: 'CSR: 98.0%' },
+          { label: 'ICICI Lombard', desc: 'CSR: 97.8%' },
+          { label: 'Tata AIG General', desc: 'CSR: 97.0%' },
+          { label: 'New India Assurance', desc: 'CSR: 96.0% — Most trusted PSU insurer.' },
+        ],
+      },
+      {
+        id: 'features', heading: 'Key Features to Compare',
+        content: 'Beyond premium, these features determine the real value of a vehicle insurance plan:',
+        bullets: [
+          { label: 'Cashless Garage Network', desc: 'More garages = easier repairs. Look for 10,000+ network garages.' },
+          { label: 'Zero Depreciation', desc: 'Is it available? What is the extra cost? Essential for new vehicles.' },
+          { label: 'Claim Settlement Speed', desc: 'How fast does the insurer settle? Look for 7-day settlement guarantee.' },
+          { label: 'IDV Flexibility', desc: 'Can you set a higher IDV for better theft/total loss coverage?' },
+          { label: 'Add-on Range', desc: 'Engine protect, RTI, consumables, tyre cover — more options = better.' },
+          { label: 'NCB Carry-forward', desc: 'Does the insurer honour NCB from your previous insurer?' },
+        ],
+      },
+      {
+        id: 'for-bike', heading: 'Best Two-Wheeler Insurance Plans',
+        content: 'For bikes and scooters, these plans offer the best value:',
+        bullets: [
+          { label: 'Bajaj Allianz Two-Wheeler Insurance', desc: 'Best overall for bikes. Zero dep available, 24x7 roadside assistance.' },
+          { label: 'HDFC Ergo Two-Wheeler Insurance', desc: 'Strong cashless network, quick claim settlement.' },
+          { label: 'ICICI Lombard Two-Wheeler', desc: 'Best digital experience, instant policy issuance.' },
+          { label: 'Royal Sundaram Two-Wheeler', desc: 'Good value for older bikes, competitive premiums.' },
+        ],
+      },
+      {
+        id: 'how-to-choose', heading: 'How to Choose the Right Vehicle Insurance',
+        content: 'Follow this checklist:',
+        bullets: [
+          { label: 'Step 1: Choose comprehensive over third-party', desc: 'Third-party is mandatory but comprehensive protects your own vehicle too.' },
+          { label: 'Step 2: Set the right IDV', desc: 'Do not under-insure to save premium. IDV = what you get in total loss.' },
+          { label: 'Step 3: Add zero depreciation', desc: 'For vehicles under 5 years old, zero dep is a must-have.' },
+          { label: 'Step 4: Check cashless garages near you', desc: 'Verify your preferred garage is in the insurer\'s network.' },
+          { label: 'Step 5: Compare total cost with add-ons', desc: 'A slightly higher premium with zero dep + engine protect is better value.' },
+        ],
+      },
+    ],
+    faqs: [
+      { q: 'Which is the best car insurance in India?', a: 'HDFC Ergo and Bajaj Allianz are consistently top-rated for their claim ratios, cashless network, and add-on options.' },
+      { q: 'Can I switch my vehicle insurance to another insurer?', a: 'Yes, at renewal you can port to any insurer. Your NCB will be transferred. Compare quotes 30 days before renewal.' },
+      { q: 'Does vehicle insurance cover CNG/LPG kit?', a: 'Only if you declare the CNG/LPG kit to the insurer and pay the additional premium. Undeclared kits lead to claim rejection.' },
+    ],
+  },
+
+  'find-vehicle': {
+    slug: 'find-vehicle', category: 'Vehicle Insurance', tag: 'Tool',
+    title: 'Find the Best Vehicle Insurance Plan For You',
+    subtitle: 'Personalized recommendations for your car or bike based on age, usage, and budget.',
+    readTime: '5 min', image: '/consultation.png',
+    keyStats: [
+      { value: '3 min', label: 'To Get a Quote' },
+      { value: '₹0', label: 'Consultation Fee' },
+      { value: '20+', label: 'Insurers Compared' },
+    ],
+    tocItems: [
+      { id: 'by-vehicle', label: 'Plans by Vehicle Type' },
+      { id: 'by-age', label: 'Plans by Vehicle Age' },
+      { id: 'by-usage', label: 'Plans by Usage' },
+      { id: 'checklist', label: 'Buying Checklist' },
+      { id: 'faq', label: 'FAQs' },
+    ],
+    sections: [
+      {
+        id: 'by-vehicle', heading: 'Best Plans by Vehicle Type',
+        content: 'Different vehicles have different insurance needs:',
+        bullets: [
+          { label: 'New Car (0-3 years)', desc: 'Comprehensive + Zero Dep + Engine Protect + RTI. Best picks: HDFC Ergo, Bajaj Allianz.' },
+          { label: 'Used Car (3-7 years)', desc: 'Comprehensive + Zero Dep. Best picks: ICICI Lombard, Tata AIG.' },
+          { label: 'Old Car (7+ years)', desc: 'Third-party or basic OD cover. Best picks: New India Assurance, Oriental Insurance.' },
+          { label: 'Bike/Scooter', desc: 'Comprehensive + Zero Dep for new bikes. Best picks: Bajaj Allianz, HDFC Ergo.' },
+          { label: 'Commercial Vehicle', desc: 'Specialized commercial vehicle policy. Best picks: New India Assurance, United India.' },
+        ],
+      },
+      {
+        id: 'by-age', heading: 'Recommended Cover Based on Vehicle Age',
+        content: 'Vehicle age determines the right type and level of coverage:',
+        bullets: [
+          { label: '0-2 years old', desc: 'Full comprehensive + Zero Dep + Engine Protect + RTI + Consumables. Maximum protection.' },
+          { label: '3-5 years old', desc: 'Comprehensive + Zero Dep + Engine Protect. Skip RTI (invoice value too old).' },
+          { label: '5-7 years old', desc: 'Comprehensive + Zero Dep (if available). Focus on cashless garage network.' },
+          { label: '7+ years old', desc: 'Third-party or basic OD. Premium savings outweigh comprehensive benefits for old vehicles.' },
+        ],
+      },
+      {
+        id: 'by-usage', heading: 'Best Plans by Usage Pattern',
+        content: 'How you use your vehicle affects which plan and add-ons make sense:',
+        bullets: [
+          { label: 'Daily City Commuter', desc: 'High accident risk. Prioritize zero dep, roadside assistance, and large cashless network.' },
+          { label: 'Occasional Weekend Driver', desc: 'Lower risk. Comprehensive cover with zero dep is sufficient.' },
+          { label: 'Highway/Long Distance', desc: 'Roadside assistance and engine protection are critical. Tyre cover add-on recommended.' },
+          { label: 'Flood-Prone City (Mumbai, Chennai)', desc: 'Engine protection cover is non-negotiable. Hydrostatic lock damage is very common.' },
+        ],
+      },
+      {
+        id: 'checklist', heading: 'Vehicle Insurance Buying Checklist',
+        content: 'Use this before you buy or renew:',
+        bullets: [
+          { label: '✅ Choose comprehensive over third-party only', desc: 'Protects your own vehicle, not just third parties.' },
+          { label: '✅ Set correct IDV', desc: 'Do not reduce IDV to save premium — it reduces your payout in total loss.' },
+          { label: '✅ Add zero depreciation', desc: 'For vehicles under 5 years, this is the single most important add-on.' },
+          { label: '✅ Add engine protection if in flood-prone area', desc: 'Engine damage from waterlogging is excluded without this add-on.' },
+          { label: '✅ Check cashless garages near your home/office', desc: 'Verify on the insurer\'s website before buying.' },
+          { label: '✅ Carry forward your NCB', desc: 'Ensure your NCB discount is applied at renewal or when switching insurers.' },
+        ],
+      },
+    ],
+    faqs: [
+      { q: 'How is vehicle insurance premium calculated?', a: 'Premium depends on IDV (vehicle value), vehicle age, fuel type, city of registration, add-ons selected, and your NCB discount.' },
+      { q: 'What documents do I need to buy vehicle insurance?', a: 'Vehicle Registration Certificate (RC), previous policy copy (for renewal/porting), driving licence, and Aadhaar/PAN for KYC.' },
+      { q: 'Can I buy vehicle insurance online?', a: 'Yes. All major insurers offer instant online policies. You can compare, buy, and get the policy document within minutes.' },
+    ],
+  },
+
   'find-health': {
     slug: 'find-health', category: 'Health Insurance', tag: 'Tool',
     title: 'Find the Best Health Insurance Plan For You',

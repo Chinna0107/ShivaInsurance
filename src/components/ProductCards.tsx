@@ -7,8 +7,11 @@ import './ProductCards.css';
 gsap.registerPlugin(ScrollTrigger);
 
 interface ProductCardsProps {
-  onGetQuote?: () => void;
+  onViewHealthPlans?: () => void;
+  onViewTermPlans?: () => void;
+  onViewVehiclePlans?: () => void;
   onLearnMore?: () => void;
+  onLearnMoreVehicle?: () => void;
 }
 
 const products = [
@@ -31,17 +34,17 @@ const products = [
     tag: 'Best Value'
   },
   {
-    id: 'super-top-up',
-    title: 'Super Top-up',
-    description: 'Enhance your existing health cover at a low cost.',
-    icon: '🚀',
+    id: 'vehicle',
+    title: 'Vehicle Insurance',
+    description: 'Protect your car or bike with the right motor insurance plan.',
+    icon: '🚗',
     color: '#fef3c7',
     image: '/plans_compare.png',
     tag: 'Smart Choice'
   }
 ];
 
-const ProductCards: React.FC<ProductCardsProps> = ({ onGetQuote, onLearnMore }) => {
+const ProductCards: React.FC<ProductCardsProps> = ({ onViewHealthPlans, onViewTermPlans, onViewVehiclePlans, onLearnMore, onLearnMoreVehicle }) => {
   const containerRef = useRef<HTMLElement>(null);
 
   useGSAP(() => {
@@ -97,8 +100,14 @@ const ProductCards: React.FC<ProductCardsProps> = ({ onGetQuote, onLearnMore }) 
                 <h3 className="product-title">{product.title}</h3>
                 <p className="product-description">{product.description}</p>
                 <div className="product-actions">
-                  <button className="btn btn-outline product-btn" onClick={onGetQuote}>View Plans &rarr;</button>
-                  <button className="btn btn-outline product-btn" onClick={onLearnMore}>Learn More</button>
+                  <button className="btn btn-outline product-btn" onClick={
+                    product.id === 'health' ? onViewHealthPlans :
+                    product.id === 'term' ? onViewTermPlans :
+                    onViewVehiclePlans
+                  }>View Plans &rarr;</button>
+                  <button className="btn btn-outline product-btn" onClick={
+                    product.id === 'vehicle' ? onLearnMoreVehicle : onLearnMore
+                  }>Learn More</button>
                 </div>
               </div>
             </div>

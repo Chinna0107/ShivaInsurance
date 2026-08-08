@@ -1,9 +1,8 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { useEffect, useState, useRef } from 'react';
 import MainSite from './MainSite';
 import RequireLeadForm from './components/RequireLeadForm';
-
-// Admin Imports
 import AdminLayout from './components/admin/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import LeadManagement from './pages/admin/LeadManagement';
@@ -18,17 +17,42 @@ import QuoteRequests from './pages/admin/QuoteRequests';
 import PremiumRequests from './pages/admin/PremiumRequests';
 import EmployeeQuoteRequests from './pages/employee/EmployeeQuoteRequests';
 import EmployeePremiumRequests from './pages/employee/EmployeePremiumRequests';
-
-// Employee Imports
 import EmployeeLayout from './components/employee/EmployeeLayout';
 import EmployeeLogin from './pages/employee/EmployeeLogin';
-
-// Main Site Pages
 import MainHome from './pages/MainHome';
 import DynamicPage from './pages/DynamicPage';
 import ArticlePageWrapper from './pages/ArticlePageWrapper';
 
-// Helper to wrap a page with the lead form gate
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  const [faded, setFaded] = useState(false);
+  const prevPath = useRef(pathname);
+
+  useEffect(() => {
+    if (prevPath.current === pathname) return;
+    prevPath.current = pathname;
+    setFaded(true);
+    const t = setTimeout(() => {
+      window.scrollTo({ top: 0 });
+      setFaded(false);
+    }, 150);
+    return () => clearTimeout(t);
+  }, [pathname]);
+
+  return (
+    <div
+      aria-hidden
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        background: '#fff',
+        opacity: faded ? 1 : 0,
+        pointerEvents: 'none',
+        transition: faded ? 'opacity 0.12s ease' : 'opacity 0.22s ease',
+      }}
+    />
+  );
+}
+
 const Gated = ({ element }: { element: React.ReactNode }) => (
   <RequireLeadForm>{element}</RequireLeadForm>
 );
@@ -38,6 +62,7 @@ function App() {
     <>
       <Toaster position="top-right" />
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Lead Form — gateway for new visitors */}
           <Route path="/leadform" element={<MainSite />} />
@@ -52,6 +77,13 @@ function App() {
 
           {/* All sub-pages — also gated */}
           <Route path="/best-plans" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/health-plans" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/term-plans" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/vehicle-plans" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/vehicle-compare" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/find-vehicle" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/know-vehicle" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/compare-vehicle" element={<Gated element={<DynamicPage />} />} />
           <Route path="/know-term" element={<Gated element={<DynamicPage />} />} />
           <Route path="/know-health" element={<Gated element={<DynamicPage />} />} />
           <Route path="/compare-term" element={<Gated element={<DynamicPage />} />} />

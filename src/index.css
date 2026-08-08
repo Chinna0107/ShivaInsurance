@@ -30,6 +30,10 @@
   --transition-normal: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -43,11 +47,13 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 a {
   text-decoration: none;
   color: inherit;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
 }
 
 button {
@@ -55,6 +61,7 @@ button {
   border: none;
   background: none;
   font-family: inherit;
+  transition: all var(--transition-fast);
 }
 
 /* Utilities */

@@ -9,6 +9,7 @@ interface CallRequest {
   phone: string;
   email: string;
   preferred_time: string;
+  notes: string | null;
   status: 'Pending' | 'Contacted' | 'Closed';
   created_at: string;
 }
@@ -97,6 +98,7 @@ const CallRequests = () => {
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Requested By</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Contact Info</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Preferred Time</th>
+              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Notes</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Request Date</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase', textAlign: 'center' }}>Status</th>
             </tr>
@@ -111,6 +113,7 @@ const CallRequests = () => {
                     <div className="skeleton-box" style={{ width: '100px', height: '14px' }}></div>
                   </td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '100px', height: '20px' }}></div></td>
+                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '120px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '140px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '100px', height: '32px', margin: '0 auto' }}></div></td>
                 </tr>
@@ -131,6 +134,9 @@ const CallRequests = () => {
                 </td>
                 <td style={{ padding: '1rem 1.5rem', color: '#4b5563', textTransform: 'capitalize' }}>
                   {req.preferred_time}
+                </td>
+                <td style={{ padding: '1rem 1.5rem', color: '#6b7280', fontSize: '0.85rem', maxWidth: '180px' }}>
+                  {req.notes || <span style={{ opacity: 0.4 }}>—</span>}
                 </td>
                 <td style={{ padding: '1rem 1.5rem', color: '#6b7280', fontSize: '0.9rem' }}>
                   {formatDate(req.created_at)}
@@ -163,7 +169,7 @@ const CallRequests = () => {
               </tr>
             ))) : (
               <tr>
-                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
                   <div style={{ marginBottom: '1rem' }}><FiPhoneCall size={32} opacity={0.3} /></div>
                   No call requests found.
                 </td>

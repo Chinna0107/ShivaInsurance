@@ -266,6 +266,32 @@
   background: #e04b1e;
 }
 
+.already-filled-btn {
+  width: 100%;
+  background: transparent;
+  color: #667285;
+  border: 1.5px solid #e0e5ed;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+
+.already-filled-btn:hover:not(:disabled) {
+  border-color: #667285;
+  color: #1a233a;
+  background: #f4f6f9;
+}
+
+.already-filled-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .expert-assist {
   display: flex;
   align-items: center;

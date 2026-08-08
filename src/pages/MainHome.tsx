@@ -36,7 +36,13 @@ function MainHome() {
       <main>
         <Hero onBookCall={handleBookCall} onGetQuote={handleGetQuote} />
         <TrustIndicators />
-        <ProductCards onGetQuote={handleGetQuote} onLearnMore={() => navigate('/compare-health')} />
+        <ProductCards
+          onViewHealthPlans={() => navigate('/health-plans')}
+          onViewTermPlans={() => navigate('/term-plans')}
+          onViewVehiclePlans={() => navigate('/vehicle-plans')}
+          onLearnMore={() => navigate('/compare-health')}
+          onLearnMoreVehicle={() => navigate('/know-vehicle')}
+        />
         <ProcessFeatures onNavigate={() => navigate('/expert')} />
         <Testimonials onNavigate={() => navigate('/expert')} />
         <CtaBanner onBookCall={handleBookCall} />

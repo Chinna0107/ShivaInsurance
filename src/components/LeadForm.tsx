@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import './LeadForm.css';
 
@@ -35,6 +36,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [detectedCity, setDetectedCity] = useState('');
   const [isFetchingCity, setIsFetchingCity] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCheckingLead, setIsCheckingLead] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem('leadform_gender', JSON.stringify(gender));
@@ -163,6 +166,32 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           }}
         >
           View Plans
+        </button>
+
+        <button
+          className="already-filled-btn"
+          disabled={isCheckingLead}
+          onClick={async () => {
+            if (mobile.length !== 10) return toast.error('Enter your 10-digit mobile number to verify');
+            setIsCheckingLead(true);
+            try {
+              const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/check?phone=${mobile}`);
+              const data = await res.json();
+              if (res.ok && data.exists) {
+                localStorage.setItem('lead_submitted_token', 'true');
+                toast.success('Welcome back!');
+                navigate('/');
+              } else {
+                toast.error('No existing submission found for this number.');
+              }
+            } catch {
+              toast.error('Could not verify. Please try again.');
+            } finally {
+              setIsCheckingLead(false);
+            }
+          }}
+        >
+          {isCheckingLead ? 'Checking...' : 'Already Filled'}
         </button>
 
         <div className="expert-assist">

@@ -7,6 +7,10 @@ import ResourcePage from './ResourcePage';
 import DecoderPage from './DecoderPage';
 import ClaimsPage from './ClaimsPage';
 import BestPlansPage from './BestPlansPage';
+import VehicleComparePage from './VehicleComparePage';
+import VehicleFindPage from './VehicleFindPage';
+import VehiclePlansPage from './VehiclePlansPage';
+import PlansPage from './PlansPage';
 import BookCallModal from '../components/BookCallModal';
 import QuoteModal from '../components/QuoteModal';
 import { Toaster } from 'react-hot-toast';
@@ -36,6 +40,21 @@ function DynamicPage() {
   const renderContent = () => {
     if (resolvedSlug === 'best-plans') {
       return <BestPlansPage onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+    }
+    if (resolvedSlug === 'health-plans') {
+      return <PlansPage type="Health" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+    }
+    if (resolvedSlug === 'term-plans') {
+      return <PlansPage type="Term" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+    }
+    if (resolvedSlug === 'vehicle-plans') {
+      return <PlansPage type="Vehicle" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+    }
+    if (resolvedSlug === 'vehicle-compare') {
+      return <VehicleComparePage onBookCall={handleBookCall} />;
+    }
+    if (resolvedSlug === 'find-vehicle') {
+      return <VehicleFindPage onBookCall={handleBookCall} />;
     }
     if (infoPages[resolvedSlug]) {
       return <InfoPage data={infoPages[resolvedSlug]} onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;

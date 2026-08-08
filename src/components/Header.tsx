@@ -25,6 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
 
   const healthPolicies = policies.filter(p => p.type === 'Health');
   const lifePolicies = policies.filter(p => p.type === 'Life');
+  const vehiclePolicies = policies.filter(p => p.type === 'Vehicle');
 
   const handleSubOptionClick = (e: React.MouseEvent, page: string) => {
     e.preventDefault();
@@ -120,39 +121,32 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
                 <li><a href="#best-plans" onClick={(e) => handleSubOptionClick(e, 'best-plans')}>Best Plans</a></li>
                 
                 <li 
-                  onMouseEnter={() => setActiveDropdown('decode')}
-                  className={activeDropdown === 'decode' ? 'active-nav-item' : ''}
-                  style={{ position: 'static' }}
+                  onMouseEnter={() => setActiveDropdown('vehicle')}
+                  className={activeDropdown === 'vehicle' ? 'active-nav-item' : ''}
                 >
-                  <a href="#decode-plans" onClick={(e) => { e.preventDefault(); setActiveDropdown(activeDropdown === 'decode' ? null : 'decode'); }}>Decode Plans <span className="dropdown-arrow"></span></a>
-                  {activeDropdown === 'decode' && (
-                    <div className="mega-menu" style={{ width: '900px', left: '50%', transform: 'translateX(-50%)' }}>
-                      <div className="mega-menu-grid">
+                  <a href="#vehicle" onClick={(e) => { e.preventDefault(); setActiveDropdown(activeDropdown === 'vehicle' ? null : 'vehicle'); }}>Vehicle <span className="dropdown-arrow"></span></a>
+                  {activeDropdown === 'vehicle' && (
+                    <div className="mega-menu" style={{ width: '400px', left: '-50px' }}>
+                      <div className="mega-menu-grid" style={{ gridTemplateColumns: '1fr' }}>
                         <div>
-                          <h3 className="mega-menu-title">Health Insurance Decoder</h3>
+                          <h3 className="mega-menu-title">Vehicle Insurance</h3>
                           <ul className="decoder-list">
-                            {healthPolicies.length > 0 ? healthPolicies.map(policy => (
-                              <li key={policy.id} onClick={(e) => handleSubOptionClick(e, `decode-${policy.id}`)} style={{cursor: 'pointer'}}>
-                                <span className="brand-placeholder" style={{backgroundColor: '#059669', color: 'white'}}>{policy.provider}</span> {policy.name}
-                              </li>
-                            )) : (
-                              <li style={{color: '#6b7280', fontStyle: 'italic', padding: '0.5rem 0'}}>No health plans added yet.</li>
-                            )}
+                            <li onClick={(e) => handleSubOptionClick(e, 'know-vehicle')} style={{cursor: 'pointer'}}>📘 Know Vehicle Insurance</li>
+                            <li onClick={(e) => handleSubOptionClick(e, 'vehicle-compare')} style={{cursor: 'pointer'}}>📊 Compare Plans</li>
+                            <li onClick={(e) => handleSubOptionClick(e, 'find-vehicle')} style={{cursor: 'pointer'}}>🔍 Find Best Plan</li>
                           </ul>
-                          <button className="btn-view-all" onClick={(e) => handleSubOptionClick(e, 'compare-health')}>View All <span style={{marginLeft: '4px'}}>→</span></button>
-                        </div>
-                        <div>
-                          <h3 className="mega-menu-title">Life / Term Plan Decoder</h3>
-                          <ul className="decoder-list">
-                            {lifePolicies.length > 0 ? lifePolicies.map(policy => (
-                              <li key={policy.id} onClick={(e) => handleSubOptionClick(e, `decode-${policy.id}`)} style={{cursor: 'pointer'}}>
-                                <span className="brand-placeholder" style={{backgroundColor: '#2563eb', color: 'white'}}>{policy.provider}</span> {policy.name}
-                              </li>
-                            )) : (
-                              <li style={{color: '#6b7280', fontStyle: 'italic', padding: '0.5rem 0'}}>No life plans added yet.</li>
-                            )}
-                          </ul>
-                          <button className="btn-view-all" onClick={(e) => handleSubOptionClick(e, 'best-plans')}>View All <span style={{marginLeft: '4px'}}>→</span></button>
+                          {vehiclePolicies.length > 0 && (
+                            <>
+                              <h3 className="mega-menu-title" style={{ marginTop: '1rem' }}>Top Vehicle Policies</h3>
+                              <ul className="decoder-list">
+                                {vehiclePolicies.map(policy => (
+                                  <li key={policy.id} onClick={(e) => handleSubOptionClick(e, `policy/${policy.id}`)} style={{cursor: 'pointer'}}>
+                                    <span className="brand-placeholder" style={{backgroundColor: '#d97706', color: 'white'}}>{policy.provider}</span> {policy.name}
+                                  </li>
+                                ))}
+                              </ul>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>

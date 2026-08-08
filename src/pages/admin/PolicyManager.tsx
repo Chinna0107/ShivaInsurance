@@ -184,8 +184,8 @@ const PolicyManager = () => {
                 <td style={{ padding: '1rem 1.5rem' }}>
                   <span style={{ 
                     padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 500,
-                    backgroundColor: policy.type === 'Health' ? '#ecfdf5' : '#eff6ff',
-                    color: policy.type === 'Health' ? '#059669' : '#2563eb'
+                    backgroundColor: policy.type === 'Health' ? '#ecfdf5' : policy.type === 'Vehicle' ? '#fef3c7' : '#eff6ff',
+                    color: policy.type === 'Health' ? '#059669' : policy.type === 'Vehicle' ? '#d97706' : '#2563eb'
                   }}>
                     {policy.type}
                   </span>
@@ -296,6 +296,7 @@ const PolicyManager = () => {
                   >
                     <option value="Health">Health Insurance</option>
                     <option value="Life">Life / Term Insurance</option>
+                    <option value="Vehicle">Vehicle Insurance</option>
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
