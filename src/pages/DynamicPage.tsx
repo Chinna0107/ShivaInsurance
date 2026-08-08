@@ -9,7 +9,6 @@ import ClaimsPage from './ClaimsPage';
 import BestPlansPage from './BestPlansPage';
 import VehicleComparePage from './VehicleComparePage';
 import VehicleFindPage from './VehicleFindPage';
-import VehiclePlansPage from './VehiclePlansPage';
 import PlansPage from './PlansPage';
 import BookCallModal from '../components/BookCallModal';
 import QuoteModal from '../components/QuoteModal';

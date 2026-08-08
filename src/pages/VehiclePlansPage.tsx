@@ -118,7 +118,6 @@ const VehiclePlansPage: React.FC<VehiclePlansPageProps> = ({ onBookCall, onGetQu
             {policies.map(policy => {
               const images = getImages(policy.images);
               const pros = policy.pros ? policy.pros.split('\n').filter(Boolean) : [];
-              const cons = policy.cons ? policy.cons.split('\n').filter(Boolean) : [];
               return (
                 <div
                   key={policy.id}

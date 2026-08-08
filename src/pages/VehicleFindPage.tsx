@@ -21,7 +21,7 @@ const highlights = [
   { icon: '⚡', title: 'Instant Policy', desc: 'Get your policy document in minutes, 100% online.' },
 ];
 
-const VehicleFindPage: React.FC<VehicleFindPageProps> = ({ onBookCall }) => {
+const VehicleFindPage: React.FC<VehicleFindPageProps> = ({ onBookCall: _onBookCall }) => {
   const [selectedVehicle, setSelectedVehicle] = useState('');
   const [form, setForm] = useState({ name: '', phone: '', email: '', preferredTime: '' });
   const [submitting, setSubmitting] = useState(false);
