@@ -26,7 +26,7 @@ function ArticlePageWrapper() {
   return (
     <div className="app">
       <Header onBookCall={handleBookCall} />
-      <ArticlePage onBookCall={handleBookCall} onGetQuote={handleGetQuote} topic={decodeURIComponent(topic || 'Term Insurance')} />
+      <ArticlePage onBookCall={handleBookCall} onGetQuote={handleGetQuote} topic={decodeURIComponent(topic || 'Life Insurance')} />
       <Footer onBookCall={handleBookCall} />
       <BookCallModal isOpen={isBookCallOpen} onClose={() => setIsBookCallOpen(false)} />
       <QuoteModal isOpen={isQuoteOpen} onClose={() => setIsQuoteOpen(false)} planName={quotePlanName} />

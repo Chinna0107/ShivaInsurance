@@ -27,8 +27,8 @@ export interface InfoPageData {
 
 export const infoPages: Record<string, InfoPageData> = {
   'know-term': {
-    slug: 'know-term', category: 'Term Insurance', tag: 'Guide',
-    title: 'Know Term Insurance Like a Pro',
+    slug: 'know-term', category: 'Life Insurance', tag: 'Guide',
+    title: 'Know Life Insurance Like a Pro',
     subtitle: 'Understand every term, clause, benefit and trap before you buy.',
     readTime: '12 min', image: '/term_insurance.png',
     keyStats: [
@@ -37,21 +37,21 @@ export const infoPages: Record<string, InfoPageData> = {
       { value: '30+', label: 'Insurers Available' },
     ],
     tocItems: [
-      { id: 'what-is', label: 'What is Term Insurance?' },
+      { id: 'what-is', label: 'What is Life Insurance?' },
       { id: 'why-need', label: 'Why Do You Need It?' },
       { id: 'how-works', label: 'How Does It Work?' },
-      { id: 'types', label: 'Types of Term Plans' },
+      { id: 'types', label: 'Types of Life Plans' },
       { id: 'riders', label: 'Riders & Add-ons' },
       { id: 'faq', label: 'FAQs' },
     ],
     sections: [
       {
-        id: 'what-is', heading: 'What is Term Insurance?',
+        id: 'what-is', heading: 'What is Life Insurance?',
         content: 'Term insurance is the simplest and most affordable form of life insurance. You pay a fixed premium for a fixed period (the "term"). If you pass away during this period, your nominees receive a large tax-free lump sum called the death benefit. If you survive the term, no money is paid back — which is exactly why it is so affordable.',
         highlight: 'A ₹1 Crore cover for a 30-year-old non-smoker can cost as little as ₹450 per month.',
       },
       {
-        id: 'why-need', heading: 'Why Do You Need Term Insurance?',
+        id: 'why-need', heading: 'Why Do You Need Life Insurance?',
         content: 'Term insurance is your family\'s income replacement. If something happens to you, your family can continue their lifestyle, repay home loans, fund children\'s education, and meet day-to-day expenses without financial stress.',
         bullets: [
           { label: 'Income Replacement', desc: 'Replaces your monthly income for your dependants for years.' },
@@ -61,13 +61,13 @@ export const infoPages: Record<string, InfoPageData> = {
         ],
       },
       {
-        id: 'how-works', heading: 'How Does Term Insurance Work?',
+        id: 'how-works', heading: 'How Does Life Insurance Work?',
         content: 'You choose a Sum Assured (e.g. ₹1 Crore), a policy term (e.g. 30 years), and a premium payment frequency. You pay premiums each year. If you die within the term, the insurer pays the death benefit directly to your nominee. The claim is usually settled within 3–5 working days.',
         highlight: 'Always buy a term plan that covers you until at least age 60-65, so your dependants are protected through your peak earning years.',
       },
       {
-        id: 'types', heading: 'Types of Term Insurance Plans',
-        content: 'Not all term plans are the same. Here are the main variants available in India:',
+        id: 'types', heading: 'Types of Life Insurance Plans',
+        content: 'Not all life plans are the same. Here are the main variants available in India:',
         bullets: [
           { label: 'Level Term Plan', desc: 'Death benefit remains constant throughout the policy term. Most popular type.' },
           { label: 'Increasing Term Plan', desc: 'Sum assured increases every year (usually by 5-10%) to beat inflation.' },
@@ -88,17 +88,17 @@ export const infoPages: Record<string, InfoPageData> = {
       },
     ],
     faqs: [
-      { q: 'What is the right age to buy term insurance?', a: 'The earlier the better. Premiums are lowest when you are young and healthy. Ideally buy before 30.' },
+      { q: 'What is the right age to buy life insurance?', a: 'The earlier the better. Premiums are lowest when you are young and healthy. Ideally buy before 30.' },
       { q: 'How much cover do I need?', a: 'A common rule: 10-15x your annual income. If you earn ₹10L/year, aim for ₹1-1.5 Crore cover.' },
-      { q: 'Does term insurance cover COVID-19 death?', a: 'Yes. Most term insurance policies cover death due to COVID-19, as it is treated as any other illness.' },
-      { q: 'Can I buy term insurance for my spouse too?', a: 'Yes. Many insurers offer joint term plans, or you can buy separate plans for each spouse.' },
+      { q: 'Does life insurance cover COVID-19 death?', a: 'Yes. Most life insurance policies cover death due to COVID-19, as it is treated as any other illness.' },
+      { q: 'Can I buy life insurance for my spouse too?', a: 'Yes. Many insurers offer joint life plans, or you can buy separate plans for each spouse.' },
       { q: 'What happens if I miss a premium payment?', a: 'Most policies have a 30-day grace period. If you miss beyond that, the policy lapses but can usually be revived within 2 years.' },
     ],
   },
 
   'compare-term': {
-    slug: 'compare-term', category: 'Term Insurance', tag: 'Comparison',
-    title: 'Compare the Best Term Insurance Plans in India',
+    slug: 'compare-term', category: 'Life Insurance', tag: 'Comparison',
+    title: 'Compare the Best Life Insurance Plans in India',
     subtitle: 'Side-by-side analysis of features, exclusions, claim ratios, and premiums.',
     readTime: '10 min', image: '/plans_compare.png',
     keyStats: [
@@ -116,8 +116,8 @@ export const infoPages: Record<string, InfoPageData> = {
     ],
     sections: [
       {
-        id: 'top-plans', heading: 'Top Term Plans in India 2024',
-        content: 'Based on our expert analysis of claim settlement ratios, premium affordability, coverage features, and customer service — here are the top term insurance plans:',
+        id: 'top-plans', heading: 'Top Life Plans in India 2024',
+        content: 'Based on our expert analysis of claim settlement ratios, premium affordability, coverage features, and customer service — here are the top life insurance plans:',
         bullets: [
           { label: 'LIC Tech Term', desc: 'Best for trust & government backing. Claim ratio: 98.8%.' },
           { label: 'HDFC Life Click 2 Protect Super', desc: 'Best for features. Life Stage Benefit option available. Claim ratio: 99.5%.' },
@@ -140,7 +140,7 @@ export const infoPages: Record<string, InfoPageData> = {
       },
       {
         id: 'features', heading: 'Key Features to Compare',
-        content: 'When comparing term plans, look beyond just the premium. Here are the features that matter most:',
+        content: 'When comparing life plans, look beyond just the premium. Here are the features that matter most:',
         bullets: [
           { label: 'Claim Settlement Ratio', desc: 'Higher is better. Look for >98%.' },
           { label: 'Cover Amount Flexibility', desc: 'Can you increase cover at life milestones (marriage, childbirth)?' },
@@ -161,7 +161,7 @@ export const infoPages: Record<string, InfoPageData> = {
       },
       {
         id: 'how-to-choose', heading: 'How to Choose the Right Term Plan',
-        content: 'Follow this checklist when buying term insurance:',
+        content: 'Follow this checklist when buying life insurance:',
         bullets: [
           { label: 'Step 1: Fix your cover amount', desc: '10-15x annual income + outstanding loans.' },
           { label: 'Step 2: Fix your policy term', desc: 'Cover until at least retirement age (60-65 years).' },
@@ -173,14 +173,14 @@ export const infoPages: Record<string, InfoPageData> = {
     ],
     faqs: [
       { q: 'Which is the best term plan in India?', a: 'There is no single "best" plan. HDFC Life Click 2 Protect Super and Max Life Smart Secure Plus are consistently top rated for their features and high claim ratios.' },
-      { q: 'Should I buy term insurance online or offline?', a: 'Online is cheaper (no agent commission) and faster. Most reputable insurers have strong online platforms.' },
-      { q: 'Can I have multiple term insurance policies?', a: 'Yes. You can own multiple policies from different insurers. All claims will be paid out, subject to each policy\'s terms.' },
+      { q: 'Should I buy life insurance online or offline?', a: 'Online is cheaper (no agent commission) and faster. Most reputable insurers have strong online platforms.' },
+      { q: 'Can I have multiple life insurance policies?', a: 'Yes. You can own multiple policies from different insurers. All claims will be paid out, subject to each policy\'s terms.' },
     ],
   },
 
   'find-term': {
-    slug: 'find-term', category: 'Term Insurance', tag: 'Tool',
-    title: 'Find the Best Term Insurance Plan For You',
+    slug: 'find-term', category: 'Life Insurance', tag: 'Tool',
+    title: 'Find the Best Life Insurance Plan For You',
     subtitle: 'Answer 3 quick questions. Get personalized recommendations in minutes.',
     readTime: '5 min', image: '/consultation.png',
     keyStats: [
@@ -197,7 +197,7 @@ export const infoPages: Record<string, InfoPageData> = {
     ],
     sections: [
       {
-        id: 'factors', heading: 'What Affects Your Term Insurance Premium?',
+        id: 'factors', heading: 'What Affects Your Life Insurance Premium?',
         content: 'Your premium is calculated based on several personal factors. Understanding these helps you find the most affordable plan:',
         bullets: [
           { label: 'Age', desc: 'Younger = cheaper. A 25-year-old pays ~30-40% less than a 40-year-old for the same cover.' },
@@ -210,8 +210,8 @@ export const infoPages: Record<string, InfoPageData> = {
         highlight: 'A non-smoking 30-year-old can get ₹1 Crore cover for just ₹450-500 per month.',
       },
       {
-        id: 'age', heading: 'Best Term Plans by Age Group',
-        content: 'Different age groups have different priorities when it comes to term insurance:',
+        id: 'age', heading: 'Best Life Plans by Age Group',
+        content: 'Different age groups have different priorities when it comes to life insurance:',
         bullets: [
           { label: '25-30 years', desc: 'Priority: Maximum cover at minimum premium. Best picks: HDFC Click 2 Protect, Max Smart Secure Plus.' },
           { label: '31-40 years', desc: 'Priority: Riders for critical illness + income replacement. Best picks: Tata AIA, ICICI Prudential iProtect.' },
@@ -241,9 +241,9 @@ export const infoPages: Record<string, InfoPageData> = {
       },
     ],
     faqs: [
-      { q: 'How do I check if I qualify for term insurance?', a: 'Most insurers require you to be between 18-65 years, be an Indian resident, and pass a medical exam for high sum assured.' },
-      { q: 'What documents do I need to buy term insurance online?', a: 'Typically: Aadhaar, PAN, income proof (Form 16 / salary slip), address proof, and recent medical reports if applicable.' },
-      { q: 'Can self-employed individuals buy term insurance?', a: 'Yes. You will need to provide your ITR (Income Tax Returns) for the last 2-3 years as income proof.' },
+      { q: 'How do I check if I qualify for life insurance?', a: 'Most insurers require you to be between 18-65 years, be an Indian resident, and pass a medical exam for high sum assured.' },
+      { q: 'What documents do I need to buy life insurance online?', a: 'Typically: Aadhaar, PAN, income proof (Form 16 / salary slip), address proof, and recent medical reports if applicable.' },
+      { q: 'Can self-employed individuals buy life insurance?', a: 'Yes. You will need to provide your ITR (Income Tax Returns) for the last 2-3 years as income proof.' },
     ],
   },
 
@@ -712,48 +712,48 @@ export interface ResourcePageData {
 
 export const resourcePages: Record<string, ResourcePageData> = {
   'articles-term': {
-    slug: 'articles-term', category: 'Term Insurance', type: 'articles',
-    title: 'Term Insurance Articles & Guides',
+    slug: 'articles-term', category: 'Life Insurance', type: 'articles',
+    title: 'Life Insurance Articles & Guides',
     subtitle: 'In-depth, unbiased articles written by insurance experts to help you make smarter decisions.',
     items: [
-      { title: 'The Complete Guide to Buying Term Insurance in 2024', description: 'Everything from choosing a plan to filing a claim — in one comprehensive guide.', tag: 'Beginner', readTime: '15 min', image: '/term_insurance.png' },
-      { title: 'Term Insurance Riders: Which Ones Are Worth It?', description: 'A detailed breakdown of every rider available and which ones actually add value.', tag: 'Intermediate', readTime: '8 min', image: '/consultation.png' },
-      { title: '10 Common Term Insurance Mistakes to Avoid', description: 'Real mistakes real people make — and how to avoid them.', tag: 'Tips', readTime: '6 min', image: '/hero_advisor.png' },
-      { title: 'How to Disclose Medical Conditions in Term Insurance', description: 'Why non-disclosure is dangerous and exactly what to disclose.', tag: 'Important', readTime: '7 min', image: '/plans_compare.png' },
-      { title: 'Term Insurance for NRIs: Rules, Taxation & Best Plans', description: 'Can NRIs buy term insurance in India? All your questions answered.', tag: 'NRI', readTime: '9 min', image: '/hero_advisor.png' },
-      { title: 'Best Term Insurance for Women in 2024', description: 'Women get lower premiums — but which plan gives the best value?', tag: 'Women', readTime: '7 min', image: '/health_insurance.png' },
+      { title: 'The Complete Guide to Buying Life Insurance in 2024', description: 'Everything from choosing a plan to filing a claim — in one comprehensive guide.', tag: 'Beginner', readTime: '15 min', image: '/term_insurance.png' },
+      { title: 'Life Insurance Riders: Which Ones Are Worth It?', description: 'A detailed breakdown of every rider available and which ones actually add value.', tag: 'Intermediate', readTime: '8 min', image: '/consultation.png' },
+      { title: '10 Common Life Insurance Mistakes to Avoid', description: 'Real mistakes real people make — and how to avoid them.', tag: 'Tips', readTime: '6 min', image: '/hero_advisor.png' },
+      { title: 'How to Disclose Medical Conditions in Life Insurance', description: 'Why non-disclosure is dangerous and exactly what to disclose.', tag: 'Important', readTime: '7 min', image: '/plans_compare.png' },
+      { title: 'Life Insurance for NRIs: Rules, Taxation & Best Plans', description: 'Can NRIs buy life insurance in India? All your questions answered.', tag: 'NRI', readTime: '9 min', image: '/hero_advisor.png' },
+      { title: 'Best Life Insurance for Women in 2024', description: 'Women get lower premiums — but which plan gives the best value?', tag: 'Women', readTime: '7 min', image: '/health_insurance.png' },
     ],
   },
   'videos-term': {
-    slug: 'videos-term', category: 'Term Insurance', type: 'videos',
-    title: 'Term Insurance Video Guides',
+    slug: 'videos-term', category: 'Life Insurance', type: 'videos',
+    title: 'Life Insurance Video Guides',
     subtitle: 'Watch and learn. Our experts break down complex insurance concepts into simple videos.',
     items: [
-      { title: 'Term Insurance Explained in 5 Minutes', description: 'The simplest explanation of term insurance you will ever watch.', tag: 'Beginner', readTime: '5 min', image: '/term_insurance.png' },
+      { title: 'Life Insurance Explained in 5 Minutes', description: 'The simplest explanation of life insurance you will ever watch.', tag: 'Beginner', readTime: '5 min', image: '/term_insurance.png' },
       { title: 'HDFC Life Click 2 Protect Super — Full Review', description: 'We analyze every feature, exclusion, and fine print of this popular plan.', tag: 'Review', readTime: '18 min', image: '/plans_compare.png' },
-      { title: 'How to File a Term Insurance Claim', description: 'Step-by-step walkthrough of the claims process from death certificate to payout.', tag: 'How-to', readTime: '12 min', image: '/claims_support.png' },
-      { title: 'Should You Buy Return of Premium Term Plans?', description: 'We crunch the numbers. Is TROP worth the extra premium?', tag: 'Analysis', readTime: '10 min', image: '/hero_advisor.png' },
+      { title: 'How to File a Life Insurance Claim', description: 'Step-by-step walkthrough of the claims process from death certificate to payout.', tag: 'How-to', readTime: '12 min', image: '/claims_support.png' },
+      { title: 'Should You Buy Return of Premium Life Plans?', description: 'We crunch the numbers. Is TROP worth the extra premium?', tag: 'Analysis', readTime: '10 min', image: '/hero_advisor.png' },
     ],
   },
   'video-guides-term': {
-    slug: 'video-guides-term', category: 'Term Insurance', type: 'videos',
-    title: 'Term Insurance Video Tutorials',
+    slug: 'video-guides-term', category: 'Life Insurance', type: 'videos',
+    title: 'Life Insurance Video Tutorials',
     subtitle: 'Step-by-step video tutorials from application to claim settlement.',
     items: [
-      { title: 'How to Buy Term Insurance Online — Step by Step', description: 'A complete screen-by-screen walkthrough of buying term insurance on an insurer\'s website.', tag: 'Tutorial', readTime: '15 min', image: '/consultation.png' },
+      { title: 'How to Buy Life Insurance Online — Step by Step', description: 'A complete screen-by-screen walkthrough of buying life insurance on an insurer\'s website.', tag: 'Tutorial', readTime: '15 min', image: '/consultation.png' },
       { title: 'How to Fill the Proposal Form Correctly', description: 'Common mistakes in proposal forms that lead to claim rejections later.', tag: 'Tutorial', readTime: '12 min', image: '/hero_advisor.png' },
       { title: 'Adding a Nominee: What You Must Know', description: 'Why nominee details matter and how to update them correctly.', tag: 'Tutorial', readTime: '8 min', image: '/term_insurance.png' },
-      { title: 'Medical Examination for Term Insurance — What to Expect', description: 'What tests are done, what levels trigger rejection, and how to prepare.', tag: 'Tutorial', readTime: '10 min', image: '/health_insurance.png' },
+      { title: 'Medical Examination for Life Insurance — What to Expect', description: 'What tests are done, what levels trigger rejection, and how to prepare.', tag: 'Tutorial', readTime: '10 min', image: '/health_insurance.png' },
     ],
   },
   'ebook-term': {
-    slug: 'ebook-term', category: 'Term Insurance', type: 'ebook',
-    title: 'Download: The Definitive Term Insurance eBook',
+    slug: 'ebook-term', category: 'Life Insurance', type: 'ebook',
+    title: 'Download: The Definitive Life Insurance eBook',
     subtitle: 'A 45-page comprehensive guide written by experts — completely free for you.',
     items: [
-      { title: 'Chapter 1: Why Every Indian Needs Term Insurance', description: 'Understand the fundamental case for buying life cover in India today.', tag: 'Chapter 1', readTime: '8 pages', image: '/term_insurance.png' },
+      { title: 'Chapter 1: Why Every Indian Needs Life Insurance', description: 'Understand the fundamental case for buying life cover in India today.', tag: 'Chapter 1', readTime: '8 pages', image: '/term_insurance.png' },
       { title: 'Chapter 2: How to Calculate the Right Cover Amount', description: 'Multiple methods to arrive at the exact cover amount suited to your life.', tag: 'Chapter 2', readTime: '10 pages', image: '/plans_compare.png' },
-      { title: 'Chapter 3: The Top 15 Term Plans — Compared', description: 'A no-nonsense comparison table covering 15 leading plans.', tag: 'Chapter 3', readTime: '12 pages', image: '/hero_advisor.png' },
+      { title: 'Chapter 3: The Top 15 Life Plans — Compared', description: 'A no-nonsense comparison table covering 15 leading plans.', tag: 'Chapter 3', readTime: '12 pages', image: '/hero_advisor.png' },
       { title: 'Chapter 4: How to Ensure Smooth Claim Settlement', description: 'What your family needs to know — in advance.', tag: 'Chapter 4', readTime: '8 pages', image: '/claims_support.png' },
     ],
   },
@@ -796,7 +796,7 @@ export const resourcePages: Record<string, ResourcePageData> = {
     title: 'Ask an Insurance Expert — Free',
     subtitle: 'Get personalized, unbiased answers to your insurance questions from 500+ verified experts.',
     items: [
-      { title: 'Term Insurance Planning', description: 'Get the right cover amount, best plan, and rider recommendations for your situation.', tag: 'Free', readTime: '30 min call', image: '/hero_advisor.png' },
+      { title: 'Life Insurance Planning', description: 'Get the right cover amount, best plan, and rider recommendations for your situation.', tag: 'Free', readTime: '30 min call', image: '/hero_advisor.png' },
       { title: 'Health Insurance Review', description: 'Expert reviews your current plan and recommends gaps to fill or better alternatives.', tag: 'Free', readTime: '30 min call', image: '/health_insurance.png' },
       { title: 'Claims Assistance', description: 'Stuck with a claim rejection or delay? Our claims expert steps in to help.', tag: 'Free', readTime: '45 min call', image: '/claims_support.png' },
       { title: 'Policy Review & Optimization', description: 'Are you over-insured, under-insured, or paying too much? Get a free portfolio review.', tag: 'Free', readTime: '45 min call', image: '/consultation.png' },
@@ -956,7 +956,7 @@ export const decoderPages: Record<string, DecoderPageData> = {
     ],
     pros: ['100% government-backed — zero default risk', 'Guaranteed maturity amount — no market risk', 'Tax benefit under 80C and 10(10D)', 'Loan facility available', 'Trusted brand with 60+ year track record'],
     cons: ['Returns (4-5% IRR) are lower than market investments and even some FDs', 'Non-participating means no bonus — what you see is what you get', 'Lock-in period is long (15-20 years)', 'Surrender value is low in early years'],
-    expertVerdict: 'LIC Bima Jyoti is suitable for risk-averse investors who want guaranteed, government-backed maturity amounts and life cover. If you\'re looking for wealth creation, pure mutual funds + term insurance is a better strategy. But for capital protection + life cover, LIC remains hard to beat.',
+    expertVerdict: 'LIC Bima Jyoti is suitable for risk-averse investors who want guaranteed, government-backed maturity amounts and life cover. If you\'re looking for wealth creation, pure mutual funds + life insurance is a better strategy. But for capital protection + life cover, LIC remains hard to beat.',
   },
   'decode-hdfc-life': {
     slug: 'decode-hdfc-life', brand: 'HDFC Life', planName: 'HDFC Life Sanchay Fixed Maturity',
@@ -1149,7 +1149,7 @@ export const bestPlansData = {
   subtitle: 'Expert-curated. Unbiased. Updated monthly. Find the best plan across term, health, and savings.',
   categories: [
     {
-      id: 'term', label: 'Best Term Plans', icon: '🛡️',
+      id: 'term', label: 'Best Life Plans', icon: '🛡️',
       plans: [
         { rank: 1, name: 'HDFC Life Click 2 Protect Super', badge: 'Editor\'s Choice', premium: '₹450/month', cover: '₹1 Crore', claimRatio: '99.5%', highlight: 'Best features + highest claim ratio' },
         { rank: 2, name: 'Max Life Smart Secure Plus', badge: 'Best Value', premium: '₹480/month', cover: '₹1 Crore', claimRatio: '99.5%', highlight: 'Excellent rider options + TROP variant' },

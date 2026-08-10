@@ -9,7 +9,7 @@ interface ArticleContentProps {
   topic?: string;
 }
 
-const ArticleContent: React.FC<ArticleContentProps> = ({ onBookCall, onGetQuote, topic = 'Term Insurance' }) => {
+const ArticleContent: React.FC<ArticleContentProps> = ({ onBookCall, onGetQuote, topic = 'Life Insurance' }) => {
   return (
     <div className="article-main-content">
       <section id="what-is" className="content-section">

@@ -19,7 +19,13 @@ import EmployeeQuoteRequests from './pages/employee/EmployeeQuoteRequests';
 import EmployeePremiumRequests from './pages/employee/EmployeePremiumRequests';
 import EmployeeLayout from './components/employee/EmployeeLayout';
 import EmployeeLogin from './pages/employee/EmployeeLogin';
+import GalleryManager from './pages/admin/GalleryManager';
+import GalleryPage from './pages/GalleryPage';
 import MainHome from './pages/MainHome';
+import CareersManager from './pages/admin/CareersManager';
+import CareersPage from './pages/CareersPage';
+import AboutPage from './pages/AboutPage';
+import ReelsManager from './pages/admin/ReelsManager';
 import DynamicPage from './pages/DynamicPage';
 import ArticlePageWrapper from './pages/ArticlePageWrapper';
 
@@ -70,6 +76,9 @@ function App() {
           {/* Main Website Routes — all gated behind lead form submission */}
           <Route path="/" element={<Gated element={<MainHome />} />} />
           <Route path="/home" element={<Gated element={<MainHome />} />} />
+          <Route path="/gallery" element={<Gated element={<GalleryPage />} />} />
+          <Route path="/careers" element={<Gated element={<CareersPage />} />} />
+          <Route path="/about" element={<Gated element={<AboutPage />} />} />
           <Route path="/contact" element={<Gated element={<ContactPage />} />} />
           <Route path="/policy/:id" element={<Gated element={<PolicyDescription />} />} />
           <Route path="/dashboard" element={<Gated element={<UserDashboard />} />} />
@@ -80,6 +89,7 @@ function App() {
           <Route path="/health-plans" element={<Gated element={<DynamicPage />} />} />
           <Route path="/term-plans" element={<Gated element={<DynamicPage />} />} />
           <Route path="/vehicle-plans" element={<Gated element={<DynamicPage />} />} />
+          <Route path="/plans/:type/:provider" element={<Gated element={<DynamicPage />} />} />
           <Route path="/vehicle-compare" element={<Gated element={<DynamicPage />} />} />
           <Route path="/find-vehicle" element={<Gated element={<DynamicPage />} />} />
           <Route path="/know-vehicle" element={<Gated element={<DynamicPage />} />} />
@@ -126,6 +136,9 @@ function App() {
             <Route path="best-plans" element={<BestPlansManager />} />
             <Route path="call-requests" element={<CallRequests />} />
             <Route path="policies" element={<PolicyManager />} />
+            <Route path="gallery" element={<GalleryManager />} />
+            <Route path="careers" element={<CareersManager />} />
+            <Route path="reels" element={<ReelsManager />} />
           </Route>
 
           {/* Employee Routes — NOT gated (separate auth) */}

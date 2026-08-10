@@ -10,7 +10,7 @@ interface ArticlePageProps {
   topic?: string;
 }
 
-const ArticlePage: React.FC<ArticlePageProps> = ({ onBookCall, onGetQuote, topic = 'Term Insurance' }) => {
+const ArticlePage: React.FC<ArticlePageProps> = ({ onBookCall, onGetQuote, topic = 'Life Insurance' }) => {
   return (
     <div className="article-page">
       <div className="container article-container">

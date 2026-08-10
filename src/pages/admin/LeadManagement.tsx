@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { FiDownload, FiFilter, FiEye, FiX } from 'react-icons/fi';
+import { FiDownload, FiFilter, FiEye, FiX, FiSearch } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -35,6 +35,7 @@ const LeadManagement = () => {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [dateFilter, setDateFilter] = useState<string>('');
+  const [search, setSearch] = useState('');
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
@@ -74,12 +75,14 @@ const LeadManagement = () => {
   };
 
   const filteredLeads = useMemo(() => {
+    const q = search.toLowerCase();
     return leads.filter(lead => {
       const matchStatus = statusFilter === 'All' || lead.status === statusFilter;
       const matchDate = dateFilter === '' || lead.date === dateFilter;
-      return matchStatus && matchDate;
+      const matchSearch = !q || lead.name.toLowerCase().includes(q) || lead.phone.includes(q) || (lead.email || '').toLowerCase().includes(q);
+      return matchStatus && matchDate && matchSearch;
     });
-  }, [leads, statusFilter, dateFilter]);
+  }, [leads, statusFilter, dateFilter, search]);
 
   const updateStatus = async (id: string, newStatus: 'Pending' | 'Closed' | 'Agreed') => {
     try {
@@ -191,11 +194,28 @@ const LeadManagement = () => {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '1.5rem', backgroundColor: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.02)', border: '1px solid var(--border-color, #e5e7eb)' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', backgroundColor: 'white', padding: '1rem', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.02)', border: '1px solid var(--border-color, #e5e7eb)', flexWrap: 'wrap', alignItems: 'center' }}>
+        {/* Search */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 200px', border: '1px solid var(--border-color, #e5e7eb)', borderRadius: '6px', padding: '0.4rem 0.75rem', backgroundColor: '#f9fafb' }}>
+          <FiSearch color="#9ca3af" size={15} />
+          <input
+            type="text"
+            placeholder="Search by name, phone or email…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{ border: 'none', outline: 'none', background: 'transparent', fontSize: '0.9rem', color: 'var(--text-dark, #1f2937)', width: '100%' }}
+          />
+          {search && (
+            <button onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', display: 'flex', padding: 0 }}>
+              <FiX size={14} />
+            </button>
+          )}
+        </div>
+        {/* Status filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <FiFilter color="#6b7280" />
-          <select 
-            value={statusFilter} 
+          <select
+            value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white', color: 'var(--text-dark, #1f2937)' }}
           >
@@ -205,11 +225,12 @@ const LeadManagement = () => {
             <option value="Closed">Closed</option>
           </select>
         </div>
+        {/* Date filter */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <label style={{ fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Date:</label>
-          <input 
-            type="date" 
-            value={dateFilter} 
+          <input
+            type="date"
+            value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
             style={{ padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', color: 'var(--text-dark, #1f2937)' }}
           />

@@ -26,7 +26,7 @@ const products = [
   },
   {
     id: 'term',
-    title: 'Term Life Insurance',
+    title: 'Life Insurance',
     description: 'Secure your family\'s future with pure protection plans.',
     icon: '☂️',
     color: '#e0e7ff',
@@ -39,7 +39,7 @@ const products = [
     description: 'Protect your car or bike with the right motor insurance plan.',
     icon: '🚗',
     color: '#fef3c7',
-    image: '/plans_compare.png',
+    image: 'https://www.qian.co.in/images/Types-of-General-Insurance-Policies.jpg',
     tag: 'Smart Choice'
   }
 ];

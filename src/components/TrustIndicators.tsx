@@ -1,10 +1,39 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
 import './TrustIndicators.css';
 
 gsap.registerPlugin(ScrollTrigger);
+
+function useCountUp(target: number, duration = 2, decimals = 0) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const started = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true;
+        gsap.to({ val: 0 }, {
+          val: target, duration, ease: 'power2.out',
+          onUpdate: function () {
+            setCount(parseFloat(this.targets()[0].val.toFixed(decimals)));
+          },
+        });
+      }
+    }, { threshold: 0.5 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target, duration, decimals]);
+  return { count, ref };
+}
+
+const Stat: React.FC<{ target: number; suffix?: string; decimals?: number }> = ({ target, suffix = '', decimals = 0 }) => {
+  const { count, ref } = useCountUp(target, 2, decimals);
+  return <span ref={ref}>{decimals ? count.toFixed(decimals) : count.toLocaleString()}{suffix}</span>;
+};
 
 const TrustIndicators: React.FC = () => {
   const containerRef = useRef<HTMLElement>(null);
@@ -38,7 +67,7 @@ const TrustIndicators: React.FC = () => {
           <div className="trust-item">
             <div className="trust-icon">💎</div>
             <div className="trust-text">
-              <h3>100% Neutral</h3>
+              <h3><Stat target={100} suffix="%" /> Neutral</h3>
               <p>Unbiased recommendations</p>
             </div>
           </div>
@@ -46,7 +75,7 @@ const TrustIndicators: React.FC = () => {
           <div className="trust-item">
             <div className="trust-icon">⭐</div>
             <div className="trust-text">
-              <h3>Expert Verified</h3>
+              <h3><Stat target={4.9} suffix="/5" decimals={1} /> Rating</h3>
               <p>Checked by industry veterans</p>
             </div>
           </div>

@@ -16,6 +16,7 @@ interface Policy {
 
 interface PlansPageProps {
   type: 'Health' | 'Term' | 'Vehicle';
+  provider?: string;
   onBookCall: () => void;
   onGetQuote: (planName?: string) => void;
 }
@@ -48,12 +49,12 @@ const config = {
     accentLight: '#eff6ff',
     accentText: '#1e1b4b',
     badgeBg: '#4f46e5',
-    title: 'Term Life Insurance Plans',
+    title: 'Life Insurance Plans',
     subtitle: 'Secure your family\'s future with pure protection plans at the lowest premiums.',
     compareRoute: '/compare-term',
     compareLabel: '⚖️ Compare Plans',
     emptyIcon: '☂️',
-    emptyMsg: 'Our team is adding term insurance plans. Talk to an expert for personalized recommendations.',
+    emptyMsg: 'Our team is adding life insurance plans. Talk to an expert for personalized recommendations.',
     stats: [
       { icon: '💰', label: '₹1 Cr from ₹450/mo', sub: 'Lowest premiums in India' },
       { icon: '📊', label: '99.5% Claim Ratio', sub: 'Best insurers pay almost all claims' },
@@ -83,19 +84,22 @@ const config = {
   },
 };
 
-const PlansPage: React.FC<PlansPageProps> = ({ type, onBookCall, onGetQuote }) => {
+const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGetQuote }) => {
   const navigate = useNavigate();
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [loading, setLoading] = useState(true);
   const c = config[type];
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies?type=${type}`)
+    const url = new URL(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies`);
+    url.searchParams.set('type', type);
+    if (provider) url.searchParams.set('provider', provider);
+    fetch(url.toString())
       .then(r => r.json())
       .then(data => setPolicies(data))
       .catch(() => toast.error(`Failed to load ${type} plans`))
       .finally(() => setLoading(false));
-  }, [type]);
+  }, [type, provider]);
 
   const getImages = (raw: string): string[] => {
     try { return raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : []; }
@@ -109,7 +113,12 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, onBookCall, onGetQuote }) =
       <div style={{ background: c.gradient, color: 'white', padding: '4rem 1.5rem', textAlign: 'center' }}>
         <div style={{ maxWidth: '700px', margin: '0 auto' }}>
           <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{c.icon}</div>
-          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, margin: '0 0 1rem', lineHeight: 1.2 }}>{c.title}</h1>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, margin: '0 0 0.5rem', lineHeight: 1.2 }}>{c.title}</h1>
+          {provider && (
+            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', borderRadius: '999px', padding: '0.3rem 1rem', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.75rem' }}>
+              {provider}
+            </div>
+          )}
           <p style={{ fontSize: '1.05rem', opacity: 0.85, margin: '0 0 1.5rem' }}>{c.subtitle}</p>
           <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <button

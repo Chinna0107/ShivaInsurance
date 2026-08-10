@@ -150,7 +150,7 @@ const BestPlansManager: React.FC = () => {
           onClick={() => setActiveCategory('term')}
           style={{ padding: '1rem 1.5rem', borderBottom: activeCategory === 'term' ? '2px solid var(--primary-color)' : 'none', color: activeCategory === 'term' ? 'var(--primary-color)' : '#6b7280', fontWeight: 'bold', background: 'none', border: 'none', cursor: 'pointer', borderBottomStyle: 'solid', borderBottomWidth: '2px' }}
         >
-          <FaShieldAlt style={{ marginRight: '8px' }} /> Term Plans
+          <FaShieldAlt style={{ marginRight: '8px' }} /> Life Plans
         </button>
         <button 
           className={`tab-btn ${activeCategory === 'health' ? 'active' : ''}`} 
@@ -226,7 +226,7 @@ const BestPlansManager: React.FC = () => {
               <div className="form-group">
                 <label>Category</label>
                 <select name="category" value={formData.category} onChange={handleInputChange} required className="form-control">
-                  <option value="term">Term Insurance</option>
+                  <option value="term">Life Insurance</option>
                   <option value="health">Health Insurance</option>
                   <option value="savings">Savings Plans</option>
                 </select>

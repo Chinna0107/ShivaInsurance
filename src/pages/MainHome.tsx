@@ -4,6 +4,7 @@ import ProcessFeatures from '../components/ProcessFeatures';
 import CtaBanner from '../components/CtaBanner';
 import Testimonials from '../components/Testimonials';
 import ProductCards from '../components/ProductCards';
+import InsurancePartners from '../components/InsurancePartners';
 import TrustIndicators from '../components/TrustIndicators';
 import MediaMentions from '../components/MediaMentions';
 import FAQ from '../components/FAQ';
@@ -36,6 +37,7 @@ function MainHome() {
       <main>
         <Hero onBookCall={handleBookCall} onGetQuote={handleGetQuote} />
         <TrustIndicators />
+        <InsurancePartners />
         <ProductCards
           onViewHealthPlans={() => navigate('/health-plans')}
           onViewTermPlans={() => navigate('/term-plans')}

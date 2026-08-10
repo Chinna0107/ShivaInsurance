@@ -5,6 +5,8 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import BookCallModal from '../components/BookCallModal';
 import QuoteModal from '../components/QuoteModal';
+import PDFViewerModal from '../components/PDFViewerModal';
+import { GalleryGrid } from './GalleryPage';
 import './PolicyDescription.css';
 
 const PolicyDescription = () => {
@@ -16,6 +18,7 @@ const PolicyDescription = () => {
   const [isBookCallModalOpen, setIsBookCallModalOpen] = useState(false);
   const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -132,6 +135,34 @@ const PolicyDescription = () => {
               <p style={{ fontSize: '1.05rem', color: '#4b5563', lineHeight: 1.6 }}>{policy.description || 'No detailed description available for this policy.'}</p>
             </div>
 
+            {/* PDF Document Section */}
+            {policy.pdf_url && (
+              <div style={{ marginBottom: '2.5rem', background: '#f8faff', border: '1px solid #e0e7ff', borderRadius: '12px', padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', color: '#1f2937', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>📄</span> Policy Document
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '1.25rem' }}>
+                  Download or view the complete policy document including terms, conditions, and coverage details.
+                </p>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={() => setIsPdfModalOpen(true)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.7rem 1.4rem', background: '#4f46e5', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
+                  >
+                    👁️ View Document
+                  </button>
+                  <a
+                    href={policy.pdf_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.7rem 1.4rem', background: 'white', color: '#4f46e5', border: '1px solid #4f46e5', borderRadius: '8px', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}
+                  >
+                    ⬇️ Download PDF
+                  </a>
+                </div>
+              </div>
+            )}
+
             <div className="policy-pros-cons">
               <div style={{ backgroundColor: '#f0fdf4', padding: '1.5rem', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                 <h4 style={{ fontSize: '1.1rem', color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -166,15 +197,24 @@ const PolicyDescription = () => {
         </div>
       </div>
       </div>
-      <BookCallModal 
-        isOpen={isBookCallModalOpen} 
-        onClose={() => setIsBookCallModalOpen(false)} 
-      />
-      <QuoteModal
-        isOpen={isQuoteModalOpen}
-        onClose={() => setIsQuoteModalOpen(false)}
-        planName={policy?.name}
-      />
+      {/* Success Stories */}
+      <div style={{ backgroundColor: '#f9fafb', padding: '3rem 1.5rem' }}>
+        <div className="policy-desc-container">
+          <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1f2937', marginBottom: '0.4rem' }}>Success Stories</h2>
+          <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>Real customers, real claims — see how we've helped families like yours.</p>
+          <GalleryGrid embedded category="Success Story" />
+        </div>
+      </div>
+      <BookCallModal isOpen={isBookCallModalOpen} onClose={() => setIsBookCallModalOpen(false)} />
+      <QuoteModal isOpen={isQuoteModalOpen} onClose={() => setIsQuoteModalOpen(false)} planName={policy?.name} />
+      {policy?.pdf_url && (
+        <PDFViewerModal
+          isOpen={isPdfModalOpen}
+          onClose={() => setIsPdfModalOpen(false)}
+          title={`${policy.name} — Policy Document`}
+          fileUrl={policy.pdf_url}
+        />
+      )}
       
       {isImageModalOpen && activeImage && (
         <div 

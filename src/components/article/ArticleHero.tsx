@@ -5,7 +5,7 @@ interface ArticleHeroProps {
   topic?: string;
 }
 
-const ArticleHero: React.FC<ArticleHeroProps> = ({ topic = 'Term Insurance' }) => {
+const ArticleHero: React.FC<ArticleHeroProps> = ({ topic = 'Life Insurance' }) => {
   return (
     <div className="article-hero">
       <div className="breadcrumbs">

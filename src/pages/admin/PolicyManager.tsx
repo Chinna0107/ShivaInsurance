@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiShield, FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import { companies } from '../../data/companies';
 
 interface Policy {
   id: string;
@@ -32,6 +33,7 @@ const PolicyManager = () => {
     cons: ''
   });
   const [images, setImages] = useState<File[]>([]);
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [expandedPolicyId, setExpandedPolicyId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -68,6 +70,7 @@ const PolicyManager = () => {
       setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '' });
     }
     setImages([]);
+    setPdfFile(null);
     setIsModalOpen(true);
   };
 
@@ -89,22 +92,24 @@ const PolicyManager = () => {
       data.append('cons', formData.cons);
       images.forEach(img => data.append('images', img));
 
+      let savedPolicy: any;
       if (editingPolicy) {
-        // Update
-        const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/policies/${editingPolicy.id}`, {
-          method: 'PUT',
-          body: data
-        });
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies/${editingPolicy.id}`, { method: 'PUT', body: data });
         if (!response.ok) throw new Error('Update failed');
+        savedPolicy = await response.json();
         toast.success('Policy updated successfully');
       } else {
-        // Create
-        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies`, {
-          method: 'POST',
-          body: data
-        });
+        const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies`, { method: 'POST', body: data });
         if (!response.ok) throw new Error('Creation failed');
+        savedPolicy = await response.json();
         toast.success('Policy created successfully');
+      }
+
+      // Upload PDF separately if provided
+      if (pdfFile && savedPolicy?.id) {
+        const pdfData = new FormData();
+        pdfData.append('pdf', pdfFile);
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/policies/${savedPolicy.id}/pdf`, { method: 'POST', body: pdfData });
       }
       handleCloseModal();
       fetchPolicies();
@@ -291,21 +296,27 @@ const PolicyManager = () => {
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Type</label>
                   <select 
-                    value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} required
+                    value={formData.type} onChange={e => setFormData({...formData, type: e.target.value, provider: ''})} required
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
                   >
                     <option value="Health">Health Insurance</option>
-                    <option value="Life">Life / Term Insurance</option>
+                    <option value="Term">Life Insurance</option>
                     <option value="Vehicle">Vehicle Insurance</option>
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Provider</label>
-                  <input 
-                    type="text" required placeholder="e.g. HDFC ERGO"
-                    value={formData.provider} onChange={e => setFormData({...formData, provider: e.target.value})}
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none' }}
-                  />
+                  <select
+                    required
+                    value={formData.provider}
+                    onChange={e => setFormData({...formData, provider: e.target.value})}
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
+                  >
+                    <option value="">Select provider</option>
+                    {(companies[formData.type as 'Health'|'Term'|'Vehicle'] || []).map(c => (
+                      <option key={c.name} value={c.name}>{c.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -351,13 +362,24 @@ const PolicyManager = () => {
                 <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Policy Images (Optional)</label>
                 <input 
                   type="file" multiple accept="image/*"
-                  onChange={e => {
-                    if (e.target.files) {
-                      setImages(Array.from(e.target.files));
-                    }
-                  }}
+                  onChange={e => { if (e.target.files) setImages(Array.from(e.target.files)); }}
                   style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px dashed var(--border-color, #e5e7eb)' }}
                 />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Policy PDF (Optional)</label>
+                <input
+                  type="file" accept="application/pdf"
+                  onChange={e => setPdfFile(e.target.files?.[0] || null)}
+                  style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px dashed #6366f1' }}
+                />
+                {pdfFile && (
+                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: '#6366f1' }}>📄 {pdfFile.name}</p>
+                )}
+                {editingPolicy && (editingPolicy as any).pdf_url && !pdfFile && (
+                  <p style={{ margin: '0.35rem 0 0', fontSize: '0.8rem', color: '#059669' }}>✅ PDF already uploaded — upload a new one to replace it</p>
+                )}
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>

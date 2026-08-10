@@ -72,19 +72,19 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
                   onMouseEnter={() => setActiveDropdown('term')}
                   className={activeDropdown === 'term' ? 'active-nav-item' : ''}
                 >
-                  <a href="#term" onClick={(e) => { e.preventDefault(); setActiveDropdown(activeDropdown === 'term' ? null : 'term'); }}>Term <span className="dropdown-arrow"></span></a>
+                  <a href="#term" onClick={(e) => { e.preventDefault(); setActiveDropdown(activeDropdown === 'term' ? null : 'term'); }}>Life <span className="dropdown-arrow"></span></a>
                   {activeDropdown === 'term' && (
                     <div className="mega-menu" style={{ width: '400px', left: '-50px' }}>
                       <div className="mega-menu-grid" style={{ gridTemplateColumns: '1fr' }}>
                         <div>
-                          <h3 className="mega-menu-title">Top Term Policies</h3>
+                          <h3 className="mega-menu-title">Top Life Policies</h3>
                           <ul className="decoder-list">
                             {lifePolicies.length > 0 ? lifePolicies.map(policy => (
                               <li key={policy.id} onClick={(e) => handleSubOptionClick(e, `term-${policy.id}`)} style={{cursor: 'pointer'}}>
                                 <span className="brand-placeholder" style={{backgroundColor: '#2563eb', color: 'white'}}>{policy.provider}</span> {policy.name}
                               </li>
                             )) : (
-                              <li style={{color: '#6b7280', fontStyle: 'italic', padding: '0.5rem 0'}}>No term plans added yet.</li>
+                              <li style={{color: '#6b7280', fontStyle: 'italic', padding: '0.5rem 0'}}>No life plans added yet.</li>
                             )}
                           </ul>
                         </div>
@@ -249,7 +249,7 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
               <div className="search-categories">
                 <h3>Top Categories</h3>
                 <ul>
-                  <li><a href="#term-life" onClick={(e) => { setIsSearchOpen(false); handleSubOptionClick(e, 'know-term'); }}># Term Life Insurance</a></li>
+                  <li><a href="#term-life" onClick={(e) => { setIsSearchOpen(false); handleSubOptionClick(e, 'know-term'); }}># Life Insurance</a></li>
                   <li><a href="#health-insurance" onClick={(e) => { setIsSearchOpen(false); handleSubOptionClick(e, 'know-health'); }}># Health Insurance</a></li>
                   <li><a href="#parents-health" onClick={(e) => { setIsSearchOpen(false); handleSubOptionClick(e, 'compare-health'); }}># Parent's Health</a></li>
                 </ul>

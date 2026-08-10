@@ -257,7 +257,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           onClick={() => { setSpecificPlan('Term'); setStep(4); }}
         >
           <div className="option-icon">⏳</div>
-          <span>Term Insurance</span>
+          <span>Life Insurance</span>
         </button>
         <button 
           className="option-card" 

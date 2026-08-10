@@ -56,7 +56,7 @@ const ContactPage: React.FC = () => {
                     <div className="info-icon phone"><FaPhoneAlt /></div>
                     <div className="info-content">
                       <h4>Call Us Directly</h4>
-                      <p>+91 88855 53249</p>
+                      <p>+91 90007 03370</p>
                       <span>Mon - Sat, 9:00 AM - 7:00 PM</span>
                     </div>
                   </div>
@@ -65,7 +65,7 @@ const ContactPage: React.FC = () => {
                     <div className="info-icon whatsapp"><FaWhatsapp /></div>
                     <div className="info-content">
                       <h4>WhatsApp Support</h4>
-                      <p><a href="https://wa.me/918885553249?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>+91 88855 53249</a></p>
+                      <p><a href="https://wa.me/919000703370?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: 'inherit', textDecoration: 'none' }}>+91 90007 03370</a></p>
                       <span>Instant replies for quick queries</span>
                     </div>
                   </div>

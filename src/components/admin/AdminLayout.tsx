@@ -8,7 +8,10 @@ import {
   FiLogOut,
   FiMenu,
   FiStar,
-  FiFileText
+  FiFileText,
+  FiImage,
+  FiBriefcase,
+  FiVideo
 } from 'react-icons/fi';
 import { useRealTimeLeads } from '../../hooks/useRealTimeLeads';
 
@@ -167,6 +170,51 @@ const AdminLayout = () => {
             })}
           >
             <FiUsers size={20} /> <span className="nav-text">Employees</span>
+          </NavLink>
+
+          {/* Gallery Link */}
+          <NavLink 
+            to="/admin/dashboard/gallery"
+            className="nav-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={({ isActive }) => ({
+              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+            })}
+          >
+            <FiImage size={20} /> <span className="nav-text">Gallery</span>
+          </NavLink>
+
+          {/* Careers Link */}
+          <NavLink 
+            to="/admin/dashboard/careers"
+            className="nav-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={({ isActive }) => ({
+              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+            })}
+          >
+            <FiBriefcase size={20} /> <span className="nav-text">Careers</span>
+          </NavLink>
+
+          {/* Reels Link */}
+          <NavLink 
+            to="/admin/dashboard/reels"
+            className="nav-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={({ isActive }) => ({
+              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+            })}
+          >
+            <FiVideo size={20} /> <span className="nav-text">Reels</span>
           </NavLink>
           </nav>
 

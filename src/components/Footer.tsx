@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
           </div>
           <div className="cta-bar-right">
             <button className="btn btn-outline" style={{ backgroundColor: 'white' }} onClick={onBookCall}>Book a Call</button>
-            <button className="btn btn-primary" style={{ backgroundColor: '#25d366', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.open('https://wa.me/918885553249?text=Hello%20InsuranceShiva%20Team%20%2C', '_blank')}>
+            <button className="btn btn-primary" style={{ backgroundColor: '#25d366', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.open('https://wa.me/919000703370?text=Hello%20InsuranceShiva%20Team%20%2C', '_blank')}>
               <FaWhatsapp size={18} /> WhatsApp Us
             </button>
           </div>
@@ -38,16 +38,16 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
               India's first and only neutral insurance platform. We simplify insurance for you, so you can buy with confidence.
             </p>
             <div className="social-links" style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-              <a href="#fb" aria-label="Facebook" className="social-icon fb">
+              <a href="https://www.facebook.com/share/1DHdyjrGQX/" aria-label="Facebook" className="social-icon fb">
                 <FaFacebookF />
               </a>
-              <a href="#tw" aria-label="Twitter" className="social-icon tw">
+              <a href="https://x.com/insuranceshiva_" aria-label="Twitter" className="social-icon tw">
                 <FaTwitter />
               </a>
-              <a href="#ig" aria-label="Instagram" className="social-icon ig">
+              <a href="https://www.instagram.com/p/DbZo6daGdsG/?igsh=MXNobG5yaWd3bmZmdg==" aria-label="Instagram" className="social-icon ig">
                 <FaInstagram />
               </a>
-              <a href="#yt" aria-label="YouTube" className="social-icon yt">
+              <a href="https://youtube.com/@insuranceshiva?si=qtReODaLMhcBO58X" aria-label="YouTube" className="social-icon yt">
                 <FaYoutube />
               </a>
             </div>
@@ -56,20 +56,20 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
           <div className="footer-links">
             <h4>InsuranceShiva</h4>
             <ul>
-              <li><a href="#about">About Us</a></li>
-              <li><a href="#careers">Careers</a></li>
-              <li><a href="#media">Media</a></li>
-              <li><a href="#contact">Contact Us</a></li>
+              <li><a href="/about">About Us</a></li>
+              <li><a href="/careers">Careers</a></li>
+              <li><a href="/gallery">Gallery</a></li>
+              <li><a href="/contact">Contact Us</a></li>
             </ul>
           </div>
           
           <div className="footer-links">
             <h4>Insurance</h4>
             <ul>
-              <li><a href="#health">Health Insurance</a></li>
-              <li><a href="#term">Term Life Insurance</a></li>
-              <li><a href="#motor">Motor Insurance</a></li>
-              <li><a href="#travel">Travel Insurance</a></li>
+              <li><a href="/health-plans">Health Insurance</a></li>
+              <li><a href="#term">Life Insurance</a></li>
+              {/* <li><a href="#motor">Motor Insurance</a></li> */}
+              <li><a href="#travel">Vehicle Insurance</a></li>
             </ul>
           </div>
 
@@ -82,7 +82,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Call Us</div>
-                  <a href="tel:+918885553249" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 88855 53249</a>
+                  <a href="tel:+919000703370" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 90007 03370</a>
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -91,7 +91,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>WhatsApp</div>
-                  <a href="https://wa.me/918885553249?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 88855 53249</a>
+                  <a href="https://wa.me/919000703370?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 90007 03370</a>
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>

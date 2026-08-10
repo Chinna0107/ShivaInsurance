@@ -49,6 +49,11 @@ function DynamicPage() {
     if (resolvedSlug === 'vehicle-plans') {
       return <PlansPage type="Vehicle" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
     }
+    // /plans/Health/HDFC Ergo  etc.
+    const plansMatch = resolvedSlug.match(/^plans\/(Health|Term|Vehicle)\/(.+)$/);
+    if (plansMatch) {
+      return <PlansPage type={plansMatch[1] as 'Health'|'Term'|'Vehicle'} provider={decodeURIComponent(plansMatch[2])} onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+    }
     if (resolvedSlug === 'vehicle-compare') {
       return <VehicleComparePage onBookCall={handleBookCall} />;
     }
