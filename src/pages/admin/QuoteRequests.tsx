@@ -9,6 +9,7 @@ interface QuoteRequest {
   phone: string;
   policy_name: string;
   status: string;
+  reminder?: string;
   created_at: string;
 }
 
@@ -49,6 +50,24 @@ const QuoteRequests: React.FC = () => {
         fetchRequests();
       } else {
         toast.error('Failed to update status');
+      }
+    } catch (error) {
+      toast.error('An error occurred');
+    }
+  };
+
+  const handleUpdateReminder = async (id: number, reminder: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/quotes/${id}/reminder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reminder })
+      });
+      if (response.ok) {
+        toast.success('Reminder updated');
+        setRequests(requests.map(r => r.id === id ? { ...r, reminder } : r));
+      } else {
+        toast.error('Failed to update reminder');
       }
     } catch (error) {
       toast.error('An error occurred');
@@ -130,6 +149,7 @@ const QuoteRequests: React.FC = () => {
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Age</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Gender</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Cover Needed</th>
+                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Reminder</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Status</th>
                 <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'center' }}>Actions</th>
               </tr>
@@ -137,7 +157,7 @@ const QuoteRequests: React.FC = () => {
             <tbody>
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>No quote requests found.</td>
+                  <td colSpan={10} style={{ textAlign: 'center', padding: '2rem' }}>No quote requests found.</td>
                 </tr>
               ) : (
                 requests.map(req => (
@@ -153,6 +173,24 @@ const QuoteRequests: React.FC = () => {
                     <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.age} Years</td>
                     <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)', textTransform: 'capitalize' }}>{req.gender}</td>
                     <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.cover_amount}</td>
+                    <td style={{ padding: '1rem 1.5rem' }}>
+                      <input
+                        type="text"
+                        defaultValue={req.reminder || ''}
+                        onBlur={(e) => handleUpdateReminder(req.id, e.target.value)}
+                        placeholder="Type a reminder..."
+                        style={{
+                          padding: '0.4rem 0.75rem',
+                          fontSize: '0.85rem',
+                          border: '1px solid var(--border-color, #e5e7eb)',
+                          borderRadius: '6px',
+                          width: '100%',
+                          minWidth: '150px',
+                          outline: 'none',
+                          color: 'var(--text-dark, #1f2937)'
+                        }}
+                      />
+                    </td>
                     <td style={{ padding: '1rem 1.5rem' }}>
                       <span style={{ 
                         padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,

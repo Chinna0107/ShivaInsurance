@@ -10,6 +10,7 @@ interface CallRequest {
   email: string;
   preferred_time: string;
   notes: string | null;
+  reminder: string | null;
   status: 'Pending' | 'Contacted' | 'Closed';
   created_at: string;
 }
@@ -65,6 +66,22 @@ const CallRequests = () => {
     }
   };
 
+  const updateReminder = async (id: string, reminder: string) => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/calls/${id}/reminder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reminder })
+      });
+      if (!response.ok) throw new Error('Update failed');
+      
+      setRequests(requests.map(req => req.id === id ? { ...req, reminder } : req));
+      toast.success('Reminder updated');
+    } catch (err) {
+      toast.error('Failed to update reminder');
+    }
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-IN', { 
@@ -99,6 +116,7 @@ const CallRequests = () => {
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Contact Info</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Preferred Time</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Notes</th>
+              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Reminder / Note</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Request Date</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase', textAlign: 'center' }}>Status</th>
             </tr>
@@ -138,6 +156,24 @@ const CallRequests = () => {
                 <td style={{ padding: '1rem 1.5rem', color: '#6b7280', fontSize: '0.85rem', maxWidth: '180px' }}>
                   {req.notes || <span style={{ opacity: 0.4 }}>—</span>}
                 </td>
+                <td style={{ padding: '1rem 1.5rem' }}>
+                  <input
+                    type="text"
+                    defaultValue={req.reminder || ''}
+                    onBlur={(e) => updateReminder(req.id, e.target.value)}
+                    placeholder="Type a reminder..."
+                    style={{
+                      padding: '0.4rem 0.75rem',
+                      fontSize: '0.85rem',
+                      border: '1px solid var(--border-color, #e5e7eb)',
+                      borderRadius: '6px',
+                      width: '100%',
+                      minWidth: '150px',
+                      outline: 'none',
+                      color: 'var(--text-dark, #1f2937)'
+                    }}
+                  />
+                </td>
                 <td style={{ padding: '1rem 1.5rem', color: '#6b7280', fontSize: '0.9rem' }}>
                   {formatDate(req.created_at)}
                 </td>
@@ -169,7 +205,7 @@ const CallRequests = () => {
               </tr>
             ))) : (
               <tr>
-                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={7} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
                   <div style={{ marginBottom: '1rem' }}><FiPhoneCall size={32} opacity={0.3} /></div>
                   No call requests found.
                 </td>

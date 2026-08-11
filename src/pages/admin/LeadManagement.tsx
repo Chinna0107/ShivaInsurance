@@ -24,6 +24,7 @@ interface Lead {
   annual_income?: string;
   education?: string;
   smoker?: string;
+  members?: string;
   policy_document_url?: string;
 }
 
@@ -415,6 +416,16 @@ const LeadManagement = () => {
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education</div>
                     <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.education || 'Not provided'}</div>
                   </div>
+                  {(selectedLead.type === 'health' || selectedLead.type === 'life') && selectedLead.members && (
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Members to Insure</div>
+                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500, display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                        {selectedLead.members.split(',').map(m => (
+                          <span key={m} style={{ background: '#eef2ff', color: '#4f46e5', padding: '2px 8px', borderRadius: '12px', fontSize: '0.85rem' }}>{m.trim()}</span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
