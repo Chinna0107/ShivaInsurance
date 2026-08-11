@@ -8,6 +8,8 @@ import DecoderPage from './DecoderPage';
 import ClaimsPage from './ClaimsPage';
 import BestPlansPage from './BestPlansPage';
 import VehicleComparePage from './VehicleComparePage';
+import HealthComparePage from './HealthComparePage';
+import TermComparePage from './TermComparePage';
 import VehicleFindPage from './VehicleFindPage';
 import PlansPage from './PlansPage';
 import BookCallModal from '../components/BookCallModal';
@@ -56,6 +58,12 @@ function DynamicPage() {
     }
     if (resolvedSlug === 'vehicle-compare') {
       return <VehicleComparePage onBookCall={handleBookCall} />;
+    }
+    if (resolvedSlug === 'compare-health') {
+      return <HealthComparePage onBookCall={handleBookCall} />;
+    }
+    if (resolvedSlug === 'compare-term') {
+      return <TermComparePage onBookCall={handleBookCall} />;
     }
     if (resolvedSlug === 'find-vehicle') {
       return <VehicleFindPage onBookCall={handleBookCall} />;

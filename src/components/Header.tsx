@@ -87,6 +87,10 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
                               <li style={{color: '#6b7280', fontStyle: 'italic', padding: '0.5rem 0'}}>No life plans added yet.</li>
                             )}
                           </ul>
+                          <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem' }}>
+                            <button onClick={(e) => handleSubOptionClick(e, 'compare-term')} style={{ padding: '0.5rem 1rem', backgroundColor: '#eef2ff', color: '#4f46e5', border: '1px solid #c7d2fe', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, flex: 1 }}>Compare Plans</button>
+                            <button onClick={(e) => handleSubOptionClick(e, 'term-plans')} style={{ padding: '0.5rem 1rem', backgroundColor: '#4f46e5', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, flex: 1 }}>View All Plans</button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -112,6 +116,10 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
                               <li style={{color: '#6b7280', fontStyle: 'italic', padding: '0.5rem 0'}}>No health plans added yet.</li>
                             )}
                           </ul>
+                          <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem' }}>
+                            <button onClick={(e) => handleSubOptionClick(e, 'compare-health')} style={{ padding: '0.5rem 1rem', backgroundColor: '#ecfdf5', color: '#059669', border: '1px solid #a7f3d0', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, flex: 1 }}>Compare Plans</button>
+                            <button onClick={(e) => handleSubOptionClick(e, 'health-plans')} style={{ padding: '0.5rem 1rem', backgroundColor: '#059669', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600, flex: 1 }}>View All Plans</button>
+                          </div>
                         </div>
                       </div>
                     </div>

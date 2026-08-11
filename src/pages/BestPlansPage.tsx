@@ -13,6 +13,8 @@ interface BestPlan {
   cover: string;
   claim_ratio: string;
   highlight: string;
+  plan_type: string;
+  insurer_type: string;
 }
 
 interface BestPlansPageProps {
@@ -95,6 +97,8 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
               <tr>
                 <th>Rank</th>
                 <th>Product Name</th>
+                <th>Plan Type</th>
+                <th>Insurer</th>
                 <th>Avg. Premium / Value</th>
                 <th>Claim Metric / IRR</th>
                 <th>Key Highlight</th>
@@ -131,6 +135,16 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
                           {plan.badge}
                         </span>
                       )}
+                    </td>
+                    <td>
+                      <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                        {plan.plan_type || 'Individual'}
+                      </span>
+                    </td>
+                    <td>
+                      <span style={{ background: plan.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: plan.insurer_type === 'Public' ? '#15803d' : '#7e22ce', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                        {plan.insurer_type === 'Public' ? '🏛️ Public' : '🏢 Private'}
+                      </span>
                     </td>
                     <td>{plan.premium}</td>
                     <td style={{ fontWeight: '700' }}>{plan.claim_ratio}</td>

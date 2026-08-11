@@ -13,6 +13,8 @@ interface Policy {
   pros: string;
   cons: string;
   created_at: string;
+  plan_type: string;
+  insurer_type: string;
 }
 
 const PolicyManager = () => {
@@ -30,7 +32,9 @@ const PolicyManager = () => {
     description: '',
     cover_amount: '',
     pros: '',
-    cons: ''
+    cons: '',
+    plan_type: 'Individual',
+    insurer_type: 'Private'
   });
   const [images, setImages] = useState<File[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -63,11 +67,13 @@ const PolicyManager = () => {
         description: policy.description || '',
         cover_amount: policy.cover_amount || '',
         pros: policy.pros || '',
-        cons: policy.cons || ''
+        cons: policy.cons || '',
+        plan_type: policy.plan_type || 'Individual',
+        insurer_type: policy.insurer_type || 'Private'
       });
     } else {
       setEditingPolicy(null);
-      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '' });
+      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual', insurer_type: 'Private' });
     }
     setImages([]);
     setPdfFile(null);
@@ -90,6 +96,8 @@ const PolicyManager = () => {
       data.append('cover_amount', formData.cover_amount);
       data.append('pros', formData.pros);
       data.append('cons', formData.cons);
+      data.append('plan_type', formData.plan_type);
+      data.append('insurer_type', formData.insurer_type);
       images.forEach(img => data.append('images', img));
 
       let savedPolicy: any;
@@ -160,6 +168,8 @@ const PolicyManager = () => {
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Plan Name</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Type</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Provider</th>
+              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Plan Type</th>
+              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Insurer</th>
               <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
             </tr>
           </thead>
@@ -170,6 +180,8 @@ const PolicyManager = () => {
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '150px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '100px', height: '20px' }}></div></td>
+                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
+                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px', marginLeft: 'auto' }}></div></td>
                 </tr>
               ))
@@ -196,6 +208,16 @@ const PolicyManager = () => {
                   </span>
                 </td>
                 <td style={{ padding: '1rem 1.5rem', color: '#4b5563' }}>{policy.provider}</td>
+                <td style={{ padding: '1rem 1.5rem' }}>
+                  <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: '#eff6ff', color: '#1d4ed8' }}>
+                    {policy.plan_type || 'Individual'}
+                  </span>
+                </td>
+                <td style={{ padding: '1rem 1.5rem' }}>
+                  <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: policy.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: policy.insurer_type === 'Public' ? '#15803d' : '#7e22ce' }}>
+                    {policy.insurer_type === 'Public' ? '🏛️ Public' : '🏢 Private'}
+                  </span>
+                </td>
                 <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     <button 
@@ -216,7 +238,7 @@ const PolicyManager = () => {
               </tr>
               {expandedPolicyId === policy.id && (
                 <tr key={`${policy.id}-details`} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', backgroundColor: '#f9fafb' }}>
-                  <td colSpan={4} style={{ padding: '1.5rem' }}>
+                  <td colSpan={6} style={{ padding: '1.5rem' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                       <div>
                         <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: '#4b5563' }}>Cover Amount</h4>
@@ -258,7 +280,7 @@ const PolicyManager = () => {
               </React.Fragment>
             ))) : (
               <tr>
-                <td colSpan={4} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
                   No policies found. Click "Add Policy" to create one.
                 </td>
               </tr>
@@ -316,6 +338,30 @@ const PolicyManager = () => {
                     {(companies[formData.type as 'Health'|'Term'|'Vehicle'] || []).map(c => (
                       <option key={c.name} value={c.name}>{c.name}</option>
                     ))}
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Plan Type</label>
+                  <select 
+                    value={formData.plan_type} onChange={e => setFormData({...formData, plan_type: e.target.value})} required
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
+                  >
+                    <option value="Individual">Individual</option>
+                    <option value="Family">Family Plan</option>
+                    <option value="Senior Citizen">Senior Citizen</option>
+                  </select>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Insurer Type</label>
+                  <select
+                    value={formData.insurer_type} onChange={e => setFormData({...formData, insurer_type: e.target.value})} required
+                    style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
+                  >
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
                   </select>
                 </div>
               </div>

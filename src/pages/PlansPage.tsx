@@ -12,6 +12,8 @@ interface Policy {
   cons: string;
   images: string;
   type: string;
+  plan_type?: string;
+  insurer_type?: string;
 }
 
 interface PlansPageProps {
@@ -88,6 +90,8 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
   const navigate = useNavigate();
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterPlanType, setFilterPlanType] = useState<string>('All');
+  const [filterInsurerType, setFilterInsurerType] = useState<string>('All');
   const c = config[type];
 
   useEffect(() => {
@@ -105,6 +109,12 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
     try { return raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : []; }
     catch { return []; }
   };
+
+  const filteredPolicies = policies.filter(p => {
+    const matchPlan = filterPlanType === 'All' || (p.plan_type || 'Individual') === filterPlanType;
+    const matchInsurer = filterInsurerType === 'All' || (p.insurer_type || 'Private') === filterInsurerType;
+    return matchPlan && matchInsurer;
+  });
 
   return (
     <div style={{ background: '#f8faff', minHeight: '100vh' }}>
@@ -150,9 +160,41 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
           ))}
         </div>
 
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', marginBottom: '1.5rem' }}>
-          All {type} Plans {!loading && `(${policies.length})`}
-        </h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#1f2937', margin: 0 }}>
+            All {type} Plans {!loading && `(${filteredPolicies.length})`}
+          </h2>
+          
+          {!loading && policies.length > 0 && (
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4b5563' }}>Plan Type:</label>
+                <select 
+                  value={filterPlanType} 
+                  onChange={e => setFilterPlanType(e.target.value)}
+                  style={{ padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '0.85rem', outline: 'none', background: 'white', color: '#1f2937' }}
+                >
+                  <option value="All">All Types</option>
+                  <option value="Individual">Individual</option>
+                  <option value="Family">Family Plan</option>
+                  <option value="Senior Citizen">Senior Citizen</option>
+                </select>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4b5563' }}>Insurer:</label>
+                <select 
+                  value={filterInsurerType} 
+                  onChange={e => setFilterInsurerType(e.target.value)}
+                  style={{ padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '0.85rem', outline: 'none', background: 'white', color: '#1f2937' }}
+                >
+                  <option value="All">All Insurers</option>
+                  <option value="Public">Public</option>
+                  <option value="Private">Private</option>
+                </select>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Skeleton */}
         {loading ? (
@@ -170,19 +212,19 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
             ))}
           </div>
 
-        ) : policies.length === 0 ? (
+        ) : filteredPolicies.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '5rem 2rem', background: 'white', borderRadius: '16px', border: '1px solid #e5e7eb' }}>
             <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>{c.emptyIcon}</div>
-            <h3 style={{ color: '#1f2937', marginBottom: '0.5rem' }}>No {type} Plans Yet</h3>
-            <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>{c.emptyMsg}</p>
-            <button onClick={onBookCall} style={{ padding: '0.75rem 1.5rem', background: c.accent, color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
-              📞 Talk to an Expert
+            <h3 style={{ color: '#1f2937', marginBottom: '0.5rem' }}>No {type} Plans Found</h3>
+            <p style={{ color: '#6b7280', marginBottom: '1.5rem' }}>We couldn't find any plans matching your selected filters.</p>
+            <button onClick={() => { setFilterPlanType('All'); setFilterInsurerType('All'); }} style={{ padding: '0.75rem 1.5rem', background: c.accent, color: 'white', border: 'none', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}>
+              Clear Filters
             </button>
           </div>
 
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            {policies.map(policy => {
+            {filteredPolicies.map(policy => {
               const images = getImages(policy.images);
               const pros = policy.pros ? policy.pros.split('\n').filter(Boolean) : [];
               return (
@@ -208,7 +250,21 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
                   <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     <div>
                       <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1f2937', margin: '0 0 0.25rem' }}>{policy.name}</h3>
-                      <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: 0 }}>by {policy.provider}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <p style={{ fontSize: '0.85rem', color: '#6b7280', margin: 0 }}>by {policy.provider}</p>
+                        <div style={{ display: 'flex', gap: '0.35rem' }}>
+                          {policy.plan_type && (
+                            <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
+                              {policy.plan_type}
+                            </span>
+                          )}
+                          {policy.insurer_type && (
+                            <span style={{ background: policy.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: policy.insurer_type === 'Public' ? '#15803d' : '#7e22ce', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
+                              {policy.insurer_type}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     {policy.cover_amount && (

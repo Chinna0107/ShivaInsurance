@@ -1145,7 +1145,7 @@ export const claimsPages: Record<string, ClaimsPageData> = {
 
 // --- BEST PLANS PAGE ---
 export const bestPlansData = {
-  title: 'Best Insurance Plans in India 2024',
+  title: 'Best Insurance Plans in India 2026',
   subtitle: 'Expert-curated. Unbiased. Updated monthly. Find the best plan across term, health, and savings.',
   categories: [
     {

@@ -32,6 +32,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [annualIncome, setAnnualIncome] = useState(getInitialState('annualIncome', ''));
   const [education, setEducation] = useState(getInitialState('education', ''));
   const [smoker, setSmoker] = useState(getInitialState('smoker', ''));
+  const [members, setMembers] = useState<string[]>(getInitialState('members', ['Self']));
   const [allowContact, setAllowContact] = useState(getInitialState('allowContact', ''));
   const [detectedCity, setDetectedCity] = useState('');
   const [isFetchingCity, setIsFetchingCity] = useState(false);
@@ -54,9 +55,10 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_annualIncome', JSON.stringify(annualIncome));
     localStorage.setItem('leadform_education', JSON.stringify(education));
     localStorage.setItem('leadform_smoker', JSON.stringify(smoker));
+    localStorage.setItem('leadform_members', JSON.stringify(members));
     localStorage.setItem('leadform_allowContact', JSON.stringify(allowContact));
     if (onStepChange) onStepChange(step);
-  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, allowContact, onStepChange]);
+  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, allowContact, onStepChange]);
 
   useEffect(() => {
     if (/^\d{6}$/.test(location)) {
@@ -366,7 +368,70 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     </div>
   );
 
-  const renderStep9 = () => {
+  const memberOptions = [
+    'Self',
+    gender === 'Male' ? 'Wife' : 'Husband',
+    'Son', 'Daughter', 'Father', 'Mother', 'Grandfather', 'Grandmother',
+    'Father-in-law', 'Mother-in-law', 'Brother', 'Sister', 'Uncle', 'Aunt', 'Live-in Partner'
+  ];
+
+  const toggleMember = (member: string) => {
+    setMembers(prev => prev.includes(member) ? prev.filter(m => m !== member) : [...prev, member]);
+  };
+
+  const renderStep9 = () => (
+    <div className="step-container">
+      <button className="back-btn" onClick={() => setStep(8)}>← Previous</button>
+      
+      <div className="gender-toggle" style={{ marginBottom: '24px' }}>
+        <button 
+          className={`gender-btn ${gender === 'Male' ? 'active' : ''}`}
+          onClick={() => setGender('Male')}
+        >
+          Male
+        </button>
+        <button 
+          className={`gender-btn ${gender === 'Female' ? 'active' : ''}`}
+          onClick={() => setGender('Female')}
+        >
+          Female
+        </button>
+      </div>
+
+      <h3 className="step-title">Select members you want to insure</h3>
+      <div className="members-grid">
+        {memberOptions.map(member => (
+          <label key={member} className={`member-card ${members.includes(member) ? 'selected' : ''}`}>
+            <input 
+              type="checkbox" 
+              checked={members.includes(member)} 
+              onChange={() => toggleMember(member)} 
+              style={{ display: 'none' }}
+            />
+            <div className={`checkbox-custom ${members.includes(member) ? 'checked' : ''}`}>
+              {members.includes(member) && <span className="checkmark">✓</span>}
+            </div>
+            <span>{member}</span>
+          </label>
+        ))}
+      </div>
+      <button 
+        className="submit-btn view-plans-btn" 
+        onClick={() => {
+          if(members.length > 0) {
+            setStep(10);
+          } else {
+            toast.error('Please select at least one member');
+          }
+        }}
+        style={{ opacity: members.length > 0 ? 1 : 0.6, marginTop: '24px' }}
+      >
+        Continue
+      </button>
+    </div>
+  );
+
+  const renderStep10 = () => {
     const handleSubmit = async () => {
       if(allowContact) {
         setIsSubmitting(true);
@@ -387,7 +452,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               employmentType,
               annualIncome,
               education,
-              smoker
+              smoker,
+              members
             })
           });
 
@@ -417,7 +483,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
     return (
       <div className="step-container">
-        <button className="back-btn" onClick={() => setStep(8)}>← Previous</button>
+        <button className="back-btn" onClick={() => setStep(9)}>← Previous</button>
         
         <h3 className="step-title" style={{ marginTop: '24px' }}>Allow us to get in touch to explain Insurance better</h3>
         <div className="gender-toggle" style={{ marginBottom: '32px' }}>
@@ -501,6 +567,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         {step === 7 && renderStep7()}
         {step === 8 && renderStep8()}
         {step === 9 && renderStep9()}
+        {step === 10 && renderStep10()}
       </div>
     </div>
   );
