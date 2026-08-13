@@ -26,6 +26,8 @@ import CareersManager from './pages/admin/CareersManager';
 import CareersPage from './pages/CareersPage';
 import AboutPage from './pages/AboutPage';
 import ReelsManager from './pages/admin/ReelsManager';
+import ClaimRatiosManager from './pages/admin/ClaimRatiosManager';
+import ClaimRatiosPage from './pages/ClaimRatiosPage';
 import DynamicPage from './pages/DynamicPage';
 import ArticlePageWrapper from './pages/ArticlePageWrapper';
 
@@ -82,6 +84,7 @@ function App() {
           <Route path="/contact" element={<Gated element={<ContactPage />} />} />
           <Route path="/policy/:id" element={<Gated element={<PolicyDescription />} />} />
           <Route path="/dashboard" element={<Gated element={<UserDashboard />} />} />
+          <Route path="/claims" element={<Gated element={<ClaimRatiosPage />} />} />
           <Route path="/article/:topic" element={<Gated element={<ArticlePageWrapper />} />} />
 
           {/* All sub-pages — also gated */}
@@ -139,6 +142,7 @@ function App() {
             <Route path="gallery" element={<GalleryManager />} />
             <Route path="careers" element={<CareersManager />} />
             <Route path="reels" element={<ReelsManager />} />
+            <Route path="claim-ratios" element={<ClaimRatiosManager />} />
           </Route>
 
           {/* Employee Routes — NOT gated (separate auth) */}

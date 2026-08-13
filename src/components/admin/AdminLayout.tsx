@@ -216,6 +216,21 @@ const AdminLayout = () => {
           >
             <FiVideo size={20} /> <span className="nav-text">Reels</span>
           </NavLink>
+
+          {/* Claim Ratios Link */}
+          <NavLink 
+            to="/admin/dashboard/claim-ratios"
+            className="nav-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={({ isActive }) => ({
+              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+            })}
+          >
+            <FiFileText size={20} /> <span className="nav-text">Claim Ratios</span>
+          </NavLink>
           </nav>
 
           {/* Logout */}

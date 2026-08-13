@@ -443,8 +443,10 @@ const LeadManagement = () => {
                   </div>
                   <div>
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Plan Requested</div>
-                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500, textTransform: 'capitalize' }}>
-                      {selectedLead.type} Insurance {selectedLead.specific_plan ? `(${selectedLead.specific_plan})` : ''}
+                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
+                      {selectedLead.type === 'health'
+                        ? 'Health Insurance'
+                        : `${selectedLead.type.charAt(0).toUpperCase() + selectedLead.type.slice(1)} Insurance${selectedLead.specific_plan ? ` (${selectedLead.specific_plan})` : ''}`}
                     </div>
                   </div>
                 </div>

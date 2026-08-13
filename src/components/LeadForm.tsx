@@ -259,7 +259,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           onClick={() => { setSpecificPlan('Term'); setStep(4); }}
         >
           <div className="option-icon">⏳</div>
-          <span>Life Insurance</span>
+          <span>Term Insurance</span>
         </button>
         <button 
           className="option-card" 
@@ -338,7 +338,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     </div>
   );
 
-  const eduOptions = ['College graduate & above', '12th Pass', '10th Pass', 'Below 10th'];
+  const eduOptions = ['Graduate & above', '12th Pass', '10th Pass', 'Below 10th'];
 
   const renderStep7 = () => (
     <div className="step-container list-step">

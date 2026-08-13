@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import LeadForm from './components/LeadForm';
@@ -22,14 +22,45 @@ const compareRows = [
 ];
 
 const stats = [
-  { value: '50,000+', label: 'Families Protected' },
-  { value: '4.9★', label: 'Customer Rating' },
-  { value: '24hrs', label: 'Response Time' },
-  { value: '100%', label: 'Unbiased Advice' },
+  { value: 50000, suffix: '+', label: 'Families Protected', format: (n: number) => `${new Intl.NumberFormat('en-IN').format(Math.round(n))}+` },
+  { value: 4.9, suffix: '★', label: 'Customer Rating', format: (n: number) => n.toFixed(1) },
+  { value: 24, suffix: 'hrs', label: 'Response Time', format: (n: number) => `${Math.round(n)}hrs` },
+  { value: 100, suffix: '%', label: 'Unbiased Advice', format: (n: number) => `${Math.round(n)}%` },
 ];
 
+function StatNumber({ value, format }: { value: number; format: (n: number) => string }) {
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+
+    let start: number | null = null;
+    const duration = 1200;
+
+    const animate = (timestamp: number) => {
+      if (start === null) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      const current = value * eased;
+      const formatted = format(current);
+      node.textContent = formatted;
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        node.textContent = format(value);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [value, format]);
+
+  return <div ref={ref} className="lf-stat-v" />;
+}
+
 const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
   * { box-sizing: border-box; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
@@ -63,8 +94,12 @@ const CSS = `
   .blob-2 { width: 600px; height: 600px; bottom: -200px; right: -200px; background: radial-gradient(circle,rgba(59,130,246,0.06) 0%,transparent 70%); }
   .lf-hero-grid { position: relative; z-index: 1; max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 3rem; align-items: center; }
   @media(min-width:900px){ .lf-hero-grid { grid-template-columns: 1fr 400px; gap: 5rem; } }
-  .lf-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #16a34a; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .lf-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #16a34a; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; font-family: 'IBM Plex Mono', 'SFMono-Regular', monospace; }
   .lf-tag::before { content: ''; display: block; width: 22px; height: 2px; background: #16a34a; border-radius: 2px; }
+  .lf-tag::after {
+    content: ''; display: inline-block; width: 0.7ch; height: 1em; background: #16a34a; border-radius: 2px; margin-left: 0.15rem; animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
   .lf-h1 { font-size: clamp(2rem,4.5vw,3.4rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: #0f172a; margin-bottom: 1.25rem; }
   .lf-h1 .hl { background: linear-gradient(135deg,#16a34a,#0891b2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .lf-sub { font-size: 0.95rem; color: #4b5563; line-height: 1.6; margin-bottom: 2rem; max-width: 500px; }
@@ -74,7 +109,7 @@ const CSS = `
   }
   .lf-stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem 1rem; margin-bottom: 1.75rem; width: 100%; }
   @media(min-width:600px){ .lf-stats { grid-template-columns: repeat(4,auto); gap: 1.25rem 2rem; width: fit-content; } }
-  .lf-stat-v { font-size: 1.35rem; font-weight: 900; color: #111827; line-height: 1; }
+  .lf-stat-v { font-size: 1.35rem; font-weight: 900; color: #111827; line-height: 1; font-family: 'IBM Plex Mono', 'SFMono-Regular', monospace; letter-spacing: -0.04em; }
   @media(min-width:600px){ .lf-stat-v { font-size: 1.6rem; } }
   .lf-stat-l { font-size: 0.71rem; color: #9ca3af; margin-top: 0.2rem; font-weight: 500; }
   .lf-badges { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
@@ -235,17 +270,22 @@ function MainSite() {
             <h1 className="lf-h1">Make the right<br /><span className="hl">insurance decisions</span><br />in 24 hrs</h1>
             <p className="lf-sub">Get unbiased, personalized insurance advice from India's top 5% professional advisors — not call centers. Zero commission, zero conflict of interest.</p>
             <div className="lf-stats">
-              {stats.map(s => (<div key={s.label}><div className="lf-stat-v">{s.value}</div><div className="lf-stat-l">{s.label}</div></div>))}
+              {stats.map(s => (
+                <div key={s.label}>
+                  <StatNumber value={s.value} format={s.format} />
+                  <div className="lf-stat-l">{s.label}</div>
+                </div>
+              ))}
             </div>
             <div className="lf-badges">
               {['🚫 No charges', '🚫 No spam', '✅ 100% Unbiased', '🏆 Top Advisors'].map(b => (<span key={b} className="lf-badge">{b}</span>))}
             </div>
             <div className="lf-cta-row">
               <button className="lf-cta" onClick={goToForm}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.8 19.79 19.79 0 0 1 1.61 3.19 2 2 0 0 1 3.61 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                Talk to an Expert
+                {/* <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.8 19.79 19.79 0 0 1 1.61 3.19 2 2 0 0 1 3.61 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> */}
+                Check Premium
               </button>
-              <button className="lf-ghost" onClick={goToForm}>Get Free Report →</button>
+              <button className="lf-ghost" onClick={goToForm}>Talk to Expert →</button>
             </div>
           </div>
           <div className="lf-banner">
