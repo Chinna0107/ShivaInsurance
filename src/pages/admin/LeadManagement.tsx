@@ -32,6 +32,7 @@ interface Lead {
   vehicle_manufacturer?: string;
   vehicle_model?: string;
   vehicle_fuel_type?: string;
+  vehicle_condition?: string;
   vehicle_reg_date?: string;
   vehicle_pincode?: string;
 }
@@ -473,11 +474,16 @@ const LeadManagement = () => {
               </div>
               )}
 
-              {/* Vehicle Details — shown only for vehicle leads */}
               {selectedLead.type === 'vehicle' && (
                 <div style={{ gridColumn: '1 / -1' }}>
                   <h4 style={{ margin: '0 0 0.75rem', color: '#d97706', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>🚗 Vehicle Details</h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem', backgroundColor: '#fffbeb', padding: '1rem', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Vehicle Condition</div>
+                      <div style={{ color: '#1f2937', fontWeight: 600 }}>
+                        {selectedLead.vehicle_condition === 'new' ? '🚀 Brand New' : selectedLead.vehicle_condition === 'old' ? '🔑 Old Vehicle' : 'N/A'}
+                      </div>
+                    </div>
                     <div>
                       <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Vehicle Number</div>
                       <div style={{ color: '#1f2937', fontWeight: 600, fontFamily: 'monospace', letterSpacing: '0.05em' }}>{selectedLead.vehicle_number || 'N/A'}</div>
@@ -499,7 +505,9 @@ const LeadManagement = () => {
                       <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_fuel_type || 'N/A'}</div>
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Registration Date</div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>
+                        {selectedLead.vehicle_condition === 'new' ? 'Expected Delivery Date' : 'Registration Date'}
+                      </div>
                       <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_reg_date || 'N/A'}</div>
                     </div>
                     <div>

@@ -42,6 +42,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [vehicleFuelType, setVehicleFuelType] = useState(getInitialState('vehicleFuelType', ''));
   const [vehicleRegDate, setVehicleRegDate] = useState(getInitialState('vehicleRegDate', ''));
   const [vehiclePincode, setVehiclePincode] = useState(getInitialState('vehiclePincode', ''));
+  const [vehicleCondition, setVehicleCondition] = useState<'new' | 'old' | ''>(getInitialState('vehicleCondition', ''));
   const [detectedCity, setDetectedCity] = useState('');
   const [isFetchingCity, setIsFetchingCity] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,8 +73,9 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_vehicleFuelType', JSON.stringify(vehicleFuelType));
     localStorage.setItem('leadform_vehicleRegDate', JSON.stringify(vehicleRegDate));
     localStorage.setItem('leadform_vehiclePincode', JSON.stringify(vehiclePincode));
+    localStorage.setItem('leadform_vehicleCondition', JSON.stringify(vehicleCondition));
     if (onStepChange) onStepChange(step);
-  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, onStepChange]);
+  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, vehicleCondition, onStepChange]);
 
   useEffect(() => {
     if (/^\d{6}$/.test(location)) {
@@ -456,7 +458,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const renderStep11 = () => {
     const vehicleTypes = ['2', '3', '4', '6', '10', '12', '14', '16', '18', 'Above'];
     const fuelTypes = ['Petrol', 'Diesel', 'CNG', 'Electric', 'Hybrid'];
-    const isVehicleValid = vehicleNumber.trim() && vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleRegDate && /^\d{6}$/.test(vehiclePincode);
+    const isVehicleValid = vehicleNumber.trim() && vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleCondition && vehicleRegDate && /^\d{6}$/.test(vehiclePincode);
 
     return (
       <div className="step-container">
@@ -505,10 +507,43 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Fuel Type</label>
         </div>
 
-        <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
-          <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
-          <label className="floating-label">Registration Date</label>
+        {/* Vehicle Condition Toggle */}
+        <div style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.6rem' }}>
+            Vehicle Condition
+          </label>
+          <div className="gender-toggle" style={{ marginBottom: 0 }}>
+            <button
+              type="button"
+              className={`gender-btn ${vehicleCondition === 'new' ? 'active' : ''}`}
+              onClick={() => { setVehicleCondition('new'); setVehicleRegDate(''); }}
+            >
+              🚀 Brand New
+            </button>
+            <button
+              type="button"
+              className={`gender-btn ${vehicleCondition === 'old' ? 'active' : ''}`}
+              onClick={() => { setVehicleCondition('old'); setVehicleRegDate(''); }}
+            >
+              🔑 Old Vehicle
+            </button>
+          </div>
         </div>
+
+        {/* Conditional Date Field */}
+        {vehicleCondition === 'old' && (
+          <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
+            <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
+            <label className="floating-label">Registration Date</label>
+          </div>
+        )}
+
+        {vehicleCondition === 'new' && (
+          <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
+            <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
+            <label className="floating-label">Expected Delivery Date</label>
+          </div>
+        )}
 
         <div className="input-group floating" style={{ textAlign: 'left' }}>
           <input type="text" value={vehiclePincode} onChange={e => setVehiclePincode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder=" " className="form-input" />
@@ -524,7 +559,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
             if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
             if (!vehicleModel.trim()) return toast.error('Please enter model');
             if (!vehicleFuelType) return toast.error('Please select fuel type');
-            if (!vehicleRegDate) return toast.error('Please enter registration date');
+            if (!vehicleCondition) return toast.error('Please select vehicle condition (New or Old)');
+            if (!vehicleRegDate) return toast.error(vehicleCondition === 'new' ? 'Please enter expected delivery date' : 'Please enter registration date');
             if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
             setStep(10);
           }}
@@ -563,6 +599,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               vehicleManufacturer,
               vehicleModel,
               vehicleFuelType,
+              vehicleCondition,
               vehicleRegDate,
               vehiclePincode
             })
