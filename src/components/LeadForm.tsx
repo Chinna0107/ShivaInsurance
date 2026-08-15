@@ -34,6 +34,14 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [smoker, setSmoker] = useState(getInitialState('smoker', ''));
   const [members, setMembers] = useState<string[]>(getInitialState('members', ['Self']));
   const [allowContact, setAllowContact] = useState(getInitialState('allowContact', ''));
+  // Vehicle fields
+  const [vehicleNumber, setVehicleNumber] = useState(getInitialState('vehicleNumber', ''));
+  const [vehicleType, setVehicleType] = useState(getInitialState('vehicleType', ''));
+  const [vehicleManufacturer, setVehicleManufacturer] = useState(getInitialState('vehicleManufacturer', ''));
+  const [vehicleModel, setVehicleModel] = useState(getInitialState('vehicleModel', ''));
+  const [vehicleFuelType, setVehicleFuelType] = useState(getInitialState('vehicleFuelType', ''));
+  const [vehicleRegDate, setVehicleRegDate] = useState(getInitialState('vehicleRegDate', ''));
+  const [vehiclePincode, setVehiclePincode] = useState(getInitialState('vehiclePincode', ''));
   const [detectedCity, setDetectedCity] = useState('');
   const [isFetchingCity, setIsFetchingCity] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,8 +65,15 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_smoker', JSON.stringify(smoker));
     localStorage.setItem('leadform_members', JSON.stringify(members));
     localStorage.setItem('leadform_allowContact', JSON.stringify(allowContact));
+    localStorage.setItem('leadform_vehicleNumber', JSON.stringify(vehicleNumber));
+    localStorage.setItem('leadform_vehicleType', JSON.stringify(vehicleType));
+    localStorage.setItem('leadform_vehicleManufacturer', JSON.stringify(vehicleManufacturer));
+    localStorage.setItem('leadform_vehicleModel', JSON.stringify(vehicleModel));
+    localStorage.setItem('leadform_vehicleFuelType', JSON.stringify(vehicleFuelType));
+    localStorage.setItem('leadform_vehicleRegDate', JSON.stringify(vehicleRegDate));
+    localStorage.setItem('leadform_vehiclePincode', JSON.stringify(vehiclePincode));
     if (onStepChange) onStepChange(step);
-  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, allowContact, onStepChange]);
+  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, onStepChange]);
 
   useEffect(() => {
     if (/^\d{6}$/.test(location)) {
@@ -244,6 +259,13 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         >
           <div className="option-icon">🛡️</div>
           <span>Life Insurance</span>
+        </button>
+        <button 
+          className="option-card" 
+          onClick={() => { setInsuranceType('Vehicle'); setStep(11); }}
+        >
+          <div className="option-icon">🚗</div>
+          <span>Vehicle Insurance</span>
         </button>
       </div>
     </div>
@@ -431,6 +453,88 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     </div>
   );
 
+  const renderStep11 = () => {
+    const vehicleTypes = ['2', '3', '4', '6', '10', '12', '14', '16', '18', 'Above'];
+    const fuelTypes = ['Petrol', 'Diesel', 'CNG', 'Electric', 'Hybrid'];
+    const isVehicleValid = vehicleNumber.trim() && vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleRegDate && /^\d{6}$/.test(vehiclePincode);
+
+    return (
+      <div className="step-container">
+        <button className="back-btn" onClick={() => setStep(2)}>← Previous</button>
+        <h3 className="step-title">Vehicle Details</h3>
+        <p style={{ fontSize: '0.84rem', color: '#6b7280', marginBottom: '1.25rem' }}>Help us give you the most accurate quote</p>
+
+        <div className="input-group floating" style={{ textAlign: 'left' }}>
+          <input type="text" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value.toUpperCase())} placeholder=" " className="form-input" />
+          <label className="floating-label">Vehicle Number (e.g. MH12AB1234)</label>
+        </div>
+
+        <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+          <select
+            value={vehicleType}
+            onChange={e => setVehicleType(e.target.value)}
+            className="form-input"
+            style={{ cursor: 'pointer' }}
+          >
+            <option value="" disabled>Select Vehicle Type (wheels)</option>
+            {vehicleTypes.map(v => <option key={v} value={v}>{v} Wheeler</option>)}
+          </select>
+          <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Vehicle Type</label>
+        </div>
+
+        <div className="input-group floating" style={{ textAlign: 'left' }}>
+          <input type="text" value={vehicleManufacturer} onChange={e => setVehicleManufacturer(e.target.value)} placeholder=" " className="form-input" />
+          <label className="floating-label">Manufacturer (e.g. Maruti, Honda)</label>
+        </div>
+
+        <div className="input-group floating" style={{ textAlign: 'left' }}>
+          <input type="text" value={vehicleModel} onChange={e => setVehicleModel(e.target.value)} placeholder=" " className="form-input" />
+          <label className="floating-label">Model (e.g. Swift, Activa)</label>
+        </div>
+
+        <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+          <select
+            value={vehicleFuelType}
+            onChange={e => setVehicleFuelType(e.target.value)}
+            className="form-input"
+            style={{ cursor: 'pointer' }}
+          >
+            <option value="" disabled>Select Fuel Type</option>
+            {fuelTypes.map(f => <option key={f} value={f}>{f}</option>)}
+          </select>
+          <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Fuel Type</label>
+        </div>
+
+        <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
+          <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
+          <label className="floating-label">Registration Date</label>
+        </div>
+
+        <div className="input-group floating" style={{ textAlign: 'left' }}>
+          <input type="text" value={vehiclePincode} onChange={e => setVehiclePincode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder=" " className="form-input" />
+          <label className="floating-label">Pincode</label>
+        </div>
+
+        <button
+          className="submit-btn view-plans-btn"
+          style={{ opacity: isVehicleValid ? 1 : 0.6, marginTop: '0.5rem' }}
+          onClick={() => {
+            if (!vehicleNumber.trim()) return toast.error('Please enter vehicle number');
+            if (!vehicleType) return toast.error('Please select vehicle type');
+            if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
+            if (!vehicleModel.trim()) return toast.error('Please enter model');
+            if (!vehicleFuelType) return toast.error('Please select fuel type');
+            if (!vehicleRegDate) return toast.error('Please enter registration date');
+            if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
+            setStep(10);
+          }}
+        >
+          Continue
+        </button>
+      </div>
+    );
+  };
+
   const renderStep10 = () => {
     const handleSubmit = async () => {
       if(allowContact) {
@@ -453,7 +557,14 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               annualIncome,
               education,
               smoker,
-              members
+              members,
+              vehicleNumber,
+              vehicleType,
+              vehicleManufacturer,
+              vehicleModel,
+              vehicleFuelType,
+              vehicleRegDate,
+              vehiclePincode
             })
           });
 
@@ -483,7 +594,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
     return (
       <div className="step-container">
-        <button className="back-btn" onClick={() => setStep(9)}>← Previous</button>
+        <button className="back-btn" onClick={() => insuranceType === 'Vehicle' ? setStep(11) : setStep(9)}>← Previous</button>
         
         <h3 className="step-title" style={{ marginTop: '24px' }}>Allow us to get in touch to explain Insurance better</h3>
         <div className="gender-toggle" style={{ marginBottom: '32px' }}>
@@ -568,6 +679,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         {step === 8 && renderStep8()}
         {step === 9 && renderStep9()}
         {step === 10 && renderStep10()}
+        {step === 11 && renderStep11()}
       </div>
     </div>
   );

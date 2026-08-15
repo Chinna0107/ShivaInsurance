@@ -137,6 +137,40 @@ const CSS = `
   /* DIVIDER */
   .lf-div { height: 1px; background: #f3f4f6; }
 
+  /* INSURANCE TYPES SHOWCASE */
+  .lf-ins-section { padding: 4rem 1.25rem; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%); }
+  @media(min-width:900px){ .lf-ins-section { padding: 5.5rem 4rem; } }
+  .lf-ins-inner { max-width: 1160px; margin: 0 auto; }
+  .lf-ins-header { text-align: center; margin-bottom: 3rem; }
+  .lf-ins-tag { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #16a34a; margin-bottom: 0.6rem; display: inline-flex; align-items: center; gap: 0.45rem; font-family: 'IBM Plex Mono', monospace; }
+  .lf-ins-tag::before, .lf-ins-tag::after { content: '—'; opacity: 0.4; }
+  .lf-ins-h2 { font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 900; letter-spacing: -1.5px; color: #0f172a; margin-bottom: 0.75rem; line-height: 1.1; }
+  .lf-ins-h2 .hl2 { background: linear-gradient(135deg,#f1592a,#e11d48); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .lf-ins-desc { font-size: 0.97rem; color: #6b7280; max-width: 540px; margin: 0 auto; line-height: 1.7; }
+  .lf-ins-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  @media(min-width:700px){ .lf-ins-grid { grid-template-columns: repeat(3, 1fr); } }
+  .lf-ins-card { position: relative; border-radius: 24px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 20px rgba(0,0,0,0.07); transition: all 0.35s cubic-bezier(.22,1,.36,1); cursor: pointer; background: white; }
+  .lf-ins-card:hover { transform: translateY(-8px); box-shadow: 0 20px 56px rgba(0,0,0,0.13); }
+  .lf-ins-card-top { padding: 2.25rem 2rem 1.75rem; position: relative; overflow: hidden; }
+  .lf-ins-card-top::before { content: ''; position: absolute; inset: 0; opacity: 0.08; background: var(--card-bg); transition: opacity 0.3s; }
+  .lf-ins-card:hover .lf-ins-card-top::before { opacity: 0.14; }
+  .lf-ins-card-glow { position: absolute; width: 180px; height: 180px; border-radius: 50%; top: -60px; right: -40px; background: var(--card-glow); opacity: 0.18; filter: blur(30px); transition: opacity 0.3s; pointer-events: none; }
+  .lf-ins-card:hover .lf-ins-card-glow { opacity: 0.3; }
+  .lf-ins-icon-wrap { width: 64px; height: 64px; border-radius: 18px; background: var(--card-bg); display: flex; align-items: center; justify-content: center; font-size: 1.9rem; margin-bottom: 1.25rem; box-shadow: 0 6px 20px var(--card-shadow); transition: transform 0.3s; }
+  .lf-ins-card:hover .lf-ins-icon-wrap { transform: scale(1.1) rotate(-3deg); }
+  .lf-ins-card-name { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem; letter-spacing: -0.5px; }
+  .lf-ins-card-tagline { font-size: 0.82rem; color: #6b7280; margin-bottom: 1.25rem; line-height: 1.5; }
+  .lf-ins-features { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+  .lf-ins-feature { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.81rem; color: #374151; line-height: 1.5; }
+  .lf-ins-check { width: 18px; height: 18px; border-radius: 50%; background: var(--card-bg); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 0.05rem; }
+  .lf-ins-check svg { width: 10px; height: 10px; stroke: white; stroke-width: 3; fill: none; }
+  .lf-ins-card-foot { padding: 1.5rem 2rem; border-top: 1px solid #f3f4f6; display: flex; align-items: center; justify-content: space-between; }
+  .lf-ins-explore { font-size: 0.83rem; font-weight: 700; color: var(--card-accent); display: flex; align-items: center; gap: 0.35rem; transition: gap 0.2s; }
+  .lf-ins-card:hover .lf-ins-explore { gap: 0.6rem; }
+  .lf-ins-plans { font-size: 0.74rem; color: #9ca3af; font-weight: 500; }
+  .lf-ins-bottom-cta { text-align: center; margin-top: 3rem; }
+  .lf-ins-bottom-cta p { font-size: 0.88rem; color: #6b7280; margin-bottom: 1.25rem; }
+
   /* SECTIONS */
   .lf-sec { padding: 3.5rem 1.25rem; max-width: 1160px; margin: 0 auto; }
   @media(min-width:900px){ .lf-sec { padding: 6rem 4rem; } }
@@ -301,6 +335,94 @@ function MainSite() {
               </div>
             </div>
             <div className="lf-banner-rating">⭐ 4.9 / 5.0</div>
+          </div>
+        </div>
+      </section>
+
+      <div className="lf-div" />
+
+      {/* INSURANCE TYPES SHOWCASE */}
+      <section className="lf-ins-section">
+        <div className="lf-ins-inner">
+          <div className="lf-ins-header">
+            <div className="lf-ins-tag">What We Cover</div>
+            <h2 className="lf-ins-h2">All types of insurance,<br /><span className="hl2">one trusted advisor</span></h2>
+            <p className="lf-ins-desc">Whether it's your health, your family's future, or your vehicle — get expert, unbiased advice across every major insurance category.</p>
+          </div>
+          <div className="lf-ins-grid">
+
+            {/* Health Insurance */}
+            <div className="lf-ins-card" style={{'--card-bg':'linear-gradient(135deg,#22c55e,#16a34a)', '--card-glow':'#22c55e', '--card-shadow':'rgba(22,163,74,0.25)', '--card-accent':'#16a34a'} as React.CSSProperties} onClick={goToForm}>
+              <div className="lf-ins-card-top">
+                <div className="lf-ins-card-glow" />
+                <div className="lf-ins-icon-wrap">🏥</div>
+                <div className="lf-ins-card-name">Health Insurance</div>
+                <div className="lf-ins-card-tagline">Comprehensive coverage for medical expenses, hospitalisation & critical illness.</div>
+                <ul className="lf-ins-features">
+                  {['Individual & Family Floater plans', 'Critical illness & super top-ups', 'Cashless hospitalisation at 5000+ hospitals', 'No-claim bonus up to 100%'].map(f => (
+                    <li key={f} className="lf-ins-feature">
+                      <span className="lf-ins-check" style={{background:'linear-gradient(135deg,#22c55e,#16a34a)'}}><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" /></svg></span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="lf-ins-card-foot">
+                <span className="lf-ins-explore">Explore Plans <span>→</span></span>
+                <span className="lf-ins-plans">50+ plans compared</span>
+              </div>
+            </div>
+
+            {/* Life Insurance */}
+            <div className="lf-ins-card" style={{'--card-bg':'linear-gradient(135deg,#6366f1,#4f46e5)', '--card-glow':'#6366f1', '--card-shadow':'rgba(99,102,241,0.25)', '--card-accent':'#4f46e5'} as React.CSSProperties} onClick={goToForm}>
+              <div className="lf-ins-card-top">
+                <div className="lf-ins-card-glow" />
+                <div className="lf-ins-icon-wrap">🛡️</div>
+                <div className="lf-ins-card-name">Life Insurance</div>
+                <div className="lf-ins-card-tagline">Protect your family's financial future with the right term or investment-linked plan.</div>
+                <ul className="lf-ins-features">
+                  {['Pure term plans at lowest premiums', 'ULIPs & endowment policies', 'Whole life & retirement plans', 'Rider add-ons for extra protection'].map(f => (
+                    <li key={f} className="lf-ins-feature">
+                      <span className="lf-ins-check" style={{background:'linear-gradient(135deg,#6366f1,#4f46e5)'}}><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" /></svg></span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="lf-ins-card-foot">
+                <span className="lf-ins-explore">Explore Plans <span>→</span></span>
+                <span className="lf-ins-plans">40+ plans compared</span>
+              </div>
+            </div>
+
+            {/* Vehicle Insurance */}
+            <div className="lf-ins-card" style={{'--card-bg':'linear-gradient(135deg,#f59e0b,#d97706)', '--card-glow':'#f59e0b', '--card-shadow':'rgba(245,158,11,0.25)', '--card-accent':'#d97706'} as React.CSSProperties} onClick={goToForm}>
+              <div className="lf-ins-card-top">
+                <div className="lf-ins-card-glow" />
+                <div className="lf-ins-icon-wrap">🚗</div>
+                <div className="lf-ins-card-name">Vehicle Insurance</div>
+                <div className="lf-ins-card-tagline">Complete protection for your car, bike and commercial vehicles against all risks.</div>
+                <ul className="lf-ins-features">
+                  {['Comprehensive & third-party cover', 'Zero depreciation add-on', 'Instant policy issuance online', 'Cashless repairs at 4000+ garages'].map(f => (
+                    <li key={f} className="lf-ins-feature">
+                      <span className="lf-ins-check" style={{background:'linear-gradient(135deg,#f59e0b,#d97706)'}}><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3" /></svg></span>
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="lf-ins-card-foot">
+                <span className="lf-ins-explore">Explore Plans <span>→</span></span>
+                <span className="lf-ins-plans">30+ plans compared</span>
+              </div>
+            </div>
+
+          </div>
+          <div className="lf-ins-bottom-cta">
+            <p>Not sure which insurance you need? Our advisors will guide you — for free.</p>
+            <div className="lf-cta-row" style={{justifyContent:'center'}}>
+              <button className="lf-cta" onClick={goToForm}>Get Free Expert Advice →</button>
+            </div>
           </div>
         </div>
       </section>

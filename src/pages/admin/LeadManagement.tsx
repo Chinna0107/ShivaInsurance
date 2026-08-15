@@ -16,7 +16,7 @@ interface Lead {
   email: string;
   date: string;
   status: 'Pending' | 'Closed' | 'Agreed';
-  type: 'health' | 'life';
+  type: 'health' | 'life' | 'vehicle';
   gender?: string;
   specific_plan?: string;
   location?: string;
@@ -26,6 +26,14 @@ interface Lead {
   smoker?: string;
   members?: string;
   policy_document_url?: string;
+  // Vehicle-specific fields
+  vehicle_number?: string;
+  vehicle_type?: string;
+  vehicle_manufacturer?: string;
+  vehicle_model?: string;
+  vehicle_fuel_type?: string;
+  vehicle_reg_date?: string;
+  vehicle_pincode?: string;
 }
 
 const LeadManagement = () => {
@@ -282,6 +290,11 @@ const LeadManagement = () => {
                       {lead.specific_plan} Insurance
                     </div>
                   )}
+                  {lead.type === 'vehicle' && lead.vehicle_manufacturer && (
+                    <div style={{ fontSize: '0.8rem', color: '#d97706', marginTop: '0.25rem', fontWeight: 600 }}>
+                      {lead.vehicle_manufacturer} {lead.vehicle_model}
+                    </div>
+                  )}
                 </td>
                 <td style={{ padding: '1rem 1.5rem', fontSize: '0.9rem' }}>
                   <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{lead.email}</div>
@@ -395,12 +408,17 @@ const LeadManagement = () => {
                   </div>
                   <div>
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Location / Pincode</div>
-                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.location || 'Not provided'}</div>
+                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
+                      {selectedLead.type === 'vehicle'
+                        ? (selectedLead.vehicle_pincode || 'Not provided')
+                        : (selectedLead.location || 'Not provided')}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Personal Details */}
+              {/* Personal Details — hidden for vehicle leads */}
+              {selectedLead.type !== 'vehicle' && (
               <div>
                 <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Personal Details</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -428,10 +446,12 @@ const LeadManagement = () => {
                   )}
                 </div>
               </div>
+              )}
 
-              {/* Financial & Insurance */}
+              {/* Financial & Insurance — hidden for vehicle leads */}
+              {selectedLead.type !== 'vehicle' && (
               <div>
-                <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Financial & Request</h4>
+                <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Financial &amp; Request</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <div>
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Employment Type</div>
@@ -451,6 +471,44 @@ const LeadManagement = () => {
                   </div>
                 </div>
               </div>
+              )}
+
+              {/* Vehicle Details — shown only for vehicle leads */}
+              {selectedLead.type === 'vehicle' && (
+                <div style={{ gridColumn: '1 / -1' }}>
+                  <h4 style={{ margin: '0 0 0.75rem', color: '#d97706', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>🚗 Vehicle Details</h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1rem', backgroundColor: '#fffbeb', padding: '1rem', borderRadius: '8px', border: '1px solid #fde68a' }}>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Vehicle Number</div>
+                      <div style={{ color: '#1f2937', fontWeight: 600, fontFamily: 'monospace', letterSpacing: '0.05em' }}>{selectedLead.vehicle_number || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Vehicle Type</div>
+                      <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_type ? `${selectedLead.vehicle_type} Wheeler` : 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Manufacturer</div>
+                      <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_manufacturer || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Model</div>
+                      <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_model || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Fuel Type</div>
+                      <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_fuel_type || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Registration Date</div>
+                      <div style={{ color: '#1f2937', fontWeight: 500 }}>{selectedLead.vehicle_reg_date || 'N/A'}</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Pincode</div>
+                      <div style={{ color: '#1f2937', fontWeight: 600 }}>{selectedLead.vehicle_pincode || 'N/A'}</div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Policy Document Management */}
               {selectedLead.status === 'Agreed' && (

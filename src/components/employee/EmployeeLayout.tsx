@@ -3,6 +3,7 @@ import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FiHeart, 
   FiShield, 
+  FiTruck,
   FiPhoneCall,
   FiFileText,
   FiLogOut,
@@ -19,6 +20,7 @@ const EmployeeLayout = () => {
   const typeFilter = searchParams.get('type');
   const isHealthActive = location.pathname.includes('/leads') && (!typeFilter || typeFilter === 'health');
   const isLifeActive = location.pathname.includes('/leads') && typeFilter === 'life';
+  const isVehicleActive = location.pathname.includes('/leads') && typeFilter === 'vehicle';
 
   useRealTimeLeads();
 
@@ -80,6 +82,21 @@ const EmployeeLayout = () => {
             })}
           >
             <FiShield size={20} /> <span className="nav-text">Life Insurance</span>
+          </NavLink>
+
+          {/* Vehicle Insurance Link */}
+          <NavLink 
+            to="/employee/dashboard/leads?type=vehicle"
+            className="nav-link"
+            onClick={() => setIsMobileMenuOpen(false)}
+            style={() => ({
+              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+              color: isVehicleActive ? '#d97706' : '#6b7280', textDecoration: 'none', fontWeight: isVehicleActive ? 600 : 400,
+              backgroundColor: isVehicleActive ? 'rgba(217,119,6,0.1)' : 'transparent',
+              borderLeft: isVehicleActive ? '4px solid #d97706' : '4px solid transparent'
+            })}
+          >
+            <FiTruck size={20} /> <span className="nav-text">Vehicle Insurance</span>
           </NavLink>
           
           {/* Call Requests Link */}
