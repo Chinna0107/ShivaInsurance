@@ -32,11 +32,19 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
     setActiveDropdown(null);
     setIsMobileMenuOpen(false);
     
+    // Explicitly handle "plans" overview pages so they don't get caught by the policy ID check
+    if (page === 'term-plans' || page === 'health-plans') {
+      navigate(`/${page}`);
+      return;
+    }
+    
     if (page.startsWith('term-') || page.startsWith('health-')) {
+      // For dynamic policy links like term-12, health-45
       const id = page.split('-')[1];
       navigate(`/policy/${id}`);
     } else {
-      navigate(`/${page}`);
+      // For all other pages like /about, /policy/123 etc
+      navigate(page.startsWith('/') ? page : `/${page}`);
     }
   };
 
