@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
           </div>
           <div className="cta-bar-right">
             <button className="btn btn-outline" style={{ backgroundColor: 'white' }} onClick={onBookCall}>Book a Call</button>
-            <button className="btn btn-primary" style={{ backgroundColor: '#25d366', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.open('https://wa.me/919000703370?text=Hello%20InsuranceShiva%20Team%20%2C', '_blank')}>
+            <button className="btn btn-primary" style={{ backgroundColor: '#25d366', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }} onClick={() => window.open('https://wa.me/919000520590?text=Hello%20InsuranceShiva%20Team%20%2C', '_blank')}>
               <FaWhatsapp size={18} /> WhatsApp Us
             </button>
           </div>
@@ -82,7 +82,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>Call Us</div>
-                  <a href="tel:+919000703370" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 90007 03370</a>
+                  <a href="tel:+919000520590" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 9000 520590</a>
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -91,7 +91,7 @@ const Footer: React.FC<FooterProps> = ({ onBookCall }) => {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '2px' }}>WhatsApp</div>
-                  <a href="https://wa.me/919000703370?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 90007 03370</a>
+                  <a href="https://wa.me/919000520590?text=Hello%20InsuranceShiva%20Team%20%2C" target="_blank" rel="noreferrer" style={{ color: '#1f2937', fontWeight: 600, fontSize: '1.05rem', textDecoration: 'none' }}>+91 9000 520590</a>
                 </div>
               </li>
               <li style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
