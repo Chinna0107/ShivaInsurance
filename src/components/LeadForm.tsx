@@ -566,11 +566,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
       }));
     };
 
-    const isComplete = extraMembers.every(m => {
-      const d = memberDetails[m];
-      return d && d.name.trim() && d.gender && d.dob && d.mobile.length === 10 && d.employmentType && d.annualIncome && d.education;
-    });
-
     return (
       <div className="step-container" style={{ textAlign: 'left' }}>
         <button className="back-btn" onClick={() => setStep(9)}>← Previous</button>
