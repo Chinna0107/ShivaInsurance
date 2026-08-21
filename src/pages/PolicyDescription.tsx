@@ -163,6 +163,26 @@ const PolicyDescription = () => {
               </div>
             )}
 
+            {/* Policy Link Section */}
+            {policy.policy_link && (
+              <div style={{ marginBottom: '2.5rem', background: '#fdf4ff', border: '1px solid #fbcfe8', borderRadius: '12px', padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.1rem', color: '#1f2937', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <span style={{ fontSize: '1.3rem' }}>🔗</span> Official Policy Link
+                </h3>
+                <p style={{ fontSize: '0.9rem', color: '#6b7280', marginBottom: '1.25rem' }}>
+                  Visit the official website for this policy to learn more directly from the provider.
+                </p>
+                <a
+                  href={policy.policy_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.7rem 1.4rem', background: '#d946ef', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, textDecoration: 'none', fontSize: '0.9rem' }}
+                >
+                  🌐 Visit Policy Page
+                </a>
+              </div>
+            )}
+
             <div className="policy-pros-cons">
               <div style={{ backgroundColor: '#f0fdf4', padding: '1.5rem', borderRadius: '12px', border: '1px solid #bbf7d0' }}>
                 <h4 style={{ fontSize: '1.1rem', color: '#166534', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

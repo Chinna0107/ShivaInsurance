@@ -229,7 +229,7 @@ function MainSite() {
   const [formStep, setFormStep] = useState(1);
 
   useEffect(() => {
-    const hasSubmitted = localStorage.getItem('lead_submitted_token') === 'true';
+    const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
     if (hasSubmitted) navigate('/', { replace: true });
   }, [navigate]);
 

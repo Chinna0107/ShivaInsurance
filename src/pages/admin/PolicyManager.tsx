@@ -15,6 +15,7 @@ interface Policy {
   created_at: string;
   plan_type: string;
   insurer_type: string;
+  policy_link?: string;
 }
 
 const PolicyManager = () => {
@@ -34,7 +35,8 @@ const PolicyManager = () => {
     pros: '',
     cons: '',
     plan_type: 'Individual',
-    insurer_type: 'Private'
+    insurer_type: 'Private',
+    policy_link: ''
   });
   const [images, setImages] = useState<File[]>([]);
   const [pdfFile, setPdfFile] = useState<File | null>(null);
@@ -69,11 +71,12 @@ const PolicyManager = () => {
         pros: policy.pros || '',
         cons: policy.cons || '',
         plan_type: policy.plan_type || 'Individual',
-        insurer_type: policy.insurer_type || 'Private'
+        insurer_type: policy.insurer_type || 'Private',
+        policy_link: policy.policy_link || ''
       });
     } else {
       setEditingPolicy(null);
-      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual', insurer_type: 'Private' });
+      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual', insurer_type: 'Private', policy_link: '' });
     }
     setImages([]);
     setPdfFile(null);
@@ -98,6 +101,7 @@ const PolicyManager = () => {
       data.append('cons', formData.cons);
       data.append('plan_type', formData.plan_type);
       data.append('insurer_type', formData.insurer_type);
+      data.append('policy_link', formData.policy_link);
       images.forEach(img => data.append('images', img));
 
       let savedPolicy: any;
@@ -245,7 +249,12 @@ const PolicyManager = () => {
                         <p style={{ margin: '0 0 1rem', fontWeight: 500 }}>{policy.cover_amount || 'N/A'}</p>
                         
                         <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: '#4b5563' }}>Description</h4>
-                        <p style={{ margin: 0, fontSize: '0.9rem' }}>{policy.description || 'N/A'}</p>
+                        <p style={{ margin: '0 0 1rem', fontSize: '0.9rem' }}>{policy.description || 'N/A'}</p>
+
+                        <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: '#4b5563' }}>Policy Link</h4>
+                        <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                          {policy.policy_link ? <a href={policy.policy_link} target="_blank" rel="noreferrer" style={{ color: 'var(--primary-color)' }}>{policy.policy_link}</a> : 'N/A'}
+                        </p>
                       </div>
                       <div style={{ display: 'flex', gap: '1.5rem' }}>
                         <div style={{ flex: 1 }}>
@@ -402,6 +411,15 @@ const PolicyManager = () => {
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', resize: 'vertical' }}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Policy Link (Optional)</label>
+                <input 
+                  type="url" placeholder="https://..."
+                  value={formData.policy_link} onChange={e => setFormData({...formData, policy_link: e.target.value})}
+                  style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none' }}
+                />
               </div>
 
               <div>

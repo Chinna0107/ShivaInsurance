@@ -33,6 +33,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [education, setEducation] = useState(getInitialState('education', ''));
   const [smoker, setSmoker] = useState(getInitialState('smoker', ''));
   const [members, setMembers] = useState<string[]>(getInitialState('members', ['Self']));
+  const [memberDetails, setMemberDetails] = useState<Record<string, { name: string, gender: string, email: string, dob: string, mobile: string, employmentType?: string, annualIncome?: string, education?: string }>>(getInitialState('memberDetails', {}));
   const [allowContact, setAllowContact] = useState(getInitialState('allowContact', ''));
   // Vehicle fields
   const [vehicleNumber, setVehicleNumber] = useState(getInitialState('vehicleNumber', ''));
@@ -65,6 +66,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_education', JSON.stringify(education));
     localStorage.setItem('leadform_smoker', JSON.stringify(smoker));
     localStorage.setItem('leadform_members', JSON.stringify(members));
+    localStorage.setItem('leadform_memberDetails', JSON.stringify(memberDetails));
     localStorage.setItem('leadform_allowContact', JSON.stringify(allowContact));
     localStorage.setItem('leadform_vehicleNumber', JSON.stringify(vehicleNumber));
     localStorage.setItem('leadform_vehicleType', JSON.stringify(vehicleType));
@@ -75,7 +77,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_vehiclePincode', JSON.stringify(vehiclePincode));
     localStorage.setItem('leadform_vehicleCondition', JSON.stringify(vehicleCondition));
     if (onStepChange) onStepChange(step);
-  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, vehicleCondition, onStepChange]);
+  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, memberDetails, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, vehicleCondition, onStepChange]);
 
   useEffect(() => {
     if (/^\d{6}$/.test(location)) {
@@ -169,24 +171,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           <label className="floating-label">Mobile Number</label>
         </div>
 
-        <button 
-          className="submit-btn view-plans-btn"
-          onClick={() => {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!name.trim()) return toast.error('Please enter your name');
-            if (!email.trim() || !emailRegex.test(email)) return toast.error('Please enter a valid email');
-            if (!dob.trim()) return toast.error('Please enter your date of birth');
-            if (mobile.length !== 10) return toast.error('Please enter a valid 10-digit mobile number');
-            setStep(2);
-          }}
-          style={{ 
-            opacity: (name.trim() && dob.trim() && mobile.length === 10 && email.trim()) ? 1 : 0.6,
-            transition: 'all 0.3s ease'
-          }}
-        >
-          View Plans
-        </button>
-
         <button
           className="already-filled-btn"
           disabled={isCheckingLead}
@@ -197,7 +181,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/check?phone=${mobile}`);
               const data = await res.json();
               if (res.ok && data.exists) {
-                localStorage.setItem('lead_submitted_token', 'true');
+                sessionStorage.setItem('lead_submitted_token', 'true');
                 toast.success('Welcome back!');
                 navigate('/');
               } else {
@@ -245,7 +229,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep2 = () => (
     <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(1)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(1)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: insuranceType ? 1 : 0.6 }} onClick={() => {
+          if (insuranceType) { setStep(insuranceType === 'Health' ? 4 : 3); }
+        }}>Next →</button>
+      </div>
       <h3 className="step-title">What type of insurance are you looking for?</h3>
       <div className="options-grid">
         <button 
@@ -275,7 +264,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep3 = () => (
     <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(2)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(2)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: gender ? 1 : 0.6 }} onClick={() => {
+          if (gender) { setStep(9); }
+        }}>Next →</button>
+      </div>
       <h3 className="step-title">Select specific plan type:</h3>
       <div className="options-grid">
         <button 
@@ -298,7 +292,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep4 = () => (
     <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(insuranceType === 'Health' ? 2 : 3)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(insuranceType === 'Health' ? 2 : 3)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: location.trim() ? 1 : 0.6 }} onClick={() => {
+          if(location.trim()) { setStep(5); } else { toast.error('Please enter your location'); }
+        }}>Next →</button>
+      </div>
       <h3 className="step-title">Enter your Location</h3>
       <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '8px' }}>
         <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder=" " className="form-input" />
@@ -310,25 +309,17 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         </div>
       )}
       {!detectedCity && <div style={{ marginBottom: '24px' }}></div>}
-      <button 
-        className="submit-btn view-plans-btn" 
-        onClick={() => {
-          if(location.trim()) {
-            setStep(5);
-          } else {
-            toast.error('Please enter your location');
-          }
-        }}
-        style={{ opacity: location.trim() ? 1 : 0.6 }}
-      >
-        Next
-      </button>
     </div>
   );
 
   const renderStep5 = () => (
     <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(4)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(4)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: employmentType ? 1 : 0.6 }} onClick={() => {
+          if (employmentType) { setStep(6); }
+        }}>Next →</button>
+      </div>
       <h3 className="step-title">Employment Type</h3>
       <div className="options-grid">
         <button className="option-card" onClick={() => { setEmploymentType('Salaried'); setStep(6); }}>
@@ -348,7 +339,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep6 = () => (
     <div className="step-container list-step">
-      <button className="back-btn" onClick={() => setStep(5)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(5)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: annualIncome ? 1 : 0.6 }} onClick={() => {
+          if (annualIncome) { setStep(7); }
+        }}>Next →</button>
+      </div>
       <p className="step-subtitle">Just answer 5 simple questions to get more accurate quotes</p>
       <h3 className="step-title">Select your annual income</h3>
       <div className="radio-list">
@@ -366,7 +362,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep7 = () => (
     <div className="step-container list-step">
-      <button className="back-btn" onClick={() => setStep(6)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(6)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: education ? 1 : 0.6 }} onClick={() => {
+          if (education) { setStep(8); }
+        }}>Next →</button>
+      </div>
       <p className="step-subtitle">Just answer 4 simple questions to get more accurate quotes</p>
       <h3 className="step-title">Select Educational Qualification</h3>
       <div className="radio-list">
@@ -382,7 +383,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
   const renderStep8 = () => (
     <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(7)}>← Previous</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(7)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: smoker ? 1 : 0.6 }} onClick={() => {
+          if (smoker) { setStep(9); }
+        }}>Next →</button>
+      </div>
       
       <h3 className="step-title">Do you smoke or Chew Tobacco?</h3>
       <div className="gender-toggle" style={{ marginBottom: '24px' }}>
@@ -404,24 +410,18 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   };
 
   const renderStep9 = () => (
-    <div className="step-container">
-      <button className="back-btn" onClick={() => setStep(8)}>← Previous</button>
-      
-      <div className="gender-toggle" style={{ marginBottom: '24px' }}>
-        <button 
-          className={`gender-btn ${gender === 'Male' ? 'active' : ''}`}
-          onClick={() => setGender('Male')}
-        >
-          Male
-        </button>
-        <button 
-          className={`gender-btn ${gender === 'Female' ? 'active' : ''}`}
-          onClick={() => setGender('Female')}
-        >
-          Female
-        </button>
+    <div className="step-container list-step">
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(8)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: members.length > 0 ? 1 : 0.6 }} onClick={() => {
+          if(members.length > 0) {
+            const extraMembers = members.filter(m => m !== 'Self');
+            if (extraMembers.length > 0) { setStep(12); } else { setStep(10); }
+          } else {
+            toast.error('Please select at least one member');
+          }
+        }}>Next →</button>
       </div>
-
       <h3 className="step-title">Select members you want to insure</h3>
       <div className="members-grid">
         {memberOptions.map(member => (
@@ -439,19 +439,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           </label>
         ))}
       </div>
-      <button 
-        className="submit-btn view-plans-btn" 
-        onClick={() => {
-          if(members.length > 0) {
-            setStep(10);
-          } else {
-            toast.error('Please select at least one member');
-          }
-        }}
-        style={{ opacity: members.length > 0 ? 1 : 0.6, marginTop: '24px' }}
-      >
-        Continue
-      </button>
     </div>
   );
 
@@ -462,7 +449,20 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
     return (
       <div className="step-container">
-        <button className="back-btn" onClick={() => setStep(2)}>← Previous</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(2)}>← Previous</button>
+          <button className="back-btn" style={{ marginBottom: 0, opacity: isVehicleValid ? 1 : 0.6 }} onClick={() => {
+            if (!vehicleNumber.trim()) return toast.error('Please enter vehicle number');
+            if (!vehicleType) return toast.error('Please select vehicle type');
+            if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
+            if (!vehicleModel.trim()) return toast.error('Please enter model');
+            if (!vehicleFuelType) return toast.error('Please select fuel type');
+            if (!vehicleCondition) return toast.error('Please select vehicle condition (New or Old)');
+            if (!vehicleRegDate) return toast.error(vehicleCondition === 'new' ? 'Please enter expected delivery date' : 'Please enter registration date');
+            if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
+            setStep(10);
+          }}>Next →</button>
+        </div>
         <h3 className="step-title">Vehicle Details</h3>
         <p style={{ fontSize: '0.84rem', color: '#6b7280', marginBottom: '1.25rem' }}>Help us give you the most accurate quote</p>
 
@@ -549,24 +549,107 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           <input type="text" value={vehiclePincode} onChange={e => setVehiclePincode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder=" " className="form-input" />
           <label className="floating-label">Pincode</label>
         </div>
+      </div>
+    );
+  };
 
-        <button
-          className="submit-btn view-plans-btn"
-          style={{ opacity: isVehicleValid ? 1 : 0.6, marginTop: '0.5rem' }}
-          onClick={() => {
-            if (!vehicleNumber.trim()) return toast.error('Please enter vehicle number');
-            if (!vehicleType) return toast.error('Please select vehicle type');
-            if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
-            if (!vehicleModel.trim()) return toast.error('Please enter model');
-            if (!vehicleFuelType) return toast.error('Please select fuel type');
-            if (!vehicleCondition) return toast.error('Please select vehicle condition (New or Old)');
-            if (!vehicleRegDate) return toast.error(vehicleCondition === 'new' ? 'Please enter expected delivery date' : 'Please enter registration date');
-            if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
-            setStep(10);
-          }}
-        >
-          Continue
-        </button>
+  const renderStep12 = () => {
+    const extraMembers = members.filter(m => m !== 'Self');
+    
+    const handleMemberChange = (member: string, field: string, value: string) => {
+      setMemberDetails(prev => ({
+        ...prev,
+        [member]: {
+          ...(prev[member] || { name: '', gender: '', email: '', dob: '', mobile: '', employmentType: '', annualIncome: '', education: '' }),
+          [field]: value
+        }
+      }));
+    };
+
+    const isComplete = extraMembers.every(m => {
+      const d = memberDetails[m];
+      return d && d.name.trim() && d.gender && d.dob && d.mobile.length === 10 && d.employmentType && d.annualIncome && d.education;
+    });
+
+    return (
+      <div className="step-container" style={{ textAlign: 'left' }}>
+        <button className="back-btn" onClick={() => setStep(9)}>← Previous</button>
+        <h3 className="step-title">Family Member Details</h3>
+        <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '8px' }}>
+          {extraMembers.map(member => {
+            const details = memberDetails[member] || { name: '', gender: '', email: '', dob: '', mobile: '' };
+            return (
+              <div key={member} style={{ marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid #eee' }}>
+                <h4 style={{ marginBottom: '1rem', color: '#374151', fontWeight: 600 }}>{member}'s Details</h4>
+                
+                <div className="gender-toggle" style={{ marginBottom: '1.5rem' }}>
+                  <button className={`gender-btn ${details.gender === 'Male' ? 'active' : ''}`} onClick={() => handleMemberChange(member, 'gender', 'Male')}>Male</button>
+                  <button className={`gender-btn ${details.gender === 'Female' ? 'active' : ''}`} onClick={() => handleMemberChange(member, 'gender', 'Female')}>Female</button>
+                </div>
+
+                <div className="input-group floating">
+                  <input type="text" value={details.name} onChange={e => handleMemberChange(member, 'name', e.target.value)} placeholder=" " className="form-input" />
+                  <label className="floating-label">Name</label>
+                </div>
+
+                <div className="input-group floating">
+                  <input type="email" value={details.email} onChange={e => handleMemberChange(member, 'email', e.target.value)} placeholder=" " className="form-input" />
+                  <label className="floating-label">Email Address (Optional)</label>
+                </div>
+
+                <div className="input-group floating dob-group">
+                  <input type="date" value={details.dob} onChange={e => handleMemberChange(member, 'dob', e.target.value)} placeholder=" " className="form-input" />
+                  <label className="floating-label">Date of Birth</label>
+                </div>
+
+                <div className="input-group floating">
+                  <input type="text" value={details.mobile} onChange={e => handleMemberChange(member, 'mobile', e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder=" " className="form-input" />
+                  <label className="floating-label">Mobile Number</label>
+                </div>
+
+                <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+                  <select
+                    value={details.employmentType || ''}
+                    onChange={e => handleMemberChange(member, 'employmentType', e.target.value)}
+                    className="form-input"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="" disabled>Select Employment Type</option>
+                    <option value="Salaried">Salaried</option>
+                    <option value="Self-employed">Self Employed</option>
+                  </select>
+                  <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Employment Type</label>
+                </div>
+
+                <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+                  <select
+                    value={details.annualIncome || ''}
+                    onChange={e => handleMemberChange(member, 'annualIncome', e.target.value)}
+                    className="form-input"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="" disabled>Select Annual Income</option>
+                    {incomeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  </select>
+                  <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Annual Income</label>
+                </div>
+
+                <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+                  <select
+                    value={details.education || ''}
+                    onChange={e => handleMemberChange(member, 'education', e.target.value)}
+                    className="form-input"
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <option value="" disabled>Select Education</option>
+                    {eduOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                  </select>
+                  <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Education</label>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   };
@@ -594,6 +677,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               education,
               smoker,
               members,
+              memberDetails,
               vehicleNumber,
               vehicleType,
               vehicleManufacturer,
@@ -607,7 +691,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
           if (response.ok) {
             toast.success('Your application was submitted successfully!');
-            localStorage.setItem('lead_submitted_token', 'true');
+            sessionStorage.setItem('lead_submitted_token', 'true');
             // Clear saved form data on complete
             Object.keys(localStorage).forEach(key => {
               if(key.startsWith('leadform_')) {
@@ -641,9 +725,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
         <button 
           className="submit-btn view-plans-btn" 
-          onClick={handleSubmit}
-          disabled={isSubmitting}
-          style={{ opacity: allowContact ? 1 : 0.6 }}
+          onClick={handleSubmit} 
+          disabled={isSubmitting || !allowContact}
+          style={{ 
+            opacity: (!isSubmitting && allowContact) ? 1 : 0.6,
+            marginTop: '24px'
+          }}
         >
           {isSubmitting ? 'Submitting...' : 'Submit Request'}
         </button>
@@ -651,7 +738,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     );
   };
 
-  const hasSubmitted = localStorage.getItem('lead_submitted_token') === 'true';
+  const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
 
   if (hasSubmitted) {
     return (
@@ -717,6 +804,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         {step === 9 && renderStep9()}
         {step === 10 && renderStep10()}
         {step === 11 && renderStep11()}
+        {step === 12 && renderStep12()}
       </div>
     </div>
   );

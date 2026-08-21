@@ -5,7 +5,7 @@ import { Navigate } from 'react-router-dom';
  * submitted the lead form yet (checked via localStorage token).
  */
 const RequireLeadForm = ({ children }: { children: React.ReactNode }) => {
-  const hasSubmitted = localStorage.getItem('lead_submitted_token') === 'true';
+  const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
   if (!hasSubmitted) {
     return <Navigate to="/leadform" replace />;
   }
