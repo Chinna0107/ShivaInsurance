@@ -171,6 +171,24 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           <label className="floating-label">Mobile Number</label>
         </div>
 
+        <button 
+          className="submit-btn view-plans-btn" 
+          disabled={!name.trim() || !dob.trim() || mobile.length !== 10 || !email.trim()}
+          onClick={() => {
+            if (!name.trim()) return toast.error('Please enter your name');
+            if (!email.trim()) return toast.error('Please enter your email');
+            if (!dob.trim()) return toast.error('Please enter your date of birth');
+            if (mobile.length !== 10) return toast.error('Please enter a valid 10-digit mobile number');
+            setStep(2);
+          }}
+          style={{ 
+            opacity: (name.trim() && dob.trim() && mobile.length === 10 && email.trim()) ? 1 : 0.6,
+            transition: 'all 0.3s ease'
+          }}
+        >
+          View Plans
+        </button>
+
         <button
           className="already-filled-btn"
           disabled={isCheckingLead}
@@ -565,6 +583,10 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         }
       }));
     };
+    const isComplete = extraMembers.every(m => {
+      const d = memberDetails[m];
+      return d && d.name.trim() && d.gender && d.dob && d.mobile.length === 10 && d.employmentType && d.annualIncome && d.education;
+    });
 
     return (
       <div className="step-container" style={{ textAlign: 'left' }}>
@@ -645,6 +667,14 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
             );
           })}
         </div>
+        <button 
+          className="submit-btn view-plans-btn" 
+          disabled={!isComplete}
+          style={{ opacity: isComplete ? 1 : 0.6, marginTop: '1rem' }}
+          onClick={() => setStep(10)}
+        >
+          Next →
+        </button>
       </div>
     );
   };
