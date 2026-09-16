@@ -138,7 +138,16 @@ const CallRequests = () => {
               ))
             ) : requests.length > 0 ? (
               requests.map((req) => (
-              <tr key={req.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+              <tr 
+                key={req.id} 
+                style={{ 
+                  borderBottom: '1px solid var(--border-color, #e5e7eb)', 
+                  transition: 'background 0.2s',
+                  backgroundColor: req.status === 'Pending' ? '#eff6ff' : 'transparent'
+                }} 
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#eff6ff' : 'transparent'}
+              >
                 <td style={{ padding: '1rem 1.5rem', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>
                   {req.name}
                 </td>
@@ -168,7 +177,7 @@ const CallRequests = () => {
                       border: '1px solid var(--border-color, #e5e7eb)',
                       borderRadius: '6px',
                       width: '100%',
-                      minWidth: '150px',
+                      minWidth: '300px',
                       outline: 'none',
                       color: 'var(--text-dark, #1f2937)'
                     }}

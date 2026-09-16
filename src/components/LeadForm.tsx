@@ -32,6 +32,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [annualIncome, setAnnualIncome] = useState(getInitialState('annualIncome', ''));
   const [education, setEducation] = useState(getInitialState('education', ''));
   const [smoker, setSmoker] = useState(getInitialState('smoker', ''));
+  const [lifeCover, setLifeCover] = useState(getInitialState('lifeCover', ''));
+  const [medicalHistory, setMedicalHistory] = useState<string[]>(getInitialState('medicalHistory', []));
   const [members, setMembers] = useState<string[]>(getInitialState('members', ['Self']));
   const [memberDetails, setMemberDetails] = useState<Record<string, { name: string, gender: string, email: string, dob: string, mobile: string, employmentType?: string, annualIncome?: string, education?: string }>>(getInitialState('memberDetails', {}));
   const [allowContact, setAllowContact] = useState(getInitialState('allowContact', ''));
@@ -65,6 +67,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_annualIncome', JSON.stringify(annualIncome));
     localStorage.setItem('leadform_education', JSON.stringify(education));
     localStorage.setItem('leadform_smoker', JSON.stringify(smoker));
+    localStorage.setItem('leadform_lifeCover', JSON.stringify(lifeCover));
+    localStorage.setItem('leadform_medicalHistory', JSON.stringify(medicalHistory));
     localStorage.setItem('leadform_members', JSON.stringify(members));
     localStorage.setItem('leadform_memberDetails', JSON.stringify(memberDetails));
     localStorage.setItem('leadform_allowContact', JSON.stringify(allowContact));
@@ -77,7 +81,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     localStorage.setItem('leadform_vehiclePincode', JSON.stringify(vehiclePincode));
     localStorage.setItem('leadform_vehicleCondition', JSON.stringify(vehicleCondition));
     if (onStepChange) onStepChange(step);
-  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, members, memberDetails, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, vehicleCondition, onStepChange]);
+  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, lifeCover, medicalHistory, members, memberDetails, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, vehicleCondition, onStepChange]);
 
   useEffect(() => {
     if (/^\d{6}$/.test(location)) {
@@ -304,6 +308,20 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           <div className="option-icon">💰</div>
           <span>Savings Insurance</span>
         </button>
+        <button 
+          className="option-card" 
+          onClick={() => { setSpecificPlan('Unit Linked'); setStep(4); }}
+        >
+          <div className="option-icon">📈</div>
+          <span>Unit Linked Insurance Plan</span>
+        </button>
+        <button 
+          className="option-card" 
+          onClick={() => { setSpecificPlan('Retirement'); setStep(4); }}
+        >
+          <div className="option-icon">🏖️</div>
+          <span>Retirement Plan</span>
+        </button>
       </div>
     </div>
   );
@@ -383,7 +401,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
         <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(6)}>← Previous</button>
         <button className="back-btn" style={{ marginBottom: 0, opacity: education ? 1 : 0.6 }} onClick={() => {
-          if (education) { setStep(8); }
+          if (education) { setStep(insuranceType === 'Life' ? 14 : 15); }
         }}>Next →</button>
       </div>
       <p className="step-subtitle">Just answer 4 simple questions to get more accurate quotes</p>
@@ -391,8 +409,80 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
       <div className="radio-list">
         {eduOptions.map(opt => (
           <label key={opt} className="radio-item">
-            <input type="radio" name="edu" value={opt} checked={education === opt} onChange={() => { setEducation(opt); setTimeout(() => setStep(8), 300); }} />
+            <input type="radio" name="edu" value={opt} checked={education === opt} onChange={() => { setEducation(opt); setTimeout(() => setStep(insuranceType === 'Life' ? 14 : 15), 300); }} />
             <span>{opt}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderStep14 = () => {
+    const options = specificPlan === 'Term' 
+      ? ['50 Lakhs', '1 Crore', '2 Crores', '5 Crores', '10 Crores', '50 Crores']
+      : ['10 Lakhs', '1 Crore', 'Unlimited Coverage'];
+      
+    return (
+      <div className="step-container list-step">
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+          <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(7)}>← Previous</button>
+          <button className="back-btn" style={{ marginBottom: 0, opacity: lifeCover ? 1 : 0.6 }} onClick={() => {
+            if (lifeCover) { setStep(15); }
+          }}>Next →</button>
+        </div>
+        <p className="step-subtitle">Just answer simple questions to get more accurate quotes</p>
+        <h3 className="step-title">Select Life Cover Amount</h3>
+        <div className="radio-list">
+          {options.map(opt => (
+            <label key={opt} className="radio-item">
+              <input type="radio" name="lifeCover" value={opt} checked={lifeCover === opt} onChange={() => { setLifeCover(opt); setTimeout(() => setStep(15), 300); }} />
+              <span>{opt}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const toggleMedicalOption = (opt: string) => {
+    if (opt === 'None of these') {
+      setMedicalHistory(['None of these']);
+    } else {
+      setMedicalHistory(prev => {
+        const filtered = prev.filter(item => item !== 'None of these');
+        if (filtered.includes(opt)) {
+          return filtered.filter(item => item !== opt);
+        } else {
+          return [...filtered, opt];
+        }
+      });
+    }
+  };
+
+  const renderStep15 = () => (
+    <div className="step-container list-step" style={{ maxWidth: '600px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(insuranceType === 'Life' ? 14 : 7)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0, opacity: medicalHistory.length > 0 ? 1 : 0.6 }} onClick={() => {
+          if (medicalHistory.length > 0) { setStep(8); }
+        }}>Next →</button>
+      </div>
+      <h3 className="step-title" style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Do any member(s) have any existing illnesses for which they take regular medication?</h3>
+      <p className="step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>That'll make sure their condition is covered and the claim isn't rejected.</p>
+      
+      <div className="members-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}>
+        {['Diabetes', 'Blood Pressure', 'Heart disease', 'Any Surgery', 'Thyroid', 'Asthma', 'Other disease', 'None of these'].map(opt => (
+          <label key={opt} className={`member-card ${medicalHistory.includes(opt) ? 'selected' : ''}`} style={{ padding: '0.75rem 1rem' }}>
+            <input 
+              type="checkbox" 
+              checked={medicalHistory.includes(opt)} 
+              onChange={() => toggleMedicalOption(opt)} 
+              style={{ display: 'none' }}
+            />
+            <div className={`checkbox-custom ${medicalHistory.includes(opt) ? 'checked' : ''}`}>
+              {medicalHistory.includes(opt) && <span className="checkmark">✓</span>}
+            </div>
+            <span style={{ fontSize: '0.9rem' }}>{opt}</span>
           </label>
         ))}
       </div>
@@ -402,7 +492,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const renderStep8 = () => (
     <div className="step-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(7)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(15)}>← Previous</button>
         <button className="back-btn" style={{ marginBottom: 0, opacity: smoker ? 1 : 0.6 }} onClick={() => {
           if (smoker) { setStep(9); }
         }}>Next →</button>
@@ -433,8 +523,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(8)}>← Previous</button>
         <button className="back-btn" style={{ marginBottom: 0, opacity: members.length > 0 ? 1 : 0.6 }} onClick={() => {
           if(members.length > 0) {
-            const extraMembers = members.filter(m => m !== 'Self');
-            if (extraMembers.length > 0) { setStep(12); } else { setStep(10); }
+            setStep(10);
           } else {
             toast.error('Please select at least one member');
           }
@@ -463,67 +552,16 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const renderStep11 = () => {
     const vehicleTypes = ['2', '3', '4', '6', '10', '12', '14', '16', '18', 'Above'];
     const fuelTypes = ['Petrol', 'Diesel', 'CNG', 'Electric', 'Hybrid'];
-    const isVehicleValid = vehicleNumber.trim() && vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleCondition && vehicleRegDate && /^\d{6}$/.test(vehiclePincode);
+    const isVehicleValid = vehicleCondition === 'old' 
+      ? vehicleNumber.trim() && vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleRegDate && /^\d{6}$/.test(vehiclePincode)
+      : vehicleCondition === 'new'
+      ? vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleRegDate && /^\d{6}$/.test(vehiclePincode)
+      : false;
 
     return (
       <div className="step-container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(2)}>← Previous</button>
-          <button className="back-btn" style={{ marginBottom: 0, opacity: isVehicleValid ? 1 : 0.6 }} onClick={() => {
-            if (!vehicleNumber.trim()) return toast.error('Please enter vehicle number');
-            if (!vehicleType) return toast.error('Please select vehicle type');
-            if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
-            if (!vehicleModel.trim()) return toast.error('Please enter model');
-            if (!vehicleFuelType) return toast.error('Please select fuel type');
-            if (!vehicleCondition) return toast.error('Please select vehicle condition (New or Old)');
-            if (!vehicleRegDate) return toast.error(vehicleCondition === 'new' ? 'Please enter expected delivery date' : 'Please enter registration date');
-            if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
-            setStep(10);
-          }}>Next →</button>
-        </div>
         <h3 className="step-title">Vehicle Details</h3>
         <p style={{ fontSize: '0.84rem', color: '#6b7280', marginBottom: '1.25rem' }}>Help us give you the most accurate quote</p>
-
-        <div className="input-group floating" style={{ textAlign: 'left' }}>
-          <input type="text" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value.toUpperCase())} placeholder=" " className="form-input" />
-          <label className="floating-label">Vehicle Number (e.g. MH12AB1234)</label>
-        </div>
-
-        <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-          <select
-            value={vehicleType}
-            onChange={e => setVehicleType(e.target.value)}
-            className="form-input"
-            style={{ cursor: 'pointer' }}
-          >
-            <option value="" disabled>Select Vehicle Type (wheels)</option>
-            {vehicleTypes.map(v => <option key={v} value={v}>{v} Wheeler</option>)}
-          </select>
-          <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Vehicle Type</label>
-        </div>
-
-        <div className="input-group floating" style={{ textAlign: 'left' }}>
-          <input type="text" value={vehicleManufacturer} onChange={e => setVehicleManufacturer(e.target.value)} placeholder=" " className="form-input" />
-          <label className="floating-label">Manufacturer (e.g. Maruti, Honda)</label>
-        </div>
-
-        <div className="input-group floating" style={{ textAlign: 'left' }}>
-          <input type="text" value={vehicleModel} onChange={e => setVehicleModel(e.target.value)} placeholder=" " className="form-input" />
-          <label className="floating-label">Model (e.g. Swift, Activa)</label>
-        </div>
-
-        <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-          <select
-            value={vehicleFuelType}
-            onChange={e => setVehicleFuelType(e.target.value)}
-            className="form-input"
-            style={{ cursor: 'pointer' }}
-          >
-            <option value="" disabled>Select Fuel Type</option>
-            {fuelTypes.map(f => <option key={f} value={f}>{f}</option>)}
-          </select>
-          <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Fuel Type</label>
-        </div>
 
         {/* Vehicle Condition Toggle */}
         <div style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
@@ -534,7 +572,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
             <button
               type="button"
               className={`gender-btn ${vehicleCondition === 'new' ? 'active' : ''}`}
-              onClick={() => { setVehicleCondition('new'); setVehicleRegDate(''); }}
+              onClick={() => { setVehicleCondition('new'); setVehicleRegDate(''); setVehicleNumber(''); }}
             >
               🚀 Brand New
             </button>
@@ -548,24 +586,85 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           </div>
         </div>
 
-        {/* Conditional Date Field */}
-        {vehicleCondition === 'old' && (
-          <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
-            <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
-            <label className="floating-label">Registration Date</label>
-          </div>
+        {vehicleCondition && (
+          <>
+            {vehicleCondition === 'old' && (
+              <div className="input-group floating" style={{ textAlign: 'left' }}>
+                <input type="text" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value.toUpperCase())} placeholder=" " className="form-input" />
+                <label className="floating-label">Vehicle Number (e.g. MH12AB1234)</label>
+              </div>
+            )}
+
+            <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+              <select
+                value={vehicleType}
+                onChange={e => setVehicleType(e.target.value)}
+                className="form-input"
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="" disabled>Select Vehicle Type (wheels)</option>
+                {vehicleTypes.map(v => <option key={v} value={v}>{v} Wheeler</option>)}
+              </select>
+              <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Vehicle Type</label>
+            </div>
+
+            <div className="input-group floating" style={{ textAlign: 'left' }}>
+              <input type="text" value={vehicleManufacturer} onChange={e => setVehicleManufacturer(e.target.value)} placeholder=" " className="form-input" />
+              <label className="floating-label">Manufacturer (e.g. Maruti, Honda)</label>
+            </div>
+
+            <div className="input-group floating" style={{ textAlign: 'left' }}>
+              <input type="text" value={vehicleModel} onChange={e => setVehicleModel(e.target.value)} placeholder=" " className="form-input" />
+              <label className="floating-label">Model (e.g. Swift, Activa)</label>
+            </div>
+
+            <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+              <select
+                value={vehicleFuelType}
+                onChange={e => setVehicleFuelType(e.target.value)}
+                className="form-input"
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="" disabled>Select Fuel Type</option>
+                {fuelTypes.map(f => <option key={f} value={f}>{f}</option>)}
+              </select>
+              <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Fuel Type</label>
+            </div>
+
+            {vehicleCondition === 'old' && (
+              <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
+                <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
+                <label className="floating-label">Registration Date</label>
+              </div>
+            )}
+
+            {vehicleCondition === 'new' && (
+              <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
+                <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
+                <label className="floating-label">Expected Delivery Date</label>
+              </div>
+            )}
+
+            <div className="input-group floating" style={{ textAlign: 'left' }}>
+              <input type="text" value={vehiclePincode} onChange={e => setVehiclePincode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder=" " className="form-input" />
+              <label className="floating-label">Pincode</label>
+            </div>
+          </>
         )}
 
-        {vehicleCondition === 'new' && (
-          <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
-            <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
-            <label className="floating-label">Expected Delivery Date</label>
-          </div>
-        )}
-
-        <div className="input-group floating" style={{ textAlign: 'left' }}>
-          <input type="text" value={vehiclePincode} onChange={e => setVehiclePincode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder=" " className="form-input" />
-          <label className="floating-label">Pincode</label>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
+          <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(2)}>← Previous</button>
+          <button className="back-btn" style={{ marginBottom: 0, opacity: isVehicleValid ? 1 : 0.6 }} onClick={() => {
+            if (!vehicleCondition) return toast.error('Please select vehicle condition (New or Old)');
+            if (vehicleCondition === 'old' && !vehicleNumber.trim()) return toast.error('Please enter vehicle number');
+            if (!vehicleType) return toast.error('Please select vehicle type');
+            if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
+            if (!vehicleModel.trim()) return toast.error('Please enter model');
+            if (!vehicleFuelType) return toast.error('Please select fuel type');
+            if (!vehicleRegDate) return toast.error(vehicleCondition === 'new' ? 'Please enter expected delivery date' : 'Please enter registration date');
+            if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
+            setStep(10);
+          }}>Next →</button>
         </div>
       </div>
     );
@@ -701,6 +800,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               annualIncome,
               education,
               smoker,
+              lifeCover,
+              medicalHistory,
               members,
               memberDetails,
               vehicleNumber,
@@ -825,6 +926,8 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         {step === 5 && renderStep5()}
         {step === 6 && renderStep6()}
         {step === 7 && renderStep7()}
+        {step === 14 && renderStep14()}
+        {step === 15 && renderStep15()}
         {step === 8 && renderStep8()}
         {step === 9 && renderStep9()}
         {step === 10 && renderStep10()}

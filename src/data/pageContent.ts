@@ -1169,7 +1169,7 @@ export const bestPlansData = {
       ],
     },
     {
-      id: 'savings', label: 'Best Savings Plans', icon: '💰',
+      id: 'vehicle', label: 'Best Vehicle Plans', icon: '🚗',
       plans: [
         { rank: 1, name: 'HDFC Life Sanchay Fixed Maturity', badge: 'Best Returns', premium: '₹5,000/month', cover: 'Life Cover Included', claimRatio: 'Up to 7.25% IRR', highlight: 'Highest guaranteed returns' },
         { rank: 2, name: 'TATA AIA Diamond Savings', badge: 'Best Brand Trust', premium: '₹4,500/month', cover: 'Life Cover Included', claimRatio: 'Bonus-linked', highlight: '99.01% claim ratio' },

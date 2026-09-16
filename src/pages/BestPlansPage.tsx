@@ -23,7 +23,7 @@ interface BestPlansPageProps {
 }
 
 const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote }) => {
-  const [activeTab, setActiveTab] = useState<'term' | 'health' | 'savings'>('term');
+  const [activeTab, setActiveTab] = useState<'term' | 'health' | 'vehicle'>('term');
   const [plans, setPlans] = useState<BestPlan[]>([]);
   const [loading, setLoading] = useState(true);
 

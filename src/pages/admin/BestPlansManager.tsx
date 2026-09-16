@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { FaPlus, FaEdit, FaTrash, FaStar, FaShieldAlt, FaPiggyBank } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaTrash, FaStar, FaShieldAlt, FaCar } from 'react-icons/fa';
 import './BestPlansManager.css';
 
 interface BestPlan {
@@ -20,13 +20,13 @@ interface BestPlan {
 const BestPlansManager: React.FC = () => {
   const [plans, setPlans] = useState<BestPlan[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState<'term' | 'health' | 'savings'>('term');
+  const [activeCategory, setActiveCategory] = useState<'term' | 'health' | 'vehicle'>('term');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPlan, setEditingPlan] = useState<BestPlan | null>(null);
 
   const [formData, setFormData] = useState({
     category: 'term', rank: 1, name: '', badge: '', premium: '', cover: '',
-    claim_ratio: '', highlight: '', plan_type: 'Individual', insurer_type: 'Private'
+    claim_ratio: '', highlight: '', plan_type: 'Individual/Multi Individual', insurer_type: 'Private'
   });
 
   const fetchPlans = async () => {
@@ -51,11 +51,11 @@ const BestPlansManager: React.FC = () => {
       setFormData({
         category: plan.category, rank: plan.rank, name: plan.name, badge: plan.badge || '',
         premium: plan.premium || '', cover: plan.cover || '', claim_ratio: plan.claim_ratio || '',
-        highlight: plan.highlight || '', plan_type: plan.plan_type || 'Individual', insurer_type: plan.insurer_type || 'Private'
+        highlight: plan.highlight || '', plan_type: plan.plan_type || 'Individual/Multi Individual', insurer_type: plan.insurer_type || 'Private'
       });
     } else {
       setEditingPlan(null);
-      setFormData({ category: activeCategory, rank: plans.length + 1, name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: 'Individual', insurer_type: 'Private' });
+      setFormData({ category: activeCategory, rank: plans.length + 1, name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: 'Individual/Multi Individual', insurer_type: 'Private' });
     }
     setIsModalOpen(true);
   };
@@ -99,7 +99,7 @@ const BestPlansManager: React.FC = () => {
       <div className="bpm-tabs">
         <button className={`bpm-tab ${activeCategory === 'term' ? 'active' : ''}`} onClick={() => setActiveCategory('term')}><FaShieldAlt /> Life Plans</button>
         <button className={`bpm-tab ${activeCategory === 'health' ? 'active' : ''}`} onClick={() => setActiveCategory('health')}><FaStar /> Health Plans</button>
-        <button className={`bpm-tab ${activeCategory === 'savings' ? 'active' : ''}`} onClick={() => setActiveCategory('savings')}><FaPiggyBank /> Savings Plans</button>
+        <button className={`bpm-tab ${activeCategory === 'vehicle' ? 'active' : ''}`} onClick={() => setActiveCategory('vehicle')}><FaCar /> Vehicle Plans</button>
       </div>
 
       <div className="bpm-table-wrapper">
@@ -126,7 +126,7 @@ const BestPlansManager: React.FC = () => {
               <tr key={plan.id}>
                 <td><span className={getRankClass(plan.rank)}>#{plan.rank}</span></td>
                 <td><span style={{ fontWeight: 600, color: '#111827' }}>{plan.name}</span></td>
-                <td><span className="pill pill-blue">{plan.plan_type || 'Individual'}</span></td>
+                <td><span className="pill pill-blue">{plan.plan_type || 'Individual/Multi Individual'}</span></td>
                 <td><span className={`pill ${plan.insurer_type === 'Public' ? 'pill-green' : 'pill-purple'}`}>{plan.insurer_type === 'Public' ? '🏛️' : '🏢'} {plan.insurer_type || 'Private'}</span></td>
                 <td>{plan.badge ? <span className="pill pill-gold">⭐ {plan.badge}</span> : <span style={{ color: '#9ca3af' }}>—</span>}</td>
                 <td style={{ fontWeight: 500 }}>{plan.premium || <span style={{ color: '#9ca3af' }}>—</span>}</td>
@@ -159,16 +159,15 @@ const BestPlansManager: React.FC = () => {
                   <select name="category" value={formData.category} onChange={handleInputChange} required className="bpm-form-control">
                     <option value="term">Life Insurance</option>
                     <option value="health">Health Insurance</option>
-                    <option value="savings">Savings Plans</option>
+                    <option value="vehicle">Vehicle Plans</option>
                   </select>
                 </div>
                 <div className="bpm-form-grid-2">
                   <div className="bpm-form-group">
                     <label>Plan Type</label>
                     <select name="plan_type" value={formData.plan_type} onChange={handleInputChange} className="bpm-form-control">
-                      <option value="Individual">Individual</option>
-                      <option value="Family">Family Plan</option>
-                      <option value="Senior Citizen">Senior Citizen</option>
+                      <option value="Individual/Multi Individual">Individual/Multi Individual</option>
+                      <option value="Family Floater">Family Floater</option>
                     </select>
                   </div>
                   <div className="bpm-form-group">

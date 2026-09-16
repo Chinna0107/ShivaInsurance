@@ -53,7 +53,7 @@ const BookCallModal: React.FC<BookCallModalProps> = ({ isOpen, onClose }) => {
           </div>
           <div className="form-group">
             <label>Phone Number</label>
-            <input type="tel" placeholder="+91 98765 43210" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+            <input type="tel" placeholder="9876543210" required value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} />
           </div>
           <div className="form-group">
             <label>Preferred Time</label>

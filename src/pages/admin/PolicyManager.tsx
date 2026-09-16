@@ -34,7 +34,7 @@ const PolicyManager = () => {
     cover_amount: '',
     pros: '',
     cons: '',
-    plan_type: 'Individual',
+    plan_type: 'Individual/Multi Individual',
     insurer_type: 'Private',
     policy_link: ''
   });
@@ -70,13 +70,13 @@ const PolicyManager = () => {
         cover_amount: policy.cover_amount || '',
         pros: policy.pros || '',
         cons: policy.cons || '',
-        plan_type: policy.plan_type || 'Individual',
+        plan_type: policy.plan_type || 'Individual/Multi Individual',
         insurer_type: policy.insurer_type || 'Private',
         policy_link: policy.policy_link || ''
       });
     } else {
       setEditingPolicy(null);
-      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual', insurer_type: 'Private', policy_link: '' });
+      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual/Multi Individual', insurer_type: 'Private', policy_link: '' });
     }
     setImages([]);
     setPdfFile(null);
@@ -214,7 +214,7 @@ const PolicyManager = () => {
                 <td style={{ padding: '1rem 1.5rem', color: '#4b5563' }}>{policy.provider}</td>
                 <td style={{ padding: '1rem 1.5rem' }}>
                   <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: '#eff6ff', color: '#1d4ed8' }}>
-                    {policy.plan_type || 'Individual'}
+                    {policy.plan_type || 'Individual/Multi Individual'}
                   </span>
                 </td>
                 <td style={{ padding: '1rem 1.5rem' }}>
@@ -358,9 +358,8 @@ const PolicyManager = () => {
                     value={formData.plan_type} onChange={e => setFormData({...formData, plan_type: e.target.value})} required
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
                   >
-                    <option value="Individual">Individual</option>
-                    <option value="Family">Family Plan</option>
-                    <option value="Senior Citizen">Senior Citizen</option>
+                    <option value="Individual/Multi Individual">Individual/Multi Individual</option>
+                    <option value="Family Floater">Family Floater</option>
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>

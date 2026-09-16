@@ -127,17 +127,17 @@ const PremiumRequests: React.FC = () => {
           </div>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>{totalRequests}</p>
         </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)', border: '1px solid #fef3c7' }}>
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)', border: '1px solid #e0e7ff' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#d97706', margin: 0 }}>Pending</h3>
-            <div style={{ backgroundColor: '#fef3c7', padding: '0.5rem', borderRadius: '8px', color: '#d97706' }}><FiClock size={20} /></div>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#4338ca', margin: 0 }}>Pending</h3>
+            <div style={{ backgroundColor: '#e0e7ff', padding: '0.5rem', borderRadius: '8px', color: '#4338ca' }}><FiClock size={20} /></div>
           </div>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>{pendingRequests}</p>
         </div>
-        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)', border: '1px solid #e0e7ff' }}>
+        <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)', border: '1px solid #fef3c7' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#4338ca', margin: 0 }}>Contacted</h3>
-            <div style={{ backgroundColor: '#e0e7ff', padding: '0.5rem', borderRadius: '8px', color: '#4338ca' }}><FiPhoneCall size={20} /></div>
+            <h3 style={{ fontSize: '0.875rem', fontWeight: '600', color: '#d97706', margin: 0 }}>Contacted</h3>
+            <div style={{ backgroundColor: '#fef3c7', padding: '0.5rem', borderRadius: '8px', color: '#d97706' }}><FiPhoneCall size={20} /></div>
           </div>
           <p style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827', margin: 0 }}>{contactedRequests}</p>
         </div>
@@ -175,7 +175,16 @@ const PremiumRequests: React.FC = () => {
                 </tr>
               ) : (
                 requests.map(req => (
-                  <tr key={req.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                  <tr 
+                    key={req.id} 
+                    style={{ 
+                      borderBottom: '1px solid var(--border-color, #e5e7eb)', 
+                      transition: 'background 0.2s',
+                      backgroundColor: req.status === 'Pending' ? '#eff6ff' : 'transparent'
+                    }} 
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#eff6ff' : 'transparent'}
+                  >
                     <td onClick={() => setSelectedRequest(req)} style={{ padding: '1rem 1.5rem', cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
                     <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{new Date(req.created_at).toLocaleDateString()}</td>
                     <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.name}</td>
@@ -198,7 +207,7 @@ const PremiumRequests: React.FC = () => {
                           border: '1px solid var(--border-color, #e5e7eb)',
                           borderRadius: '6px',
                           width: '100%',
-                          minWidth: '150px',
+                          minWidth: '300px',
                           outline: 'none',
                           color: 'var(--text-dark, #1f2937)'
                         }}
@@ -207,8 +216,8 @@ const PremiumRequests: React.FC = () => {
                     <td style={{ padding: '1rem 1.5rem' }}>
                       <span style={{ 
                         padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
-                        backgroundColor: req.status === 'Closed' ? '#f3f4f6' : req.status === 'Contacted' ? '#e0e7ff' : '#fef9c3',
-                        color: req.status === 'Closed' ? '#374151' : req.status === 'Contacted' ? '#4338ca' : '#d97706'
+                        backgroundColor: req.status === 'Closed' ? '#f3f4f6' : req.status === 'Pending' ? '#e0e7ff' : '#fef9c3',
+                        color: req.status === 'Closed' ? '#374151' : req.status === 'Pending' ? '#4338ca' : '#d97706'
                       }}>
                         {req.status}
                       </span>

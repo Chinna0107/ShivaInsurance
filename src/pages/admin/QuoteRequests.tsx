@@ -161,7 +161,16 @@ const QuoteRequests: React.FC = () => {
                 </tr>
               ) : (
                 requests.map(req => (
-                  <tr key={req.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+                  <tr 
+                    key={req.id} 
+                    style={{ 
+                      borderBottom: '1px solid var(--border-color, #e5e7eb)', 
+                      transition: 'background 0.2s',
+                      backgroundColor: req.status === 'Pending' ? '#eff6ff' : 'transparent'
+                    }} 
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#eff6ff' : 'transparent'}
+                  >
                     <td onClick={() => setSelectedRequest(req)} style={{ padding: '1rem 1.5rem', cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
                     <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{new Date(req.created_at).toLocaleDateString()}</td>
                     <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>
@@ -185,7 +194,7 @@ const QuoteRequests: React.FC = () => {
                           border: '1px solid var(--border-color, #e5e7eb)',
                           borderRadius: '6px',
                           width: '100%',
-                          minWidth: '150px',
+                          minWidth: '300px',
                           outline: 'none',
                           color: 'var(--text-dark, #1f2937)'
                         }}

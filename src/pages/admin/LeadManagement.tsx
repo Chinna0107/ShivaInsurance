@@ -23,8 +23,11 @@ interface Lead {
   employment_type?: string;
   annual_income?: string;
   education?: string;
+  life_cover?: string;
   smoker?: string;
+  medical_history?: string;
   members?: string;
+  reminder?: string;
   policy_document_url?: string;
   // Vehicle-specific fields
   vehicle_number?: string;
@@ -114,6 +117,25 @@ const LeadManagement = () => {
     } catch (err) {
       console.error(err);
       toast.error('Failed to update status');
+    }
+  };
+
+  const handleUpdateReminder = async (id: string, reminder: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/${id}/reminder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reminder })
+      });
+      if (res.ok) {
+        setLeads(leads.map(lead => lead.id === id ? { ...lead, reminder } : lead));
+        toast.success('Reminder updated');
+      } else {
+        toast.error('Failed to update reminder');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error updating reminder');
     }
   };
 
@@ -260,6 +282,7 @@ const LeadManagement = () => {
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Name</th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Contact Info</th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Date</th>
+              <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Reminder</th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Status</th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'center' }}>Actions</th>
             </tr>
@@ -274,13 +297,23 @@ const LeadManagement = () => {
                     <div className="skeleton-box" style={{ width: '100px', height: '14px' }}></div>
                   </td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '18px' }}></div></td>
+                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '300px', height: '30px', borderRadius: '6px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '70px', height: '24px', borderRadius: '12px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '180px', height: '28px', margin: '0 auto', display: 'block' }}></div></td>
                 </tr>
               ))
             ) : filteredLeads.length > 0 ? (
               filteredLeads.map((lead) => (
-              <tr key={lead.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
+              <tr 
+                key={lead.id} 
+                style={{ 
+                  borderBottom: '1px solid var(--border-color, #e5e7eb)', 
+                  transition: 'background 0.2s',
+                  backgroundColor: lead.status === 'Pending' ? '#eff6ff' : 'transparent'
+                }} 
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = lead.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = lead.status === 'Pending' ? '#eff6ff' : 'transparent'}
+              >
                 <td 
                   style={{ padding: '1rem 1.5rem', cursor: 'pointer' }}
                   onClick={() => setSelectedLead(lead)}
@@ -306,6 +339,24 @@ const LeadManagement = () => {
                   </div>
                 </td>
                 <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{lead.date}</td>
+                <td style={{ padding: '1rem 1.5rem' }}>
+                  <input
+                    type="text"
+                    defaultValue={lead.reminder || ''}
+                    onBlur={(e) => handleUpdateReminder(lead.id, e.target.value)}
+                    placeholder="Type a reminder..."
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      fontSize: '0.85rem',
+                      border: '1px solid var(--border-color, #e5e7eb)',
+                      borderRadius: '6px',
+                      width: '100%',
+                      minWidth: '300px',
+                      outline: 'none',
+                      color: 'var(--text-dark, #1f2937)'
+                    }}
+                  />
+                </td>
                 <td style={{ padding: '1rem 1.5rem' }}>
                   <span style={{ 
                     padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
@@ -354,7 +405,7 @@ const LeadManagement = () => {
             ))
             ) : (
               <tr>
-                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
+                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
                   No leads found matching your criteria.
                 </td>
               </tr>
@@ -428,8 +479,12 @@ const LeadManagement = () => {
                     <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.gender || 'Not provided'}</div>
                   </div>
                   <div>
-                    <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Smoker/Tobacco User</div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Smoker / Chews Tobacco</div>
                     <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.smoker || 'Not provided'}</div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Medical History</div>
+                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.medical_history || 'Not provided'}</div>
                   </div>
                   <div>
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education</div>
@@ -470,6 +525,12 @@ const LeadManagement = () => {
                         : `${selectedLead.type.charAt(0).toUpperCase() + selectedLead.type.slice(1)} Insurance${selectedLead.specific_plan ? ` (${selectedLead.specific_plan})` : ''}`}
                     </div>
                   </div>
+                  {selectedLead.type === 'life' && selectedLead.life_cover && (
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Life Cover Amount</div>
+                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.life_cover}</div>
+                    </div>
+                  )}
                 </div>
               </div>
               )}
