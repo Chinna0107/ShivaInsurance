@@ -401,7 +401,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
         <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(6)}>← Previous</button>
         <button className="back-btn" style={{ marginBottom: 0, opacity: education ? 1 : 0.6 }} onClick={() => {
-          if (education) { setStep(insuranceType === 'Life' ? 14 : 15); }
+          if (education) { setStep(14); }
         }}>Next →</button>
       </div>
       <p className="step-subtitle">Just answer 4 simple questions to get more accurate quotes</p>
@@ -409,7 +409,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
       <div className="radio-list">
         {eduOptions.map(opt => (
           <label key={opt} className="radio-item">
-            <input type="radio" name="edu" value={opt} checked={education === opt} onChange={() => { setEducation(opt); setTimeout(() => setStep(insuranceType === 'Life' ? 14 : 15), 300); }} />
+            <input type="radio" name="edu" value={opt} checked={education === opt} onChange={() => { setEducation(opt); setTimeout(() => setStep(14), 300); }} />
             <span>{opt}</span>
           </label>
         ))}
@@ -418,9 +418,9 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   );
 
   const renderStep14 = () => {
-    const options = specificPlan === 'Term' 
-      ? ['50 Lakhs', '1 Crore', '2 Crores', '5 Crores', '10 Crores', '50 Crores']
-      : ['10 Lakhs', '1 Crore', 'Unlimited Coverage'];
+    const options = insuranceType === 'Health'
+      ? ['5 Lakhs', '10 Lakhs', '15 Lakhs', '20 Lakhs', '25 Lakhs', '50 Lakhs', '1 Crore','Unlimited']
+      : ['15 Lakhs', '20 Lakhs', '25 Lakhs', '30 Lakhs', '40 Lakhs', '50 Lakhs', '75 Lakhs', '1 Crore', '2 Crores', '5 Crores', '10 Crores', '50 Crores'];
       
     return (
       <div className="step-container list-step">
@@ -431,7 +431,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           }}>Next →</button>
         </div>
         <p className="step-subtitle">Just answer simple questions to get more accurate quotes</p>
-        <h3 className="step-title">Select Life Cover Amount</h3>
+        <h3 className="step-title">{insuranceType === 'Health' ? 'Select Health Cover Amount' : 'Select Life Cover Amount'}</h3>
         <div className="radio-list">
           {options.map(opt => (
             <label key={opt} className="radio-item">
@@ -462,7 +462,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const renderStep15 = () => (
     <div className="step-container list-step" style={{ maxWidth: '600px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(insuranceType === 'Life' ? 14 : 7)}>← Previous</button>
+        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(14)}>← Previous</button>
         <button className="back-btn" style={{ marginBottom: 0, opacity: medicalHistory.length > 0 ? 1 : 0.6 }} onClick={() => {
           if (medicalHistory.length > 0) { setStep(8); }
         }}>Next →</button>

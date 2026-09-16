@@ -490,6 +490,10 @@ const LeadManagement = () => {
                     <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education</div>
                     <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.education || 'Not provided'}</div>
                   </div>
+                  <div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Cover Amount</div>
+                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.life_cover || 'Not provided'}</div>
+                  </div>
                   {(selectedLead.type === 'health' || selectedLead.type === 'life') && selectedLead.members && (
                     <div>
                       <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Members to Insure</div>
