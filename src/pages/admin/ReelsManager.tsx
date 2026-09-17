@@ -14,7 +14,7 @@ const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 function toEmbedUrl(url: string) {
   // Extract reel ID from any instagram reel URL format
-  const match = url.match(/reel\/([A-Za-z0-9_-]+)/);
+  const match = url.match(/reels?\/([A-Za-z0-9_-]+)/);
   return match ? `https://www.instagram.com/reel/${match[1]}/embed/` : '';
 }
 

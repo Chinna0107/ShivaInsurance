@@ -219,7 +219,7 @@ const PolicyManager = () => {
                 </td>
                 <td style={{ padding: '1rem 1.5rem' }}>
                   <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: policy.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: policy.insurer_type === 'Public' ? '#15803d' : '#7e22ce' }}>
-                    {policy.insurer_type === 'Public' ? '🏛️ Public' : '🏢 Private'}
+                    {policy.insurer_type === 'Public' ? '🏛️ Government' : '🏢 Private'}
                   </span>
                 </td>
                 <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
@@ -352,16 +352,18 @@ const PolicyManager = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Plan Type</label>
-                  <select 
-                    value={formData.plan_type} onChange={e => setFormData({...formData, plan_type: e.target.value})} required
-                    style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
-                  >
-                    <option value="Individual/Multi Individual">Individual/Multi Individual</option>
-                    <option value="Family Floater">Family Floater</option>
-                  </select>
-                </div>
+                {formData.type === 'Health' && (
+                  <div style={{ flex: 1 }}>
+                    <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Plan Type</label>
+                    <select 
+                      value={formData.plan_type} onChange={e => setFormData({...formData, plan_type: e.target.value})} required={formData.type === 'Health'}
+                      style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
+                    >
+                      <option value="Individual/Multi Individual">Individual/Multi Individual</option>
+                      <option value="Family Floater">Family Floater</option>
+                    </select>
+                  </div>
+                )}
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Insurer Type</label>
                   <select

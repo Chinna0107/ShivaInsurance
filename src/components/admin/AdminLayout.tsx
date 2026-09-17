@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FiHeart, 
@@ -14,12 +14,44 @@ import {
   FiBriefcase,
   FiVideo
 } from 'react-icons/fi';
-import { useRealTimeLeads } from '../../hooks/useRealTimeLeads';
+import { useRealTimeLeads, leadEventEmitter } from '../../hooks/useRealTimeLeads';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [counts, setCounts] = useState({ health: 0, life: 0, vehicle: 0 });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const [health, life, vehicle] = await Promise.all([
+          fetch(`${API}/api/leads?type=health`).then(res => res.json()),
+          fetch(`${API}/api/leads?type=life`).then(res => res.json()),
+          fetch(`${API}/api/leads?type=vehicle`).then(res => res.json()),
+        ]);
+        setCounts({
+          health: Array.isArray(health) ? health.length : 0,
+          life: Array.isArray(life) ? life.length : 0,
+          vehicle: Array.isArray(vehicle) ? vehicle.length : 0,
+        });
+      } catch (err) {
+        console.error('Failed to fetch lead counts', err);
+      }
+    };
+    fetchCounts();
+
+    const handleNewLeadEvent = (e: any) => {
+      const newLead = e.detail;
+      if (newLead.type === 'health') setCounts(prev => ({ ...prev, health: prev.health + 1 }));
+      if (newLead.type === 'life') setCounts(prev => ({ ...prev, life: prev.life + 1 }));
+      if (newLead.type === 'vehicle') setCounts(prev => ({ ...prev, vehicle: prev.vehicle + 1 }));
+    };
+    
+    leadEventEmitter.addEventListener('new-lead', handleNewLeadEvent);
+    return () => leadEventEmitter.removeEventListener('new-lead', handleNewLeadEvent);
+  }, []);
 
   const searchParams = new URLSearchParams(location.search);
   const typeFilter = searchParams.get('type');
@@ -65,7 +97,13 @@ const AdminLayout = () => {
               borderLeft: isHealthActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
             })}
           >
-            <FiHeart size={20} /> <span className="nav-text">Health</span>
+            <FiHeart size={20} /> 
+            <span className="nav-text" style={{ flex: 1 }}>Health</span>
+            {counts.health > 0 && (
+              <span style={{ background: isHealthActive ? 'var(--primary-color, #2e9f68)' : '#e5e7eb', color: isHealthActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                {counts.health}
+              </span>
+            )}
           </NavLink>
 
           {/* Life Insurance Link */}
@@ -80,7 +118,13 @@ const AdminLayout = () => {
               borderLeft: isLifeActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
             })}
           >
-            <FiShield size={20} /> <span className="nav-text">Life</span>
+            <FiShield size={20} /> 
+            <span className="nav-text" style={{ flex: 1 }}>Life</span>
+            {counts.life > 0 && (
+              <span style={{ background: isLifeActive ? 'var(--primary-color, #2e9f68)' : '#e5e7eb', color: isLifeActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                {counts.life}
+              </span>
+            )}
           </NavLink>
 
           {/* Vehicle Insurance Link */}
@@ -95,7 +139,13 @@ const AdminLayout = () => {
               borderLeft: isVehicleActive ? '4px solid #d97706' : '4px solid transparent'
             })}
           >
-            <FiTruck size={20} /> <span className="nav-text">Vehicle</span>
+            <FiTruck size={20} /> 
+            <span className="nav-text" style={{ flex: 1 }}>Vehicle</span>
+            {counts.vehicle > 0 && (
+              <span style={{ background: isVehicleActive ? '#d97706' : '#e5e7eb', color: isVehicleActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                {counts.vehicle}
+              </span>
+            )}
           </NavLink>
 
           {/* Best Plans Link */}

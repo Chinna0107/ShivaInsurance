@@ -143,7 +143,7 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
                     </td>
                     <td>
                       <span style={{ background: plan.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: plan.insurer_type === 'Public' ? '#15803d' : '#7e22ce', padding: '4px 10px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 600, whiteSpace: 'nowrap' }}>
-                        {plan.insurer_type === 'Public' ? '🏛️ Public' : '🏢 Private'}
+                        {plan.insurer_type === 'Public' ? '🏛️ Government' : '🏢 Private'}
                       </span>
                     </td>
                     <td>{plan.premium}</td>

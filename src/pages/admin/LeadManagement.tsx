@@ -15,7 +15,7 @@ interface Lead {
   phone: string;
   email: string;
   date: string;
-  status: 'Pending' | 'Closed' | 'Agreed';
+  status: 'Pending' | 'Contacted' | 'Agreed' | 'Closed';
   type: 'health' | 'life' | 'vehicle';
   gender?: string;
   specific_plan?: string;
@@ -49,6 +49,7 @@ const LeadManagement = () => {
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [dateFilter, setDateFilter] = useState<string>('');
   const [search, setSearch] = useState('');
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
@@ -97,7 +98,7 @@ const LeadManagement = () => {
     });
   }, [leads, statusFilter, dateFilter, search]);
 
-  const updateStatus = async (id: string, newStatus: 'Pending' | 'Closed' | 'Agreed') => {
+  const updateStatus = async (id: string, newStatus: 'Pending' | 'Contacted' | 'Agreed' | 'Closed') => {
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/leads/${id}/status`, {
         method: 'PUT',
@@ -117,6 +118,43 @@ const LeadManagement = () => {
     } catch (err) {
       console.error(err);
       toast.error('Failed to update status');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this lead?')) return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/${id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        setLeads(leads.filter(l => l.id !== id));
+        setSelectedLeads(prev => prev.filter(selectedId => selectedId !== id));
+        if (selectedLead?.id === id) setSelectedLead(null);
+        toast.success('Lead deleted successfully');
+      } else {
+        toast.error('Failed to delete lead');
+      }
+    } catch (err) {
+      toast.error('Error deleting lead');
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete ${selectedLeads.length} leads?`)) return;
+    try {
+      let successCount = 0;
+      await Promise.all(selectedLeads.map(async (id) => {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/${id}`, { method: 'DELETE' });
+        if (res.ok) successCount++;
+      }));
+      
+      setLeads(leads.filter(l => !selectedLeads.includes(l.id)));
+      setSelectedLeads([]);
+      if (selectedLead && selectedLeads.includes(selectedLead.id)) setSelectedLead(null);
+      toast.success(`Deleted ${successCount} leads`);
+    } catch (err) {
+      toast.error('Error during bulk delete');
     }
   };
 
@@ -210,6 +248,14 @@ const LeadManagement = () => {
           {typeFilter} Insurance Leads
         </h1>
         <div style={{ display: 'flex', gap: '1rem' }}>
+          {selectedLeads.length > 0 && (
+            <button onClick={handleBulkDelete} style={{
+              display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem',
+              backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500
+            }}>
+              Delete Selected ({selectedLeads.length})
+            </button>
+          )}
           <button onClick={exportToPDF} style={{
             display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem',
             backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500
@@ -253,6 +299,7 @@ const LeadManagement = () => {
           >
             <option value="All">All Statuses</option>
             <option value="Pending">Pending</option>
+            <option value="Contacted">Contacted</option>
             <option value="Agreed">Agreed</option>
             <option value="Closed">Closed</option>
           </select>
@@ -279,6 +326,17 @@ const LeadManagement = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
+              <th style={{ padding: '1rem 1.5rem', width: '40px' }}>
+                <input 
+                  type="checkbox" 
+                  checked={filteredLeads.length > 0 && selectedLeads.length === filteredLeads.length}
+                  onChange={(e) => {
+                    if (e.target.checked) setSelectedLeads(filteredLeads.map(l => l.id));
+                    else setSelectedLeads([]);
+                  }}
+                  style={{ cursor: 'pointer' }}
+                />
+              </th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Name</th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Contact Info</th>
               <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Date</th>
@@ -291,6 +349,7 @@ const LeadManagement = () => {
             {loading ? (
               [...Array(5)].map((_, i) => (
                 <tr key={`skeleton-${i}`} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)' }}>
+                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '20px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '120px', height: '20px' }}></div></td>
                   <td style={{ padding: '1rem 1.5rem' }}>
                     <div className="skeleton-box" style={{ width: '150px', height: '16px', marginBottom: '8px' }}></div><br/>
@@ -304,16 +363,27 @@ const LeadManagement = () => {
               ))
             ) : filteredLeads.length > 0 ? (
               filteredLeads.map((lead) => (
-              <tr 
+                <tr 
                 key={lead.id} 
                 style={{ 
                   borderBottom: '1px solid var(--border-color, #e5e7eb)', 
                   transition: 'background 0.2s',
-                  backgroundColor: lead.status === 'Pending' ? '#eff6ff' : 'transparent'
+                  backgroundColor: selectedLeads.includes(lead.id) ? '#f0fdf4' : (lead.status === 'Pending' ? '#eff6ff' : 'transparent')
                 }} 
-                onMouseEnter={e => e.currentTarget.style.backgroundColor = lead.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
-                onMouseLeave={e => e.currentTarget.style.backgroundColor = lead.status === 'Pending' ? '#eff6ff' : 'transparent'}
+                onMouseEnter={e => e.currentTarget.style.backgroundColor = selectedLeads.includes(lead.id) ? '#dcfce7' : (lead.status === 'Pending' ? '#dbeafe' : '#f9fafb')} 
+                onMouseLeave={e => e.currentTarget.style.backgroundColor = selectedLeads.includes(lead.id) ? '#f0fdf4' : (lead.status === 'Pending' ? '#eff6ff' : 'transparent')}
               >
+                <td style={{ padding: '1rem 1.5rem' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={selectedLeads.includes(lead.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedLeads([...selectedLeads, lead.id]);
+                      else setSelectedLeads(selectedLeads.filter(id => id !== lead.id));
+                    }}
+                    style={{ cursor: 'pointer' }}
+                  />
+                </td>
                 <td 
                   style={{ padding: '1rem 1.5rem', cursor: 'pointer' }}
                   onClick={() => setSelectedLead(lead)}
@@ -360,8 +430,8 @@ const LeadManagement = () => {
                 <td style={{ padding: '1rem 1.5rem' }}>
                   <span style={{ 
                     padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
-                    backgroundColor: lead.status === 'Agreed' ? '#dcfce7' : lead.status === 'Closed' ? '#f3f4f6' : '#fef9c3',
-                    color: lead.status === 'Agreed' ? 'var(--success-color, #10b981)' : lead.status === 'Closed' ? '#374151' : '#d97706'
+                    backgroundColor: lead.status === 'Agreed' ? '#dcfce7' : lead.status === 'Contacted' ? '#dbeafe' : lead.status === 'Closed' ? '#f3f4f6' : '#fef9c3',
+                    color: lead.status === 'Agreed' ? 'var(--success-color, #10b981)' : lead.status === 'Contacted' ? '#2563eb' : lead.status === 'Closed' ? '#374151' : '#d97706'
                   }}>
                     {lead.status}
                   </span>
@@ -378,34 +448,44 @@ const LeadManagement = () => {
                     
                     <select
                       value={lead.status}
-                      onChange={(e) => updateStatus(lead.id, e.target.value as 'Pending' | 'Closed' | 'Agreed')}
+                      onChange={(e) => updateStatus(lead.id, e.target.value as 'Pending' | 'Contacted' | 'Agreed' | 'Closed')}
                       style={{
                         padding: '0.4rem 2rem 0.4rem 0.75rem',
                         fontSize: '0.85rem',
                         fontWeight: 500,
                         border: `1px solid ${
                           lead.status === 'Agreed' ? 'var(--success-color, #10b981)' : 
+                          lead.status === 'Contacted' ? '#3b82f6' : 
                           lead.status === 'Closed' ? '#9ca3af' : '#d97706'
                         }`,
                         borderRadius: '6px',
-                        backgroundColor: lead.status === 'Agreed' ? '#f0fdf4' : lead.status === 'Closed' ? '#f9fafb' : '#fefce8',
-                        color: lead.status === 'Agreed' ? 'var(--success-color, #10b981)' : lead.status === 'Closed' ? '#4b5563' : '#d97706',
+                        backgroundColor: lead.status === 'Agreed' ? '#f0fdf4' : lead.status === 'Contacted' ? '#eff6ff' : lead.status === 'Closed' ? '#f9fafb' : '#fefce8',
+                        color: lead.status === 'Agreed' ? 'var(--success-color, #10b981)' : lead.status === 'Contacted' ? '#2563eb' : lead.status === 'Closed' ? '#4b5563' : '#d97706',
                         cursor: 'pointer',
                         outline: 'none',
                         transition: 'all 0.2s'
                       }}
                     >
                       <option value="Pending">Pending</option>
+                      <option value="Contacted">Contacted</option>
                       <option value="Agreed">Agreed</option>
                       <option value="Closed">Closed</option>
                     </select>
+                    
+                    <button 
+                      onClick={() => handleDelete(lead.id)}
+                      title="Delete Lead"
+                      style={{ padding: '0.4rem 0.6rem', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', borderRadius: '6px', background: '#fef2f2', color: '#ef4444', cursor: 'pointer' }}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
                   </div>
                 </td>
               </tr>
             ))
             ) : (
               <tr>
-                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
+                <td colSpan={7} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
                   No leads found matching your criteria.
                 </td>
               </tr>
@@ -584,7 +664,7 @@ const LeadManagement = () => {
               )}
 
               {/* Policy Document Management */}
-              {selectedLead.status === 'Agreed' && (
+              {(selectedLead.status === 'Agreed' || selectedLead.status === 'Closed') && (
                 <div style={{ gridColumn: '1 / -1' }}>
                   <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Policy Document</h4>
                   <div style={{ backgroundColor: '#f9fafb', padding: '1.5rem', borderRadius: '8px', border: '1px dashed #d1d5db', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
@@ -609,7 +689,7 @@ const LeadManagement = () => {
                       </div>
                     ) : (
                       <div style={{ textAlign: 'center' }}>
-                        <p style={{ color: '#4b5563', marginBottom: '1rem', fontSize: '0.9rem' }}>Application is agreed. Please generate and upload the final policy PDF for the customer.</p>
+                        <p style={{ color: '#4b5563', marginBottom: '1rem', fontSize: '0.9rem' }}>Application is {selectedLead.status}. Please generate and upload the final policy PDF for the customer.</p>
                         <label style={{ cursor: 'pointer', padding: '0.75rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--primary-color, #2e9f68)', color: 'white', borderRadius: '6px', fontWeight: 600, transition: 'opacity 0.2s' }}>
                           <FiUpload /> {uploadingPdf ? 'Uploading...' : 'Upload Policy PDF'}
                           <input type="file" accept="application/pdf" style={{ display: 'none' }} disabled={uploadingPdf} onChange={(e) => { if (e.target.files && e.target.files[0]) handleUploadPolicy(selectedLead.id, e.target.files[0]) }} />

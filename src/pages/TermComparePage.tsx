@@ -64,7 +64,7 @@ const TermComparePage: React.FC<TermComparePageProps> = ({ onBookCall }) => {
             )}
             {policy.insurer_type && (
               <span style={{ background: policy.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: policy.insurer_type === 'Public' ? '#15803d' : '#7e22ce', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>
-                {policy.insurer_type === 'Public' ? '🏛️ Public' : '🏢 Private'}
+                {policy.insurer_type === 'Public' ? '🏛️ Government' : '🏢 Private'}
               </span>
             )}
           </div>

@@ -188,7 +188,7 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
                   style={{ padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '0.85rem', outline: 'none', background: 'white', color: '#1f2937' }}
                 >
                   <option value="All">All Insurers</option>
-                  <option value="Public">Public</option>
+                  <option value="Public">Government</option>
                   <option value="Private">Private</option>
                 </select>
               </div>
