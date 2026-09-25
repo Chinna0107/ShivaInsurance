@@ -327,7 +327,11 @@ const PolicyManager = () => {
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Type</label>
                   <select 
-                    value={formData.type} onChange={e => setFormData({...formData, type: e.target.value, provider: ''})} required
+                    value={formData.type} onChange={e => {
+                      const newType = e.target.value;
+                      const defaultPlanType = newType === 'Health' ? 'Individual/Multi Individual' : newType === 'Term' ? 'Self' : 'Nil Dep';
+                      setFormData({...formData, type: newType, provider: '', plan_type: defaultPlanType});
+                    }} required
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
                   >
                     <option value="Health">Health Insurance</option>
@@ -352,18 +356,33 @@ const PolicyManager = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '1rem' }}>
-                {formData.type === 'Health' && (
                   <div style={{ flex: 1 }}>
                     <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Plan Type</label>
                     <select 
-                      value={formData.plan_type} onChange={e => setFormData({...formData, plan_type: e.target.value})} required={formData.type === 'Health'}
+                      value={formData.plan_type} onChange={e => setFormData({...formData, plan_type: e.target.value})} required
                       style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
                     >
-                      <option value="Individual/Multi Individual">Individual/Multi Individual</option>
-                      <option value="Family Floater">Family Floater</option>
+                      {formData.type === 'Health' && (
+                        <>
+                          <option value="Individual/Multi Individual">Individual/Multi Individual</option>
+                          <option value="Family Floater">Family Floater</option>
+                        </>
+                      )}
+                      {formData.type === 'Term' && (
+                        <>
+                          <option value="Self">Self</option>
+                          <option value="Non Self">Non Self</option>
+                        </>
+                      )}
+                      {formData.type === 'Vehicle' && (
+                        <>
+                          <option value="Nil Dep">Nil Dep</option>
+                          <option value="Comprehensive">Comprehensive</option>
+                          <option value="Third Party Insurance">Third Party Insurance</option>
+                        </>
+                      )}
                     </select>
                   </div>
-                )}
                 <div style={{ flex: 1 }}>
                   <label style={{ display: 'block', marginBottom: '0.25rem', fontSize: '0.9rem', color: '#4b5563', fontWeight: 500 }}>Insurer Type</label>
                   <select

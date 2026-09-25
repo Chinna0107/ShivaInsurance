@@ -13,9 +13,7 @@ import BestPlansManager from './pages/admin/BestPlansManager';
 import PolicyDescription from './pages/PolicyDescription';
 import UserDashboard from './pages/UserDashboard';
 import ContactPage from './pages/ContactPage';
-import QuoteRequests from './pages/admin/QuoteRequests';
 import PremiumRequests from './pages/admin/PremiumRequests';
-import EmployeeQuoteRequests from './pages/employee/EmployeeQuoteRequests';
 import EmployeePremiumRequests from './pages/employee/EmployeePremiumRequests';
 import EmployeeLayout from './components/employee/EmployeeLayout';
 import EmployeeLogin from './pages/employee/EmployeeLogin';
@@ -133,7 +131,6 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/dashboard/leads" replace />} />
             <Route path="leads" element={<LeadManagement />} />
-            <Route path="quote-requests" element={<QuoteRequests />} />
             <Route path="premium-requests" element={<PremiumRequests />} />
             <Route path="employees" element={<EmployeeManager />} />
             <Route path="best-plans" element={<BestPlansManager />} />
@@ -151,7 +148,6 @@ function App() {
           <Route path="/employee/dashboard" element={<EmployeeLayout />}>
             <Route index element={<Navigate to="/employee/dashboard/leads?type=health" replace />} />
             <Route path="leads" element={<LeadManagement />} />
-            <Route path="quote-requests" element={<EmployeeQuoteRequests />} />
             <Route path="premium-requests" element={<EmployeePremiumRequests />} />
             <Route path="call-requests" element={<CallRequests />} />
           </Route>

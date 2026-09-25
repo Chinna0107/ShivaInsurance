@@ -32,9 +32,9 @@ const AdminLayout = () => {
           fetch(`${API}/api/leads?type=vehicle`).then(res => res.json()),
         ]);
         setCounts({
-          health: Array.isArray(health) ? health.length : 0,
-          life: Array.isArray(life) ? life.length : 0,
-          vehicle: Array.isArray(vehicle) ? vehicle.length : 0,
+          health: Array.isArray(health) ? health.filter((l: any) => l.status === 'Pending').length : 0,
+          life: Array.isArray(life) ? life.filter((l: any) => l.status === 'Pending').length : 0,
+          vehicle: Array.isArray(vehicle) ? vehicle.filter((l: any) => l.status === 'Pending').length : 0,
         });
       } catch (err) {
         console.error('Failed to fetch lead counts', err);
@@ -44,9 +44,11 @@ const AdminLayout = () => {
 
     const handleNewLeadEvent = (e: any) => {
       const newLead = e.detail;
-      if (newLead.type === 'health') setCounts(prev => ({ ...prev, health: prev.health + 1 }));
-      if (newLead.type === 'life') setCounts(prev => ({ ...prev, life: prev.life + 1 }));
-      if (newLead.type === 'vehicle') setCounts(prev => ({ ...prev, vehicle: prev.vehicle + 1 }));
+      if (newLead.status === 'Pending') {
+        if (newLead.type === 'health') setCounts(prev => ({ ...prev, health: prev.health + 1 }));
+        if (newLead.type === 'life') setCounts(prev => ({ ...prev, life: prev.life + 1 }));
+        if (newLead.type === 'vehicle') setCounts(prev => ({ ...prev, vehicle: prev.vehicle + 1 }));
+      }
     };
     
     leadEventEmitter.addEventListener('new-lead', handleNewLeadEvent);
@@ -163,20 +165,6 @@ const AdminLayout = () => {
             <FiStar size={20} /> <span className="nav-text">Best Plans</span>
           </NavLink>
 
-          {/* Quote Requests Link */}
-          <NavLink 
-            to="/admin/dashboard/quote-requests"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiFileText size={20} /> <span className="nav-text">Quote Requests</span>
-          </NavLink>
 
           {/* Premium Requests Link */}
           <NavLink 

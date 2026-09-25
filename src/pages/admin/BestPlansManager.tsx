@@ -42,7 +42,12 @@ const BestPlansManager: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: name === 'rank' ? parseInt(value) || 0 : value });
+    if (name === 'category') {
+      const defaultPlanType = value === 'health' ? 'Individual/Multi Individual' : value === 'term' ? 'Self' : 'Nil Dep';
+      setFormData({ ...formData, category: value, plan_type: defaultPlanType });
+    } else {
+      setFormData({ ...formData, [name]: name === 'rank' ? parseInt(value) || 0 : value });
+    }
   };
 
   const handleOpenModal = (plan?: BestPlan) => {
@@ -55,7 +60,8 @@ const BestPlansManager: React.FC = () => {
       });
     } else {
       setEditingPlan(null);
-      setFormData({ category: activeCategory, rank: plans.length + 1, name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: 'Individual/Multi Individual', insurer_type: 'Private' });
+      const defaultPlanType = activeCategory === 'health' ? 'Individual/Multi Individual' : activeCategory === 'term' ? 'Self' : 'Nil Dep';
+      setFormData({ category: activeCategory, rank: plans.length + 1, name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: defaultPlanType, insurer_type: 'Private' });
     }
     setIsModalOpen(true);
   };
@@ -166,8 +172,25 @@ const BestPlansManager: React.FC = () => {
                   <div className="bpm-form-group">
                     <label>Plan Type</label>
                     <select name="plan_type" value={formData.plan_type} onChange={handleInputChange} className="bpm-form-control">
-                      <option value="Individual/Multi Individual">Individual/Multi Individual</option>
-                      <option value="Family Floater">Family Floater</option>
+                      {formData.category === 'health' && (
+                        <>
+                          <option value="Individual/Multi Individual">Individual/Multi Individual</option>
+                          <option value="Family Floater">Family Floater</option>
+                        </>
+                      )}
+                      {formData.category === 'term' && (
+                        <>
+                          <option value="Self">Self</option>
+                          <option value="Non Self">Non Self</option>
+                        </>
+                      )}
+                      {formData.category === 'vehicle' && (
+                        <>
+                          <option value="Nil Dep">Nil Dep</option>
+                          <option value="Comprehensive">Comprehensive</option>
+                          <option value="Third Party Insurance">Third Party Insurance</option>
+                        </>
+                      )}
                     </select>
                   </div>
                   <div className="bpm-form-group">
