@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { FiPhoneCall, FiEye, FiCheckCircle, FiX } from 'react-icons/fi';
+import { FiPhoneCall, FiEye, FiX } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { leadEventEmitter } from '../../hooks/useRealTimeLeads';
 

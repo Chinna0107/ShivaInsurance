@@ -226,7 +226,6 @@ const CSS = `
 function MainSite() {
   const navigate = useNavigate();
   const [stage, setStage] = useState<1 | 2>(1);
-  const [formStep, setFormStep] = useState(1);
 
   useEffect(() => {
     const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
@@ -252,7 +251,7 @@ function MainSite() {
         <div className="lf-form-stage">
           <div className="lf-form-wrap">
             <div className="lf-form-body" style={{ borderRadius: '16px' }}>
-              <LeadForm onComplete={handleComplete} onStepChange={setFormStep} />
+              <LeadForm onComplete={handleComplete} />
             </div>
             <div className="lf-trust">
               {['🔒 Secure & Private', '🚫 No Spam', '✅ Free Service', '⭐ 4.9 Rated'].map(t => (
