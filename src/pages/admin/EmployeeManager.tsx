@@ -117,42 +117,40 @@ const EmployeeManager = () => {
             cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 4px 10px rgba(46, 159, 104, 0.3)',
             transition: 'background 0.2s'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-hover, #238052)'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--primary-color, #2e9f68)'}
-        >
+          >
           <FiPlus /> Add Employee
         </button>
       </div>
 
       {/* Table */}
       <div className="table-responsive-wrapper" style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', border: '1px solid var(--border-color, #e5e7eb)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="admin-table">
           <thead>
-            <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
-              <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Name</th>
-              <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Email</th>
-              <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Role</th>
-              <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Department</th>
-              <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'right' }}>Actions</th>
+            <tr>
+              <th >Name</th>
+              <th >Email</th>
+              <th >Role</th>
+              <th >Department</th>
+              <th >Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               [...Array(4)].map((_, i) => (
-                <tr key={`skeleton-${i}`} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)' }}>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '130px', height: '20px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '180px', height: '18px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '24px', borderRadius: '12px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '90px', height: '18px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px', marginLeft: 'auto', display: 'block' }}></div></td>
+                <tr key={`skeleton-${i}`} >
+                  <td ><div className="skeleton-box" style={{ width: '130px', height: '20px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '180px', height: '18px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '80px', height: '24px', borderRadius: '12px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '90px', height: '18px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '80px', height: '20px', marginLeft: 'auto', display: 'block' }}></div></td>
                 </tr>
               ))
             ) : employees.length > 0 ? (
               employees.map((emp) => (
-              <tr key={emp.id} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
-                <td style={{ padding: '1rem 1.5rem', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>{emp.name}</td>
-                <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{emp.email}</td>
-                <td style={{ padding: '1rem 1.5rem' }}>
+              <tr key={emp.id}  >
+                <td >{emp.name}</td>
+                <td >{emp.email}</td>
+                <td >
                   <span style={{ 
                     padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem',
                     backgroundColor: emp.role === 'Manager' ? '#fef3c7' : '#dcfce7',
@@ -162,8 +160,8 @@ const EmployeeManager = () => {
                     {emp.role}
                   </span>
                 </td>
-                <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{emp.department}</td>
-                <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
+                <td >{emp.department}</td>
+                <td >
                   <button 
                     onClick={() => handleOpenModal(emp)}
                     style={{ background: 'none', border: 'none', color: 'var(--primary-color, #2e9f68)', cursor: 'pointer', marginRight: '1rem' }}
@@ -181,7 +179,7 @@ const EmployeeManager = () => {
             ))
             ) : (
               <tr>
-                <td colSpan={5} style={{ padding: '3rem', textAlign: 'center', color: '#9ca3af' }}>
+                <td colSpan={5} >
                   No employees found. Add one to get started!
                 </td>
               </tr>

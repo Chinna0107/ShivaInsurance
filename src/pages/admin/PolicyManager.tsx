@@ -166,34 +166,34 @@ const PolicyManager = () => {
 
       {/* Table */}
       <div className="table-responsive-wrapper" style={{ backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', border: '1px solid var(--border-color, #e5e7eb)' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="admin-table">
           <thead>
-            <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
-              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Plan Name</th>
-              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Type</th>
-              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Provider</th>
-              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Plan Type</th>
-              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase' }}>Insurer</th>
-              <th style={{ padding: '1rem 1.5rem', fontWeight: 600, color: '#4b5563', fontSize: '0.85rem', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+            <tr>
+              <th >Plan Name</th>
+              <th >Type</th>
+              <th >Provider</th>
+              <th >Plan Type</th>
+              <th >Insurer</th>
+              <th >Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)' }}>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '150px', height: '20px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '100px', height: '20px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
-                  <td style={{ padding: '1rem 1.5rem' }}><div className="skeleton-box" style={{ width: '80px', height: '20px', marginLeft: 'auto' }}></div></td>
+                <tr key={i} >
+                  <td ><div className="skeleton-box" style={{ width: '150px', height: '20px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '100px', height: '20px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '80px', height: '20px' }}></div></td>
+                  <td ><div className="skeleton-box" style={{ width: '80px', height: '20px', marginLeft: 'auto' }}></div></td>
                 </tr>
               ))
             ) : policies.length > 0 ? (
               policies.map((policy) => (
               <React.Fragment key={policy.id}>
-              <tr style={{ borderBottom: expandedPolicyId === policy.id ? 'none' : '1px solid var(--border-color, #e5e7eb)' }}>
-                <td style={{ padding: '1rem 1.5rem', fontWeight: 500, color: 'var(--text-dark)' }}>
+              <tr>
+                <td >
                   <div>{policy.name}</div>
                   <button 
                     onClick={() => setExpandedPolicyId(expandedPolicyId === policy.id ? null : policy.id)}
@@ -202,7 +202,7 @@ const PolicyManager = () => {
                     {expandedPolicyId === policy.id ? 'Hide Details' : 'View Details'}
                   </button>
                 </td>
-                <td style={{ padding: '1rem 1.5rem' }}>
+                <td >
                   <span style={{ 
                     padding: '0.25rem 0.75rem', borderRadius: '1rem', fontSize: '0.85rem', fontWeight: 500,
                     backgroundColor: policy.type === 'Health' ? '#ecfdf5' : policy.type === 'Vehicle' ? '#fef3c7' : '#eff6ff',
@@ -211,18 +211,18 @@ const PolicyManager = () => {
                     {policy.type}
                   </span>
                 </td>
-                <td style={{ padding: '1rem 1.5rem', color: '#4b5563' }}>{policy.provider}</td>
-                <td style={{ padding: '1rem 1.5rem' }}>
+                <td >{policy.provider}</td>
+                <td >
                   <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: '#eff6ff', color: '#1d4ed8' }}>
                     {policy.plan_type || 'Individual/Multi Individual'}
                   </span>
                 </td>
-                <td style={{ padding: '1rem 1.5rem' }}>
+                <td >
                   <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: policy.insurer_type === 'Public' ? '#f0fdf4' : '#fdf4ff', color: policy.insurer_type === 'Public' ? '#15803d' : '#7e22ce' }}>
                     {policy.insurer_type === 'Public' ? '🏛️ Government' : '🏢 Private'}
                   </span>
                 </td>
-                <td style={{ padding: '1rem 1.5rem', textAlign: 'right' }}>
+                <td >
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     <button 
                       onClick={() => handleOpenModal(policy)}
@@ -241,8 +241,8 @@ const PolicyManager = () => {
                 </td>
               </tr>
               {expandedPolicyId === policy.id && (
-                <tr key={`${policy.id}-details`} style={{ borderBottom: '1px solid var(--border-color, #e5e7eb)', backgroundColor: '#f9fafb' }}>
-                  <td colSpan={6} style={{ padding: '1.5rem' }}>
+                <tr key={`${policy.id}-details`} >
+                  <td colSpan={6} >
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
                       <div>
                         <h4 style={{ margin: '0 0 0.5rem', fontSize: '0.9rem', color: '#4b5563' }}>Cover Amount</h4>
@@ -289,7 +289,7 @@ const PolicyManager = () => {
               </React.Fragment>
             ))) : (
               <tr>
-                <td colSpan={6} style={{ padding: '3rem', textAlign: 'center', color: '#6b7280' }}>
+                <td colSpan={6} >
                   No policies found. Click "Add Policy" to create one.
                 </td>
               </tr>
@@ -377,7 +377,7 @@ const PolicyManager = () => {
                       {formData.type === 'Vehicle' && (
                         <>
                           <option value="Nil Dep">Nil Dep</option>
-                          <option value="Comprehensive">Comprehensive</option>
+                          <option value="Comprehensive">Full Insurance</option>
                           <option value="Third Party Insurance">Third Party Insurance</option>
                         </>
                       )}

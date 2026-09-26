@@ -251,19 +251,7 @@ function MainSite() {
 
         <div className="lf-form-stage">
           <div className="lf-form-wrap">
-            {formStep === 1 && (
-              <div className="lf-form-header">
-                <div className="lf-form-avatar">
-                  <img src="/advisor-hero.png" alt="Advisor" />
-                </div>
-                <div>
-                  <div className="lf-form-title">Talk to an Expert</div>
-                  <div className="lf-form-sub">Free personalized plan in 24 hrs</div>
-                </div>
-                <div className="lf-live" title="Advisors online now" />
-              </div>
-            )}
-            <div className="lf-form-body" style={{ borderRadius: formStep === 1 ? '0 0 16px 16px' : '16px' }}>
+            <div className="lf-form-body" style={{ borderRadius: '16px' }}>
               <LeadForm onComplete={handleComplete} onStepChange={setFormStep} />
             </div>
             <div className="lf-trust">

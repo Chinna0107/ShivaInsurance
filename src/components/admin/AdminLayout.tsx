@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  FiHeart, 
-  FiShield, 
+import {
+  FiHeart,
+  FiShield,
   FiTruck,
-  FiUsers, 
+  FiUsers,
   FiPhoneCall,
   FiLogOut,
   FiMenu,
@@ -50,7 +50,7 @@ const AdminLayout = () => {
         if (newLead.type === 'vehicle') setCounts(prev => ({ ...prev, vehicle: prev.vehicle + 1 }));
       }
     };
-    
+
     leadEventEmitter.addEventListener('new-lead', handleNewLeadEvent);
     return () => leadEventEmitter.removeEventListener('new-lead', handleNewLeadEvent);
   }, []);
@@ -83,214 +83,214 @@ const AdminLayout = () => {
             <FiMenu />
           </button>
         </div>
-        
+
         <div className={`admin-nav-container ${isMobileMenuOpen ? 'open' : ''}`} style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           <nav className="admin-nav" style={{ flex: 1, padding: '1rem 0', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-          
-          {/* Health Insurance Link */}
-          <NavLink 
-            to="/admin/dashboard/leads?type=health"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={() => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isHealthActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isHealthActive ? 600 : 400,
-              backgroundColor: isHealthActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isHealthActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiHeart size={20} /> 
-            <span className="nav-text" style={{ flex: 1 }}>Health</span>
-            {counts.health > 0 && (
-              <span style={{ background: isHealthActive ? 'var(--primary-color, #2e9f68)' : '#e5e7eb', color: isHealthActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
-                {counts.health}
-              </span>
-            )}
-          </NavLink>
 
-          {/* Life Insurance Link */}
-          <NavLink 
-            to="/admin/dashboard/leads?type=life"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={() => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isLifeActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isLifeActive ? 600 : 400,
-              backgroundColor: isLifeActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isLifeActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiShield size={20} /> 
-            <span className="nav-text" style={{ flex: 1 }}>Life</span>
-            {counts.life > 0 && (
-              <span style={{ background: isLifeActive ? 'var(--primary-color, #2e9f68)' : '#e5e7eb', color: isLifeActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
-                {counts.life}
-              </span>
-            )}
-          </NavLink>
+            {/* Health Insurance Link */}
+            <NavLink
+              to="/admin/dashboard/leads?type=health"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={() => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isHealthActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isHealthActive ? 600 : 400,
+                backgroundColor: isHealthActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isHealthActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiHeart size={20} />
+              <span className="nav-text" style={{ flex: 1 }}>Health</span>
+              {counts.health > 0 && (
+                <span style={{ background: isHealthActive ? 'var(--primary-color, #2e9f68)' : '#e5e7eb', color: isHealthActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  {counts.health}
+                </span>
+              )}
+            </NavLink>
 
-          {/* Vehicle Insurance Link */}
-          <NavLink 
-            to="/admin/dashboard/leads?type=vehicle"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={() => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isVehicleActive ? '#d97706' : '#6b7280', textDecoration: 'none', fontWeight: isVehicleActive ? 600 : 400,
-              backgroundColor: isVehicleActive ? 'rgba(217,119,6,0.1)' : 'transparent',
-              borderLeft: isVehicleActive ? '4px solid #d97706' : '4px solid transparent'
-            })}
-          >
-            <FiTruck size={20} /> 
-            <span className="nav-text" style={{ flex: 1 }}>Vehicle</span>
-            {counts.vehicle > 0 && (
-              <span style={{ background: isVehicleActive ? '#d97706' : '#e5e7eb', color: isVehicleActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
-                {counts.vehicle}
-              </span>
-            )}
-          </NavLink>
+            {/* Life Insurance Link */}
+            <NavLink
+              to="/admin/dashboard/leads?type=life"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={() => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isLifeActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isLifeActive ? 600 : 400,
+                backgroundColor: isLifeActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isLifeActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiShield size={20} />
+              <span className="nav-text" style={{ flex: 1 }}>Life</span>
+              {counts.life > 0 && (
+                <span style={{ background: isLifeActive ? 'var(--primary-color, #2e9f68)' : '#e5e7eb', color: isLifeActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  {counts.life}
+                </span>
+              )}
+            </NavLink>
 
-          {/* Best Plans Link */}
-          <NavLink 
-            to="/admin/dashboard/best-plans"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiStar size={20} /> <span className="nav-text">Best Plans</span>
-          </NavLink>
+            {/* Vehicle Insurance Link */}
+            <NavLink
+              to="/admin/dashboard/leads?type=vehicle"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={() => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isVehicleActive ? '#d97706' : '#6b7280', textDecoration: 'none', fontWeight: isVehicleActive ? 600 : 400,
+                backgroundColor: isVehicleActive ? 'rgba(217,119,6,0.1)' : 'transparent',
+                borderLeft: isVehicleActive ? '4px solid #d97706' : '4px solid transparent'
+              })}
+            >
+              <FiTruck size={20} />
+              <span className="nav-text" style={{ flex: 1 }}>Vehicle</span>
+              {counts.vehicle > 0 && (
+                <span style={{ background: isVehicleActive ? '#d97706' : '#e5e7eb', color: isVehicleActive ? 'white' : '#4b5563', padding: '0.1rem 0.5rem', borderRadius: '999px', fontSize: '0.75rem', fontWeight: 700 }}>
+                  {counts.vehicle}
+                </span>
+              )}
+            </NavLink>
+
+            {/* Best Plans Link */}
+            <NavLink
+              to="/admin/dashboard/best-plans"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiStar size={20} /> <span className="nav-text">Best Plans</span>
+            </NavLink>
 
 
-          {/* Premium Requests Link */}
-          <NavLink 
-            to="/admin/dashboard/premium-requests"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiFileText size={20} /> <span className="nav-text">Premium Requests</span>
-          </NavLink>
+            {/* Premium Requests Link */}
+            <NavLink
+              to="/admin/dashboard/premium-requests"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiFileText size={20} /> <span className="nav-text">Premium Requests</span>
+            </NavLink>
 
-          {/* Manage Policies Link */}
-          <NavLink 
-            to="/admin/dashboard/policies" 
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} 
-            style={({ isActive }) => ({ 
-              display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1.5rem', 
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#4b5563', textDecoration: 'none', 
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent', 
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              transition: 'all 0.2s' 
-            })}
-          >
-            <FiShield size={20} />
-            <span className="nav-text">Manage Policies</span>
-          </NavLink>
+            {/* Manage Policies Link */}
+            <NavLink
+              to="/admin/dashboard/policies"
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem 1.5rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#4b5563', textDecoration: 'none',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent',
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                transition: 'all 0.2s'
+              })}
+            >
+              <FiShield size={20} />
+              <span className="nav-text">Manage Policies</span>
+            </NavLink>
 
-          {/* Call Requests Link */}
-          <NavLink 
-            to="/admin/dashboard/call-requests"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiPhoneCall size={20} /> <span className="nav-text">Call Requests</span>
-          </NavLink>
+            {/* Call Requests Link */}
+            <NavLink
+              to="/admin/dashboard/call-requests"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiPhoneCall size={20} /> <span className="nav-text">Call Requests</span>
+            </NavLink>
 
-          {/* Employee Management Link */}
-          <NavLink 
-            to="/admin/dashboard/employees"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiUsers size={20} /> <span className="nav-text">Employees</span>
-          </NavLink>
+            {/* Employee Management Link */}
+            <NavLink
+              to="/admin/dashboard/employees"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiUsers size={20} /> <span className="nav-text">Employees</span>
+            </NavLink>
 
-          {/* Gallery Link */}
-          <NavLink 
-            to="/admin/dashboard/gallery"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiImage size={20} /> <span className="nav-text">Gallery</span>
-          </NavLink>
+            {/* Gallery Link */}
+            <NavLink
+              to="/admin/dashboard/gallery"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiImage size={20} /> <span className="nav-text">Gallery</span>
+            </NavLink>
 
-          {/* Careers Link */}
-          <NavLink 
-            to="/admin/dashboard/careers"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiBriefcase size={20} /> <span className="nav-text">Careers</span>
-          </NavLink>
+            {/* Careers Link */}
+            <NavLink
+              to="/admin/dashboard/careers"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiBriefcase size={20} /> <span className="nav-text">Careers</span>
+            </NavLink>
 
-          {/* Reels Link */}
-          <NavLink 
-            to="/admin/dashboard/reels"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiVideo size={20} /> <span className="nav-text">Reels</span>
-          </NavLink>
+            {/* Reels Link */}
+            <NavLink
+              to="/admin/dashboard/reels"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiVideo size={20} /> <span className="nav-text">Reels</span>
+            </NavLink>
 
-          {/* Claim Ratios Link */}
-          <NavLink 
-            to="/admin/dashboard/claim-ratios"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-            style={({ isActive }) => ({
-              padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
-              color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
-              backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
-              borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
-            })}
-          >
-            <FiFileText size={20} /> <span className="nav-text">Claim Ratios</span>
-          </NavLink>
+            {/* Claim Ratios Link */}
+            <NavLink
+              to="/admin/dashboard/claim-ratios"
+              className="nav-link"
+              onClick={() => setIsMobileMenuOpen(false)}
+              style={({ isActive }) => ({
+                padding: '0.75rem 1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+                color: isActive ? 'var(--primary-color, #2e9f68)' : '#6b7280', textDecoration: 'none', fontWeight: isActive ? 600 : 400,
+                backgroundColor: isActive ? 'rgba(46, 159, 104, 0.1)' : 'transparent',
+                borderLeft: isActive ? '4px solid var(--primary-color, #2e9f68)' : '4px solid transparent'
+              })}
+            >
+              <FiFileText size={20} /> <span className="nav-text">Claim Ratios</span>
+            </NavLink>
           </nav>
 
           {/* Logout */}
           <div className="logout-container" style={{ padding: '1rem', borderTop: '1px solid var(--border-color, #e5e7eb)' }}>
-            <button 
+            <button
               onClick={handleLogout}
               style={{
                 width: '100%', padding: '0.75rem', display: 'flex', alignItems: 'center', justifySelf: 'flex-end', justifyContent: 'center', gap: '0.5rem',

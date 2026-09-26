@@ -103,9 +103,9 @@ const BestPlansManager: React.FC = () => {
       </div>
 
       <div className="bpm-tabs">
-        <button className={`bpm-tab ${activeCategory === 'term' ? 'active' : ''}`} onClick={() => setActiveCategory('term')}><FaShieldAlt /> Life Plans</button>
-        <button className={`bpm-tab ${activeCategory === 'health' ? 'active' : ''}`} onClick={() => setActiveCategory('health')}><FaStar /> Health Plans</button>
-        <button className={`bpm-tab ${activeCategory === 'vehicle' ? 'active' : ''}`} onClick={() => setActiveCategory('vehicle')}><FaCar /> Vehicle Plans</button>
+        <button className={`bpm-tab ${activeCategory === 'term' ? 'active' : ''}`} onClick={() => setActiveCategory('term')}><FaShieldAlt /> Life Insurance</button>
+        <button className={`bpm-tab ${activeCategory === 'health' ? 'active' : ''}`} onClick={() => setActiveCategory('health')}><FaStar /> Health Insurance</button>
+        <button className={`bpm-tab ${activeCategory === 'vehicle' ? 'active' : ''}`} onClick={() => setActiveCategory('vehicle')}><FaCar /> Vehicle Insurance</button>
       </div>
 
       <div className="bpm-table-wrapper">
@@ -114,7 +114,7 @@ const BestPlansManager: React.FC = () => {
             <tr>
               <th>Rank</th><th>Product Name</th><th>Plan Type</th><th>Insurer</th>
               <th>Badge</th><th>Premium</th><th>Cover</th><th>Claim Metric</th><th>Highlight</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
+              <th >Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -135,9 +135,9 @@ const BestPlansManager: React.FC = () => {
                 <td><span className="pill pill-blue">{plan.plan_type || 'Individual/Multi Individual'}</span></td>
                 <td><span className={`pill ${plan.insurer_type === 'Public' ? 'pill-green' : 'pill-purple'}`}>{plan.insurer_type === 'Public' ? '🏛️' : '🏢'} {plan.insurer_type || 'Private'}</span></td>
                 <td>{plan.badge ? <span className="pill pill-gold">⭐ {plan.badge}</span> : <span style={{ color: '#9ca3af' }}>—</span>}</td>
-                <td style={{ fontWeight: 500 }}>{plan.premium || <span style={{ color: '#9ca3af' }}>—</span>}</td>
+                <td >{plan.premium || <span style={{ color: '#9ca3af' }}>—</span>}</td>
                 <td>{plan.cover || <span style={{ color: '#9ca3af' }}>—</span>}</td>
-                <td style={{ fontWeight: 700, color: '#2e9f68' }}>{plan.claim_ratio || '—'}</td>
+                <td >{plan.claim_ratio || '—'}</td>
                 <td><div style={{ maxWidth: '160px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', color: '#6b7280', fontSize: '0.85rem' }}>{plan.highlight || '—'}</div></td>
                 <td>
                   <div className="bpm-actions">
@@ -187,7 +187,7 @@ const BestPlansManager: React.FC = () => {
                       {formData.category === 'vehicle' && (
                         <>
                           <option value="Nil Dep">Nil Dep</option>
-                          <option value="Comprehensive">Comprehensive</option>
+                          <option value="Comprehensive">Full Insurance</option>
                           <option value="Third Party Insurance">Third Party Insurance</option>
                         </>
                       )}

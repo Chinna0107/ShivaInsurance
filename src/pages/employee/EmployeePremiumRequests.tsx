@@ -154,48 +154,42 @@ const EmployeePremiumRequests: React.FC = () => {
         {loading ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}>Loading requests...</div>
         ) : (
-          <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', whiteSpace: 'nowrap' }}>
+          <table className="admin-table">
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>ID</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Date</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Name</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Email</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Phone Number</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Policy Name</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Reminder</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Status</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'center' }}>Actions</th>
+              <tr>
+                <th >ID</th>
+                <th >Date</th>
+                <th >Name</th>
+                <th >Email</th>
+                <th >Phone Number</th>
+                <th >Policy Name</th>
+                <th >Reminder</th>
+                <th >Status</th>
+                <th >Actions</th>
               </tr>
             </thead>
             <tbody>
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>No premium requests found.</td>
+                  <td colSpan={8} >No premium requests found.</td>
                 </tr>
               ) : (
                 requests.map(req => (
                   <tr 
                     key={req.id} 
-                    style={{ 
-                      borderBottom: '1px solid var(--border-color, #e5e7eb)', 
-                      transition: 'background 0.2s',
-                      backgroundColor: req.status === 'Pending' ? '#eff6ff' : 'transparent'
-                    }} 
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#eff6ff' : 'transparent'}
-                  >
+                     
+                    >
                     <td onClick={() => setSelectedRequest(req)} style={{ padding: '1rem 1.5rem', cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.name}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.email}</td>
-                    <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>
+                    <td >{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td >{req.name}</td>
+                    <td >{req.email}</td>
+                    <td >
                       <a href={`tel:${req.phone}`} style={{ color: 'var(--primary-color, #2e9f68)', textDecoration: 'none' }}>
                         {req.phone}
                       </a>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
+                    <td >
                       <input
                         type="text"
                         defaultValue={req.reminder || ''}
@@ -213,7 +207,7 @@ const EmployeePremiumRequests: React.FC = () => {
                         }}
                       />
                     </td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >
                       <span style={{ 
                         padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
                         backgroundColor: req.status === 'Closed' ? '#f3f4f6' : req.status === 'Pending' ? '#e0e7ff' : '#fef9c3',
@@ -222,7 +216,7 @@ const EmployeePremiumRequests: React.FC = () => {
                         {req.status}
                       </span>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >
                       <div className="action-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
                         <button 
                           className="btn btn-outline" 

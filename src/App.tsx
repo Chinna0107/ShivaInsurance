@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import './admin.css';
 import { useEffect, useState, useRef } from 'react';
 import MainSite from './MainSite';
 import RequireLeadForm from './components/RequireLeadForm';

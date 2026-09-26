@@ -52,8 +52,36 @@ const PremiumRequests: React.FC = () => {
   }, []);
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
+    if (['health', 'life', 'vehicle'].includes(newStatus)) {
+      const reqDetails = requests.find(r => r.id === id);
+      if (!reqDetails) return;
+      try {
+        const leadRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: reqDetails.name,
+            phone: reqDetails.phone,
+            email: reqDetails.email,
+            date: new Date().toISOString().split('T')[0],
+            type: newStatus,
+            status: 'Pending'
+          })
+        });
+        if (leadRes.ok) {
+          toast.success(`Pushed to ${newStatus} leads!`);
+        } else {
+          toast.error('Failed to push to leads');
+          return;
+        }
+      } catch (err) {
+        toast.error('Error pushing to leads');
+        return;
+      }
+    }
+
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/premium-requests/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/premium-requests/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -67,6 +95,24 @@ const PremiumRequests: React.FC = () => {
       }
     } catch (error) {
       toast.error('An error occurred');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this premium request?')) return;
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/premium-requests/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        toast.success('Request deleted successfully');
+        setRequests(requests.filter(req => req.id !== id));
+      } else {
+        toast.error('Failed to delete request');
+      }
+    } catch (error) {
+      toast.error('An error occurred while deleting');
     }
   };
 
@@ -154,81 +200,62 @@ const PremiumRequests: React.FC = () => {
         {loading ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}>Loading requests...</div>
         ) : (
-          <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', whiteSpace: 'nowrap' }}>
+          <table className="admin-table">
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>ID</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Date</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Name</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Email</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Phone Number</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Policy Name</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Reminder</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Status</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'center' }}>Actions</th>
+              <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+                <th>Policy Name</th>
+                <th>Reminder</th>
+                <th>Status</th>
+                <th >Actions</th>
               </tr>
             </thead>
             <tbody>
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={8} style={{ textAlign: 'center', padding: '2rem' }}>No premium requests found.</td>
+                  <td colSpan={8} >No premium requests found.</td>
                 </tr>
               ) : (
                 requests.map(req => (
-                  <tr 
-                    key={req.id} 
-                    style={{ 
-                      borderBottom: '1px solid var(--border-color, #e5e7eb)', 
-                      transition: 'background 0.2s',
-                      backgroundColor: req.status === 'Pending' ? '#eff6ff' : 'transparent'
-                    }} 
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#eff6ff' : 'transparent'}
-                  >
-                    <td onClick={() => setSelectedRequest(req)} style={{ padding: '1rem 1.5rem', cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.name}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.email}</td>
-                    <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>
+                  <tr key={req.id}>
+                    <td onClick={() => setSelectedRequest(req)} style={{ cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
+                    <td >{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td >{req.name}</td>
+                    <td >{req.email}</td>
+                    <td >
                       <a href={`tel:${req.phone}`} style={{ color: 'var(--primary-color, #2e9f68)', textDecoration: 'none' }}>
                         {req.phone}
                       </a>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
+                    <td>
                       <input
                         type="text"
                         defaultValue={req.reminder || ''}
                         onBlur={(e) => handleUpdateReminder(req.id, e.target.value)}
                         placeholder="Type a reminder..."
-                        style={{
-                          padding: '0.4rem 0.75rem',
-                          fontSize: '0.85rem',
-                          border: '1px solid var(--border-color, #e5e7eb)',
-                          borderRadius: '6px',
-                          width: '100%',
-                          minWidth: '300px',
-                          outline: 'none',
-                          color: 'var(--text-dark, #1f2937)'
-                        }}
+                        className="admin-reminder-input"
                       />
                     </td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td>
                       <span style={{ 
                         padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
-                        backgroundColor: req.status === 'Closed' ? '#f3f4f6' : req.status === 'Pending' ? '#e0e7ff' : '#fef9c3',
-                        color: req.status === 'Closed' ? '#374151' : req.status === 'Pending' ? '#4338ca' : '#d97706'
+                        backgroundColor: req.status === 'Closed' ? '#f3f4f6' : req.status === 'Pending' ? '#e0e7ff' : ['health', 'life', 'vehicle'].includes(req.status) ? '#dcfce7' : '#fef9c3',
+                        color: req.status === 'Closed' ? '#374151' : req.status === 'Pending' ? '#4338ca' : ['health', 'life', 'vehicle'].includes(req.status) ? '#10b981' : '#d97706'
                       }}>
                         {req.status}
                       </span>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
-                      <div className="action-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
+                    <td>
+                      <div className="admin-actions-container" style={{ justifyContent: 'center' }}>
                         <button 
-                          className="btn btn-outline" 
                           onClick={() => setSelectedRequest(req)}
                           title="View Full Details"
-                          style={{ padding: '0.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '6px', color: 'var(--primary-color, #2e9f68)', borderColor: 'var(--primary-color, #2e9f68)' }}
+                          className="admin-btn-view"
                         >
                           <FiEye size={16} />
                         </button>
@@ -248,6 +275,15 @@ const PremiumRequests: React.FC = () => {
                             onClick={() => handleUpdateStatus(req.id, 'Closed')}
                           >
                             <FiCheckCircle size={14} /> Close
+                          </button>
+                        )}
+                        {(req.status === 'Pending' || req.status === 'Contacted') && (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDelete(req.id); }}
+                            title="Delete Request"
+                            className="admin-btn-delete"
+                          >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                           </button>
                         )}
                       </div>
@@ -345,7 +381,7 @@ const PremiumRequests: React.FC = () => {
               <div style={{ gridColumn: '1 / -1', marginTop: '1rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border-color, #e5e7eb)' }}>
                 <h4 style={{ margin: '0 0 0.75rem', color: '#1f2937', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Update Status</h4>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                  {['Pending', 'Contacted', 'Closed'].map((status) => (
+                  {['Pending', 'Contacted', 'Closed', 'health', 'life', 'vehicle'].map((status) => (
                     <button
                       key={status}
                       onClick={() => handleUpdateStatus(selectedRequest.id, status)}
@@ -355,14 +391,15 @@ const PremiumRequests: React.FC = () => {
                         border: '1px solid',
                         fontWeight: 500,
                         cursor: selectedRequest.status === status ? 'default' : 'pointer',
-                        borderColor: selectedRequest.status === status ? 'var(--primary-color, #2e9f68)' : '#e5e7eb',
-                        backgroundColor: selectedRequest.status === status ? 'rgba(46, 159, 104, 0.1)' : 'white',
-                        color: selectedRequest.status === status ? 'var(--primary-color, #2e9f68)' : '#4b5563',
-                        transition: 'all 0.2s'
+                        borderColor: selectedRequest.status === status ? (['health', 'life', 'vehicle'].includes(status) ? '#10b981' : 'var(--primary-color, #2e9f68)') : '#e5e7eb',
+                        backgroundColor: selectedRequest.status === status ? (['health', 'life', 'vehicle'].includes(status) ? '#dcfce7' : 'rgba(46, 159, 104, 0.1)') : 'white',
+                        color: selectedRequest.status === status ? (['health', 'life', 'vehicle'].includes(status) ? '#10b981' : 'var(--primary-color, #2e9f68)') : '#4b5563',
+                        transition: 'all 0.2s',
+                        textTransform: ['health', 'life', 'vehicle'].includes(status) ? 'capitalize' : 'none'
                       }}
                       disabled={selectedRequest.status === status}
                     >
-                      {status}
+                      {['health', 'life', 'vehicle'].includes(status) ? `Push to ${status}` : status}
                     </button>
                   ))}
                 </div>

@@ -103,42 +103,42 @@ const CareersManager = () => {
       </div>
 
       <div style={{ backgroundColor: 'white', borderRadius: '12px', border: '1px solid #e5e7eb', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <table className="admin-table">
           <thead>
-            <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
+            <tr>
               {['Job Title', 'Department', 'Location', 'Type', 'Status', 'Actions'].map(h => (
-                <th key={h} style={{ padding: '1rem 1.25rem', textAlign: h === 'Actions' ? 'right' : 'left', fontSize: '0.8rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase' }}>{h}</th>
+                <th key={h} >{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {loading ? (
               Array.from({ length: 4 }).map((_, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid #f3f4f6' }}>
+                <tr key={i} >
                   {Array.from({ length: 6 }).map((_, j) => (
-                    <td key={j} style={{ padding: '1rem 1.25rem' }}><div className="skeleton-box" style={{ height: '18px', width: j === 5 ? '60px' : '100px', marginLeft: j === 5 ? 'auto' : 0 }} /></td>
+                    <td key={j} ><div className="skeleton-box" style={{ height: '18px', width: j === 5 ? '60px' : '100px', marginLeft: j === 5 ? 'auto' : 0 }} /></td>
                   ))}
                 </tr>
               ))
             ) : jobs.length === 0 ? (
-              <tr><td colSpan={6} style={{ padding: '4rem', textAlign: 'center', color: '#9ca3af' }}>No jobs posted yet. Click "Add Job" to create one.</td></tr>
+              <tr><td colSpan={6} >No jobs posted yet. Click "Add Job" to create one.</td></tr>
             ) : jobs.map(job => (
-              <tr key={job.id} style={{ borderBottom: '1px solid #f3f4f6' }}>
-                <td style={{ padding: '1rem 1.25rem' }}>
+              <tr key={job.id} >
+                <td >
                   <div style={{ fontWeight: 600, color: '#1f2937' }}>{job.title}</div>
                   <div style={{ fontSize: '0.8rem', color: '#9ca3af', marginTop: '2px' }}>{job.experience}</div>
                 </td>
-                <td style={{ padding: '1rem 1.25rem', color: '#4b5563' }}>{job.department}</td>
-                <td style={{ padding: '1rem 1.25rem', color: '#4b5563' }}>{job.location}</td>
-                <td style={{ padding: '1rem 1.25rem' }}>
+                <td >{job.department}</td>
+                <td >{job.location}</td>
+                <td >
                   <span style={{ padding: '0.2rem 0.7rem', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600, background: typeColors[job.type] || '#f3f4f6', color: '#374151' }}>{job.type}</span>
                 </td>
-                <td style={{ padding: '1rem 1.25rem' }}>
+                <td >
                   <span style={{ padding: '0.2rem 0.7rem', borderRadius: '999px', fontSize: '0.78rem', fontWeight: 600, background: job.is_active ? '#dcfce7' : '#fee2e2', color: job.is_active ? '#166534' : '#991b1b' }}>
                     {job.is_active ? 'Active' : 'Closed'}
                   </span>
                 </td>
-                <td style={{ padding: '1rem 1.25rem', textAlign: 'right' }}>
+                <td >
                   <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
                     <button onClick={() => openModal(job)} style={{ padding: '0.45rem', border: '1px solid #e5e7eb', borderRadius: '6px', background: 'white', color: '#4b5563', cursor: 'pointer' }}><FiEdit2 size={15} /></button>
                     <button onClick={() => handleDelete(job.id)} disabled={deletingId === job.id} style={{ padding: '0.45rem', border: '1px solid #fee2e2', borderRadius: '6px', background: '#fef2f2', color: '#ef4444', cursor: 'pointer', opacity: deletingId === job.id ? 0.5 : 1 }}>

@@ -101,9 +101,7 @@ const AdminLogin = () => {
               alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginTop: '0.5rem',
               boxShadow: '0 4px 15px rgba(46, 159, 104, 0.3)', transition: 'background 0.2s'
             }}
-            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = 'var(--primary-hover, #238052)')}
-            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = 'var(--primary-color, #2e9f68)')}
-          >
+            >
             {loading ? 'Signing in...' : <>Sign In <FiArrowRight /></>}
           </button>
         </form>

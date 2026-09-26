@@ -139,50 +139,44 @@ const QuoteRequests: React.FC = () => {
         {loading ? (
           <div style={{ padding: '2rem', textAlign: 'center' }}>Loading requests...</div>
         ) : (
-          <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', whiteSpace: 'nowrap' }}>
+          <table className="admin-table">
             <thead>
-              <tr style={{ backgroundColor: '#f9fafb', borderBottom: '1px solid var(--border-color, #e5e7eb)', textAlign: 'left' }}>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>ID</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Date</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Phone Number</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Policy Name</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Age</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Gender</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Cover Needed</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Reminder</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600 }}>Status</th>
-                <th style={{ padding: '1rem 1.5rem', color: '#6b7280', fontWeight: 600, textAlign: 'center' }}>Actions</th>
+              <tr>
+                <th >ID</th>
+                <th >Date</th>
+                <th >Phone Number</th>
+                <th >Policy Name</th>
+                <th >Age</th>
+                <th >Gender</th>
+                <th >Cover Needed</th>
+                <th >Reminder</th>
+                <th >Status</th>
+                <th >Actions</th>
               </tr>
             </thead>
             <tbody>
               {requests.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: 'center', padding: '2rem' }}>No quote requests found.</td>
+                  <td colSpan={10} >No quote requests found.</td>
                 </tr>
               ) : (
                 requests.map(req => (
                   <tr 
                     key={req.id} 
-                    style={{ 
-                      borderBottom: '1px solid var(--border-color, #e5e7eb)', 
-                      transition: 'background 0.2s',
-                      backgroundColor: req.status === 'Pending' ? '#eff6ff' : 'transparent'
-                    }} 
-                    onMouseEnter={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#dbeafe' : '#f9fafb'} 
-                    onMouseLeave={e => e.currentTarget.style.backgroundColor = req.status === 'Pending' ? '#eff6ff' : 'transparent'}
-                  >
+                     
+                    >
                     <td onClick={() => setSelectedRequest(req)} style={{ padding: '1rem 1.5rem', cursor: 'pointer', fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>#{req.id}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: '#6b7280' }}>{new Date(req.created_at).toLocaleDateString()}</td>
-                    <td style={{ padding: '1rem 1.5rem', fontWeight: 'bold' }}>
+                    <td >{new Date(req.created_at).toLocaleDateString()}</td>
+                    <td >
                       <a href={`tel:${req.phone}`} style={{ color: 'var(--primary-color, #2e9f68)', textDecoration: 'none' }}>
                         {req.phone}
                       </a>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.age} Years</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)', textTransform: 'capitalize' }}>{req.gender}</td>
-                    <td style={{ padding: '1rem 1.5rem', color: 'var(--text-dark, #1f2937)' }}>{req.cover_amount}</td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >{req.policy_name || <span style={{ color: '#9ca3af' }}>N/A</span>}</td>
+                    <td >{req.age} Years</td>
+                    <td >{req.gender}</td>
+                    <td >{req.cover_amount}</td>
+                    <td >
                       <input
                         type="text"
                         defaultValue={req.reminder || ''}
@@ -200,7 +194,7 @@ const QuoteRequests: React.FC = () => {
                         }}
                       />
                     </td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >
                       <span style={{ 
                         padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.85rem', fontWeight: 500,
                         backgroundColor: req.status === 'Closed' ? '#f3f4f6' : req.status === 'Contacted' ? '#e0e7ff' : '#fef9c3',
@@ -209,7 +203,7 @@ const QuoteRequests: React.FC = () => {
                         {req.status}
                       </span>
                     </td>
-                    <td style={{ padding: '1rem 1.5rem' }}>
+                    <td >
                       <div className="action-buttons" style={{ display: 'flex', gap: '0.5rem' }}>
                         <button 
                           className="btn btn-outline" 
