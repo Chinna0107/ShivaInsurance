@@ -61,11 +61,13 @@
   margin-bottom: 1.5rem;
   letter-spacing: -0.03em;
   color: #111827;
+  min-height: 150px; /* Prevent layout shift on mobile */
 }
 
 @media (min-width: 768px) {
   .hero-title {
     font-size: 4.5rem;
+    min-height: 220px; /* Prevent layout shift on desktop */
   }
 }
 

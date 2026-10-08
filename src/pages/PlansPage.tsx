@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 interface Policy {
@@ -88,9 +88,10 @@ const config = {
 
 const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGetQuote }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterPlanType, setFilterPlanType] = useState<string>('All');
+  const [filterPlanType, setFilterPlanType] = useState<string>(searchParams.get('plan_type') || 'All');
   const [filterInsurerType, setFilterInsurerType] = useState<string>('All');
   const c = config[type];
 
@@ -146,8 +147,97 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
           </div>
         </div>
       </div>
+      <div style={{ maxWidth: '1250px', margin: '0 auto', padding: '3rem 1.5rem', display: 'flex', gap: '2rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
 
-      <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+        {/* Sidebar */}
+        <aside style={{ width: '100%', maxWidth: '280px', flexShrink: 0, background: 'white', padding: '1.5rem', borderRadius: '16px', boxShadow: '0 2px 12px rgba(0,0,0,0.05)', border: '1px solid #e5e7eb' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#1f2937', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            {type} Categories
+          </h3>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            {type === 'Term' && (
+              <>
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Term Plans</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {['Non-Return of Premium', 'Return of Premium', 'Term + Investment'].map(item => (
+                      <button key={item} onClick={() => setFilterPlanType(item)} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: filterPlanType === item ? c.accent : '#374151', padding: '0.4rem 0.5rem', borderRadius: '6px', backgroundColor: filterPlanType === item ? c.accentLight : 'transparent', transition: 'all 0.2s' }}>
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Savings - Guaranteed</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {['Child Education Plan', 'Children Marriage Plan', 'Money Back Plans', 'Retirement Plans'].map(item => (
+                      <button key={item} onClick={() => setFilterPlanType(item)} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: filterPlanType === item ? c.accent : '#374151', padding: '0.4rem 0.5rem', borderRadius: '6px', backgroundColor: filterPlanType === item ? c.accentLight : 'transparent', transition: 'all 0.2s' }}>
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Non-Guaranteed Plans</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {['Money Back Plans (Non-Guaranteed)'].map(item => (
+                      <button key={item} onClick={() => setFilterPlanType(item)} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: filterPlanType === item ? c.accent : '#374151', padding: '0.4rem 0.5rem', borderRadius: '6px', backgroundColor: filterPlanType === item ? c.accentLight : 'transparent', transition: 'all 0.2s' }}>
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Market Linked Plans</h4>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {['Long-Term Investment Plan'].map(item => (
+                      <button key={item} onClick={() => setFilterPlanType(item)} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: filterPlanType === item ? c.accent : '#374151', padding: '0.4rem 0.5rem', borderRadius: '6px', backgroundColor: filterPlanType === item ? c.accentLight : 'transparent', transition: 'all 0.2s' }}>
+                        {item}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {type === 'Health' && (
+              <div>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Health Categories</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {['Family Floater', 'Multi Individual', 'Individual', 'Maternity Plan'].map(item => (
+                    <button key={item} onClick={() => setFilterPlanType(item)} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: filterPlanType === item ? c.accent : '#374151', padding: '0.4rem 0.5rem', borderRadius: '6px', backgroundColor: filterPlanType === item ? c.accentLight : 'transparent', transition: 'all 0.2s' }}>
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {type === 'Vehicle' && (
+              <div>
+                <h4 style={{ fontSize: '0.85rem', fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', marginBottom: '0.75rem' }}>Vehicle Categories</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  {['Nil Dep', 'Comprehensive / Full Insurance', 'Third Party Insurance'].map(item => (
+                    <button key={item} onClick={() => setFilterPlanType(item)} style={{ textAlign: 'left', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500, color: filterPlanType === item ? c.accent : '#374151', padding: '0.4rem 0.5rem', borderRadius: '6px', backgroundColor: filterPlanType === item ? c.accentLight : 'transparent', transition: 'all 0.2s' }}>
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            <button 
+              onClick={() => setFilterPlanType('All')} 
+              style={{ textAlign: 'left', background: 'none', border: '1px solid #e5e7eb', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, color: filterPlanType === 'All' ? c.accent : '#6b7280', padding: '0.6rem', borderRadius: '8px', marginTop: '1rem', backgroundColor: filterPlanType === 'All' ? c.accentLight : 'white' }}
+            >
+              Clear Category Filter
+            </button>
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <div style={{ flex: 1, minWidth: '0' }}>
 
         {/* Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '3rem' }}>
@@ -167,19 +257,6 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
           
           {!loading && policies.length > 0 && (
             <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4b5563' }}>Plan Type:</label>
-                <select 
-                  value={filterPlanType} 
-                  onChange={e => setFilterPlanType(e.target.value)}
-                  style={{ padding: '0.4rem 0.8rem', borderRadius: '6px', border: '1px solid #e5e7eb', fontSize: '0.85rem', outline: 'none', background: 'white', color: '#1f2937' }}
-                >
-                  <option value="All">All Types</option>
-                  <option value="Individual">Individual</option>
-                  <option value="Family">Family Plan</option>
-                  <option value="Senior Citizen">Senior Citizen</option>
-                </select>
-              </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#4b5563' }}>Insurer:</label>
                 <select 
@@ -295,15 +372,26 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
                     <div style={{ display: 'flex', gap: '0.75rem', marginTop: 'auto', paddingTop: '0.5rem' }}>
                       <button
                         onClick={() => navigate(`/policy/${policy.id}`)}
-                        style={{ flex: 1, padding: '0.7rem', background: c.accent, color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem' }}
+                        style={{ flex: 1, padding: '0.7rem', background: c.accent, color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem', transition: 'opacity 0.2s' }}
+                        onMouseEnter={e => (e.currentTarget.style.opacity = '0.9')}
+                        onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
                       >
                         View Details
                       </button>
                       <button
-                        onClick={() => onGetQuote(policy.name)}
-                        style={{ flex: 1, padding: '0.7rem', background: 'white', color: c.accent, border: `1px solid ${c.accent}`, borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem' }}
+                        onClick={() => {
+                          const pdfUrl = (policy as any).pdf_url;
+                          if (pdfUrl) {
+                            window.open(pdfUrl, '_blank');
+                          } else {
+                            toast('Brochure not available', { icon: '📄' });
+                          }
+                        }}
+                        style={{ flex: 1, padding: '0.7rem', background: 'white', color: c.accent, border: `1px solid ${c.accent}`, borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '0.88rem', transition: 'background 0.2s' }}
+                        onMouseEnter={e => (e.currentTarget.style.background = c.accentLight)}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'white')}
                       >
-                        Get Quote
+                        📄 Brochure
                       </button>
                     </div>
                   </div>
@@ -328,6 +416,7 @@ const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGet
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

@@ -1,939 +1,837 @@
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import toast from 'react-hot-toast';
 import './LeadForm.css';
+import { Shield, Heart, Car, User, Mail, Phone, Calendar, Hash, Factory, CarFront, FileText, MapPin, Briefcase, GraduationCap, PiggyBank, TrendingUp } from 'lucide-react';
+
 
 interface LeadFormProps {
   onComplete?: () => void;
   onStepChange?: (step: number) => void;
 }
 
-function getInitialState<T>(key: string, defaultValue: T): T {
-  try {
-    const saved = localStorage.getItem(`leadform_${key}`);
-    return saved !== null ? JSON.parse(saved) : defaultValue;
-  } catch {
-    return defaultValue;
-  }
-}
-
 const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
-  const [gender, setGender] = useState<'Male' | 'Female'>(getInitialState('gender', 'Male'));
-  const [name, setName] = useState(getInitialState('name', ''));
-  const [email, setEmail] = useState(getInitialState('email', ''));
-  const [dob, setDob] = useState(getInitialState('dob', ''));
-  const [mobile, setMobile] = useState(getInitialState('mobile', ''));
-  const [whatsappUpdates, setWhatsappUpdates] = useState(getInitialState('whatsappUpdates', true));
-  const [step, setStep] = useState(getInitialState('step', 1));
-  const [insuranceType, setInsuranceType] = useState(getInitialState('insuranceType', ''));
-  const [specificPlan, setSpecificPlan] = useState(getInitialState('specificPlan', ''));
-  const [location, setLocation] = useState(getInitialState('location', ''));
-  const [employmentType, setEmploymentType] = useState(getInitialState('employmentType', ''));
-  const [annualIncome, setAnnualIncome] = useState(getInitialState('annualIncome', ''));
-  const [education, setEducation] = useState(getInitialState('education', ''));
-  const [smoker, setSmoker] = useState(getInitialState('smoker', ''));
-  const [lifeCover, setLifeCover] = useState(getInitialState('lifeCover', ''));
-  const [medicalHistory, setMedicalHistory] = useState<string[]>(getInitialState('medicalHistory', []));
-  const [members, setMembers] = useState<string[]>(getInitialState('members', ['Self']));
-  const [memberDetails, setMemberDetails] = useState<Record<string, { name: string, gender: string, email: string, dob: string, mobile: string, employmentType?: string, annualIncome?: string, education?: string }>>(getInitialState('memberDetails', {}));
-  const [allowContact, setAllowContact] = useState(getInitialState('allowContact', ''));
-  // Vehicle fields
-  const [vehicleNumber, setVehicleNumber] = useState(getInitialState('vehicleNumber', ''));
-  const [vehicleType, setVehicleType] = useState(getInitialState('vehicleType', ''));
-  const [vehicleManufacturer, setVehicleManufacturer] = useState(getInitialState('vehicleManufacturer', ''));
-  const [vehicleModel, setVehicleModel] = useState(getInitialState('vehicleModel', ''));
-  const [vehicleFuelType, setVehicleFuelType] = useState(getInitialState('vehicleFuelType', ''));
-  const [vehicleRegDate, setVehicleRegDate] = useState(getInitialState('vehicleRegDate', ''));
-  const [vehiclePincode, setVehiclePincode] = useState(getInitialState('vehiclePincode', ''));
-  const [vehicleCondition, setVehicleCondition] = useState<'new' | 'old' | ''>(getInitialState('vehicleCondition', ''));
-  const [detectedCity, setDetectedCity] = useState('');
-  const [isFetchingCity, setIsFetchingCity] = useState(false);
+  const [step, setStep] = useState(1);
+  const [insuranceType, setInsuranceType] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isCheckingLead, setIsCheckingLead] = useState(false);
-  const navigate = useNavigate();
+
+  // Health Specific State
+  const [healthStep, setHealthStep] = useState(1);
+  const [policyMode, setPolicyMode] = useState<'Family' | 'Individual'>('Individual');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [ages, setAges] = useState('');
+  const [medicalConditions, setMedicalConditions] = useState<string[]>([]);
+  const [otherDiseaseName, setOtherDiseaseName] = useState('');
+  const [healthCover, setHealthCover] = useState('');
+  const [smoker, setSmoker] = useState('');
+
+  // Life & Vehicle Placeholders to prevent breaking
+  
+  // Life Specific State
+  const [lifeStep, setLifeStep] = useState(1);
+  const [lifeAge, setLifeAge] = useState('');
+  const [lifePlanCat, setLifePlanCat] = useState('');
+  const [lifePlanDetail, setLifePlanDetail] = useState('');
+  const [education, setEducation] = useState('');
+  const [employment, setEmployment] = useState('');
+  const [income, setIncome] = useState('');
+  const [lifeCoverAmount, setLifeCoverAmount] = useState('');
+
+  // Vehicle Specific State
+  const [vehicleStep, setVehicleStep] = useState(1);
+  const [vehicleNumber, setVehicleNumber] = useState('');
+  const [vehicleType, setVehicleType] = useState('');
+  const [manufacturer, setManufacturer] = useState('');
+  const [model, setModel] = useState('');
+  const [fuelType, setFuelType] = useState('');
+  const [registrationDate, setRegistrationDate] = useState('');
+  const [pinCode, setPinCode] = useState('');
+  const [vehicleCover, setVehicleCover] = useState('');
+  const [vehicleCoverAmount, setVehicleCoverAmount] = useState('');
+
+  const handleLifeNext1 = () => {
+    if (!name.trim()) return toast.error('Please enter Proposer Name');
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error('Please enter a valid email address');
+    if (!mobile.trim() || !/^[0-9]{10}$/.test(mobile)) return toast.error('Please enter a valid 10-digit mobile number');
+    if (!lifeAge.trim()) return toast.error('Please enter Age');
+    setLifeStep(2);
+  };
+  const handleLifeNext2 = () => {
+    if (!lifePlanCat || !lifePlanDetail) return toast.error('Please select a plan type');
+    setLifeStep(3);
+  };
+  const handleLifeNext3 = () => {
+    if (!education || !employment) return toast.error('Please select education and employment');
+    setLifeStep(4);
+  };
+  const handleLifeNext4 = () => {
+    if (!income) return toast.error('Please select an income bracket');
+    setLifeStep(5);
+  };
+  const handleVehicleNext1 = () => {
+    if (!name.trim()) return toast.error('Please enter Proposer Name');
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error('Please enter a valid email address');
+    if (!mobile.trim() || !/^[0-9]{10}$/.test(mobile)) return toast.error('Please enter a valid 10-digit mobile number');
+    if (!vehicleNumber.trim()) return toast.error('Please enter Vehicle Number');
+    if (!vehicleType) return toast.error('Please select Vehicle Type');
+    if (!manufacturer) return toast.error('Please select Manufacturer');
+    if (!model) return toast.error('Please select Model');
+    if (!registrationDate) return toast.error('Please select Registration Date');
+    setVehicleStep(2);
+  };
+
 
   useEffect(() => {
-    localStorage.setItem('leadform_gender', JSON.stringify(gender));
-    localStorage.setItem('leadform_name', JSON.stringify(name));
-    localStorage.setItem('leadform_email', JSON.stringify(email));
-    localStorage.setItem('leadform_dob', JSON.stringify(dob));
-    localStorage.setItem('leadform_mobile', JSON.stringify(mobile));
-    localStorage.setItem('leadform_whatsappUpdates', JSON.stringify(whatsappUpdates));
-    localStorage.setItem('leadform_step', JSON.stringify(step));
-    localStorage.setItem('leadform_insuranceType', JSON.stringify(insuranceType));
-    localStorage.setItem('leadform_specificPlan', JSON.stringify(specificPlan));
-    localStorage.setItem('leadform_location', JSON.stringify(location));
-    localStorage.setItem('leadform_employmentType', JSON.stringify(employmentType));
-    localStorage.setItem('leadform_annualIncome', JSON.stringify(annualIncome));
-    localStorage.setItem('leadform_education', JSON.stringify(education));
-    localStorage.setItem('leadform_smoker', JSON.stringify(smoker));
-    localStorage.setItem('leadform_lifeCover', JSON.stringify(lifeCover));
-    localStorage.setItem('leadform_medicalHistory', JSON.stringify(medicalHistory));
-    localStorage.setItem('leadform_members', JSON.stringify(members));
-    localStorage.setItem('leadform_memberDetails', JSON.stringify(memberDetails));
-    localStorage.setItem('leadform_allowContact', JSON.stringify(allowContact));
-    localStorage.setItem('leadform_vehicleNumber', JSON.stringify(vehicleNumber));
-    localStorage.setItem('leadform_vehicleType', JSON.stringify(vehicleType));
-    localStorage.setItem('leadform_vehicleManufacturer', JSON.stringify(vehicleManufacturer));
-    localStorage.setItem('leadform_vehicleModel', JSON.stringify(vehicleModel));
-    localStorage.setItem('leadform_vehicleFuelType', JSON.stringify(vehicleFuelType));
-    localStorage.setItem('leadform_vehicleRegDate', JSON.stringify(vehicleRegDate));
-    localStorage.setItem('leadform_vehiclePincode', JSON.stringify(vehiclePincode));
-    localStorage.setItem('leadform_vehicleCondition', JSON.stringify(vehicleCondition));
     if (onStepChange) onStepChange(step);
-  }, [gender, name, email, dob, mobile, whatsappUpdates, step, insuranceType, specificPlan, location, employmentType, annualIncome, education, smoker, lifeCover, medicalHistory, members, memberDetails, allowContact, vehicleNumber, vehicleType, vehicleManufacturer, vehicleModel, vehicleFuelType, vehicleRegDate, vehiclePincode, vehicleCondition, onStepChange]);
+  }, [step, onStepChange]);
 
-  useEffect(() => {
-    if (/^\d{6}$/.test(location)) {
-      setIsFetchingCity(true);
-      fetch(`https://api.postalpincode.in/pincode/${location}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data[0] && data[0].Status === 'Success') {
-            const postOffice = data[0].PostOffice[0];
-            setDetectedCity(`${postOffice.District}, ${postOffice.State}`);
-          } else {
-            setDetectedCity('Invalid Pincode');
-          }
+  
+  const handleNextStep1 = () => {
+    if (!name.trim()) return toast.error('Please enter Proposer Name');
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error('Please enter a valid email address');
+    if (!mobile.trim() || !/^[0-9]{10}$/.test(mobile)) return toast.error('Please enter a valid 10-digit mobile number');
+    if (!ages.trim()) return toast.error('Please enter Ages');
+    setHealthStep(2);
+  };
+
+  const handleNextStep2 = () => {
+    if (medicalConditions.length === 0) return toast.error('Please select at least one medical condition');
+    if (medicalConditions.includes('Other Diseases') && !otherDiseaseName.trim()) {
+      return toast.error('Please enter the disease name');
+    }
+    setHealthStep(3);
+  };
+
+  const handleNextStep3 = () => {
+    if (!healthCover) return toast.error('Please select a cover amount');
+    setHealthStep(4);
+  };
+
+  const handleNextStep4 = () => {
+    if (!smoker) return toast.error('Please select an option');
+    setHealthStep(5);
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          phone: mobile,
+          email,
+          type: insuranceType.toLowerCase() || 'health',
+          smoker,
+          medicalHistory: insuranceType === 'Health' ? (medicalConditions.includes('Other Diseases') ? [...medicalConditions.filter(c => c !== 'Other Diseases'), otherDiseaseName] : medicalConditions) : [],
+          specificPlan: insuranceType === 'Vehicle' ? `${vehicleCover} - ${vehicleCoverAmount}` : (insuranceType === 'Health' ? healthCover : (lifePlanCat + ' - ' + lifePlanDetail)),
+          members: [policyMode, insuranceType === 'Life' ? lifeAge : ages],
+          date: new Date().toISOString().split('T')[0],
+          vehicleNumber,
+          vehicleType: insuranceType === 'Vehicle' ? vehicleType : undefined,
+          vehicleManufacturer: insuranceType === 'Vehicle' ? manufacturer : undefined,
+          vehicleModel: insuranceType === 'Vehicle' ? model : undefined,
+          vehicleFuelType: insuranceType === 'Vehicle' ? fuelType : undefined,
+          vehicleRegDate: insuranceType === 'Vehicle' ? registrationDate : undefined,
+          vehiclePincode: insuranceType === 'Vehicle' ? pinCode : undefined,
+          education: insuranceType === 'Life' ? education : undefined,
+          employmentType: insuranceType === 'Life' ? employment : undefined,
+          annualIncome: insuranceType === 'Life' ? income : undefined,
+          lifeCover: insuranceType === 'Life' ? lifeCoverAmount : undefined,
         })
-        .catch(() => setDetectedCity('Failed to fetch city'))
-        .finally(() => setIsFetchingCity(false));
-    } else {
-      setDetectedCity('');
-    }
-  }, [location]);
-
-  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.replace(/\D/g, '').slice(0, 10);
-    setMobile(val);
-  };
-
-  const renderStep1 = () => (
-    <>
-      <div className="gender-toggle" style={{ marginBottom: '1.5rem' }}>
-          <button 
-            className={`gender-btn ${gender === 'Male' ? 'active' : ''}`}
-            onClick={() => setGender('Male')}
-          >
-            Male
-          </button>
-          <button 
-            className={`gender-btn ${gender === 'Female' ? 'active' : ''}`}
-            onClick={() => setGender('Female')}
-          >
-            Female
-          </button>
-        </div>
-
-        <div className="input-group floating">
-          <input 
-            type="text" 
-            value={name} 
-            onChange={(e) => setName(e.target.value)} 
-            placeholder=" " 
-            className="form-input"
-          />
-          <label className="floating-label">Your Name</label>
-        </div>
-
-        <div className="input-group floating">
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            placeholder=" " 
-            className="form-input"
-          />
-          <label className="floating-label">Email Address</label>
-        </div>
-
-        <div className="input-group floating dob-group">
-          <input 
-            type="date" 
-            value={dob} 
-            onChange={(e) => setDob(e.target.value)} 
-            placeholder=" " 
-            className="form-input"
-          />
-          <label className="floating-label">Date of Birth</label>
-        </div>
-
-        <div className="input-group floating mobile-group">
-          <div className="mobile-prefix">
-            <select className="country-select">
-              <option>India</option>
-            </select>
-            <span className="country-code">+91</span>
-          </div>
-          <input 
-            type="text" 
-            value={mobile} 
-            onChange={handleMobileChange} 
-            placeholder=" " 
-            className="form-input mobile-input"
-          />
-          <label className="floating-label">Mobile Number</label>
-        </div>
-
-        <button 
-          className="submit-btn view-plans-btn" 
-          disabled={!name.trim() || !dob.trim() || mobile.length !== 10 || !email.trim()}
-          onClick={() => {
-            if (!name.trim()) return toast.error('Please enter your name');
-            if (!email.trim()) return toast.error('Please enter your email');
-            if (!dob.trim()) return toast.error('Please enter your date of birth');
-            if (mobile.length !== 10) return toast.error('Please enter a valid 10-digit mobile number');
-            setStep(2);
-          }}
-          style={{ 
-            opacity: (name.trim() && dob.trim() && mobile.length === 10 && email.trim()) ? 1 : 0.6,
-            transition: 'all 0.3s ease'
-          }}
-        >
-          View Plans
-        </button>
-
-        <button
-          className="already-filled-btn"
-          disabled={isCheckingLead}
-          onClick={async () => {
-            if (mobile.length !== 10) return toast.error('Enter your 10-digit mobile number to verify');
-            setIsCheckingLead(true);
-            try {
-              const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/check?phone=${mobile}`);
-              const data = await res.json();
-              if (res.ok && data.exists) {
-                sessionStorage.setItem('lead_submitted_token', 'true');
-                toast.success('Welcome back!');
-                navigate('/');
-              } else {
-                toast.error('No existing submission found for this number.');
-              }
-            } catch {
-              toast.error('Could not verify. Please try again.');
-            } finally {
-              setIsCheckingLead(false);
-            }
-          }}
-        >
-          {isCheckingLead ? 'Checking...' : 'Already Filled'}
-        </button>
-
-        <div className="expert-assist">
-          <div className="expert-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
-              <line x1="9" y1="9" x2="15" y2="9"></line>
-              <line x1="9" y1="13" x2="15" y2="13"></line>
-              <line x1="9" y1="17" x2="11" y2="17"></line>
-            </svg>
-            <div className="badge-pb">is</div>
-          </div>
-          <p>Only certified InsuranceShiva expert will assist you</p>
-        </div>
-
-        <div className="whatsapp-toggle">
-          <div className="whatsapp-label">
-            <svg viewBox="0 0 24 24" className="wa-icon" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.66-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/>
-            </svg>
-            <span>Get updates on WhatsApp</span>
-          </div>
-          <div 
-            className={`toggle-switch ${whatsappUpdates ? 'on' : 'off'}`}
-            onClick={() => setWhatsappUpdates(!whatsappUpdates)}
-          >
-            <div className="toggle-thumb"></div>
-          </div>
-        </div>
-    </>
-  );
-
-  const renderStep2 = () => (
-    <div className="step-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(1)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: insuranceType ? 1 : 0.6 }} onClick={() => {
-          if (insuranceType) { setStep(insuranceType === 'Health' ? 4 : 3); }
-        }}>Next →</button>
-      </div>
-      <h3 className="step-title">What type of insurance are you looking for?</h3>
-      <div className="options-grid">
-        <button 
-          className="option-card" 
-          onClick={() => { setInsuranceType('Health'); setStep(4); }}
-        >
-          <div className="option-icon">🏥</div>
-          <span>Health Insurance</span>
-        </button>
-        <button 
-          className="option-card" 
-          onClick={() => { setInsuranceType('Life'); setStep(3); }}
-        >
-          <div className="option-icon">🛡️</div>
-          <span>Life Insurance</span>
-        </button>
-        <button 
-          className="option-card" 
-          onClick={() => { setInsuranceType('Vehicle'); setStep(11); }}
-        >
-          <div className="option-icon">🚗</div>
-          <span>Vehicle Insurance</span>
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderStep3 = () => (
-    <div className="step-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(2)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: gender ? 1 : 0.6 }} onClick={() => {
-          if (gender) { setStep(9); }
-        }}>Next →</button>
-      </div>
-      <h3 className="step-title">Select specific plan type:</h3>
-      <div className="options-grid">
-        <button 
-          className="option-card" 
-          onClick={() => { setSpecificPlan('Term'); setStep(4); }}
-        >
-          <div className="option-icon">⏳</div>
-          <span>Term Insurance</span>
-        </button>
-        <button 
-          className="option-card" 
-          onClick={() => { setSpecificPlan('Savings'); setStep(4); }}
-        >
-          <div className="option-icon">💰</div>
-          <span>Savings Insurance</span>
-        </button>
-        <button 
-          className="option-card" 
-          onClick={() => { setSpecificPlan('Unit Linked'); setStep(4); }}
-        >
-          <div className="option-icon">📈</div>
-          <span>Unit Linked Insurance Plan</span>
-        </button>
-        <button 
-          className="option-card" 
-          onClick={() => { setSpecificPlan('Retirement'); setStep(4); }}
-        >
-          <div className="option-icon">🏖️</div>
-          <span>Retirement Plan</span>
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderStep4 = () => (
-    <div className="step-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(insuranceType === 'Health' ? 2 : 3)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: location.trim() ? 1 : 0.6 }} onClick={() => {
-          if(location.trim()) { setStep(5); } else { toast.error('Please enter your location'); }
-        }}>Next →</button>
-      </div>
-      <h3 className="step-title">Enter your Location</h3>
-      <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '8px' }}>
-        <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder=" " className="form-input" />
-        <label className="floating-label">City or Pincode</label>
-      </div>
-      {detectedCity && (
-        <div style={{ textAlign: 'left', fontSize: '14px', fontWeight: 500, color: detectedCity === 'Invalid Pincode' ? '#ef4444' : '#2e9f68', marginBottom: '24px', paddingLeft: '8px' }}>
-          {isFetchingCity ? 'Fetching city details...' : `📍 ${detectedCity}`}
-        </div>
-      )}
-      {!detectedCity && <div style={{ marginBottom: '24px' }}></div>}
-    </div>
-  );
-
-  const renderStep5 = () => (
-    <div className="step-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(4)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: employmentType ? 1 : 0.6 }} onClick={() => {
-          if (employmentType) { setStep(6); }
-        }}>Next →</button>
-      </div>
-      <h3 className="step-title">Employment Type</h3>
-      <div className="options-grid">
-        <button className="option-card" onClick={() => { setEmploymentType('Salaried'); setStep(6); }}>
-          <span>Salaried</span>
-        </button>
-        <button className="option-card" onClick={() => { setEmploymentType('Self-employed'); setStep(6); }}>
-          <span>Self Employed</span>
-        </button>
-      </div>
-    </div>
-  );
-
-  const incomeOptions = [
-    '25 Lac +', '15 Lac to 24.9 Lac', '10 Lac to 14.9 Lac', '8 Lac to 9.9 Lac',
-    '5 Lac to 7.9 Lac', '3 Lac to 4.9 Lac', '2 Lac to 2.9 Lac', 'Less than 2 Lac'
-  ];
-
-  const renderStep6 = () => (
-    <div className="step-container list-step">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(5)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: annualIncome ? 1 : 0.6 }} onClick={() => {
-          if (annualIncome) { setStep(7); }
-        }}>Next →</button>
-      </div>
-      <p className="step-subtitle">Just answer 5 simple questions to get more accurate quotes</p>
-      <h3 className="step-title">Select your annual income</h3>
-      <div className="radio-list">
-        {incomeOptions.map(opt => (
-          <label key={opt} className="radio-item">
-            <input type="radio" name="income" value={opt} checked={annualIncome === opt} onChange={() => { setAnnualIncome(opt); setTimeout(() => setStep(7), 300); }} />
-            <span>{opt}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-
-  const eduOptions = ['Graduate & above', '12th Pass', '10th Pass', 'Below 10th'];
-
-  const renderStep7 = () => (
-    <div className="step-container list-step">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(6)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: education ? 1 : 0.6 }} onClick={() => {
-          if (education) { setStep(14); }
-        }}>Next →</button>
-      </div>
-      <p className="step-subtitle">Just answer 4 simple questions to get more accurate quotes</p>
-      <h3 className="step-title">Select Educational Qualification</h3>
-      <div className="radio-list">
-        {eduOptions.map(opt => (
-          <label key={opt} className="radio-item">
-            <input type="radio" name="edu" value={opt} checked={education === opt} onChange={() => { setEducation(opt); setTimeout(() => setStep(14), 300); }} />
-            <span>{opt}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderStep14 = () => {
-    const options = insuranceType === 'Health'
-      ? ['5 Lakhs', '10 Lakhs', '15 Lakhs', '20 Lakhs', '25 Lakhs', '50 Lakhs', '1 Crore','Unlimited']
-      : ['15 Lakhs', '20 Lakhs', '25 Lakhs', '30 Lakhs', '40 Lakhs', '50 Lakhs', '75 Lakhs', '1 Crore', '2 Crores', '5 Crores', '10 Crores', '50 Crores'];
-      
-    return (
-      <div className="step-container list-step">
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-          <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(7)}>← Previous</button>
-          <button className="back-btn" style={{ marginBottom: 0, opacity: lifeCover ? 1 : 0.6 }} onClick={() => {
-            if (lifeCover) { setStep(15); }
-          }}>Next →</button>
-        </div>
-        <p className="step-subtitle">Just answer simple questions to get more accurate quotes</p>
-        <h3 className="step-title">{insuranceType === 'Health' ? 'Select Health Cover Amount' : 'Select Life Cover Amount'}</h3>
-        <div className="radio-list">
-          {options.map(opt => (
-            <label key={opt} className="radio-item">
-              <input type="radio" name="lifeCover" value={opt} checked={lifeCover === opt} onChange={() => { setLifeCover(opt); setTimeout(() => setStep(15), 300); }} />
-              <span>{opt}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const toggleMedicalOption = (opt: string) => {
-    if (opt === 'None of these') {
-      setMedicalHistory(['None of these']);
-    } else {
-      setMedicalHistory(prev => {
-        const filtered = prev.filter(item => item !== 'None of these');
-        if (filtered.includes(opt)) {
-          return filtered.filter(item => item !== opt);
-        } else {
-          return [...filtered, opt];
-        }
       });
+
+      if (response.ok) {
+        toast.success('Your application was submitted successfully!');
+        sessionStorage.setItem('lead_submitted_token', 'true');
+        if(onComplete) onComplete(); 
+      } else {
+        toast.error('Failed to submit application. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Server error. Please try again later.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const renderStep15 = () => (
-    <div className="step-container list-step" style={{ maxWidth: '600px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(14)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: medicalHistory.length > 0 ? 1 : 0.6 }} onClick={() => {
-          if (medicalHistory.length > 0) { setStep(8); }
-        }}>Next →</button>
-      </div>
-      <h3 className="step-title" style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>Do any member(s) have any existing illnesses for which they take regular medication?</h3>
-      <p className="step-subtitle" style={{ fontSize: '0.85rem', marginBottom: '1rem' }}>That'll make sure their condition is covered and the claim isn't rejected.</p>
-      
-      <div className="members-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))' }}>
-        {['Diabetes', 'Blood Pressure', 'Heart disease', 'Any Surgery', 'Thyroid', 'Asthma', 'Other disease', 'None of these'].map(opt => (
-          <label key={opt} className={`member-card ${medicalHistory.includes(opt) ? 'selected' : ''}`} style={{ padding: '0.75rem 1rem' }}>
-            <input 
-              type="checkbox" 
-              checked={medicalHistory.includes(opt)} 
-              onChange={() => toggleMedicalOption(opt)} 
-              style={{ display: 'none' }}
-            />
-            <div className={`checkbox-custom ${medicalHistory.includes(opt) ? 'checked' : ''}`}>
-              {medicalHistory.includes(opt) && <span className="checkmark">✓</span>}
-            </div>
-            <span style={{ fontSize: '0.9rem' }}>{opt}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderStep8 = () => (
-    <div className="step-container">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(15)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: smoker ? 1 : 0.6 }} onClick={() => {
-          if (smoker) { setStep(9); }
-        }}>Next →</button>
-      </div>
-      
-      <h3 className="step-title">Do you smoke or Chew Tobacco?</h3>
-      <div className="gender-toggle" style={{ marginBottom: '24px' }}>
-        <button className={`gender-btn ${smoker === 'Yes' ? 'active' : ''}`} onClick={() => { setSmoker('Yes'); setTimeout(() => setStep(9), 300); }}>Yes</button>
-        <button className={`gender-btn ${smoker === 'No' ? 'active' : ''}`} onClick={() => { setSmoker('No'); setTimeout(() => setStep(9), 300); }}>No</button>
+  const renderInsuranceSelection = () => (
+    <div className="step-container" style={{ textAlign: 'center' }}>
+      <h2 style={{ marginBottom: '2rem' }}>What type of insurance are you looking for?</h2>
+      <div className="insurance-cards-container">
+        <div className="insurance-card" onClick={() => { setInsuranceType('Health'); setStep(2); }}>
+          <div className="icon-wrapper">
+            <Heart size={32} />
+          </div>
+          <h3>HEALTH INSURANCE</h3>
+          <p>Family / Individual<br/>Medical details<br/>Cover selection</p>
+        </div>
+        <div className="insurance-card" onClick={() => { setInsuranceType('Life'); setStep(2); }}>
+          <div className="icon-wrapper">
+            <Shield size={32} />
+          </div>
+          <h3>LIFE INSURANCE</h3>
+          <p>Term / Savings / Market Linked<br/>Profile & income<br/>Cover selection</p>
+        </div>
+        <div className="insurance-card" onClick={() => { setInsuranceType('Vehicle'); setStep(2); }}>
+          <div className="icon-wrapper">
+            <Car size={32} />
+          </div>
+          <h3>VEHICLE INSURANCE</h3>
+          <p>Vehicle details<br/>Eligibility<br/>Cover type</p>
+        </div>
       </div>
     </div>
   );
 
-  const memberOptions = [
-    'Self',
-    gender === 'Male' ? 'Wife' : 'Husband',
-    'Son', 'Daughter', 'Father', 'Mother', 'Grandfather', 'Grandmother',
-    'Father-in-law', 'Mother-in-law', 'Brother', 'Sister', 'Uncle', 'Aunt', 'Live-in Partner'
-  ];
-
-  const toggleMember = (member: string) => {
-    setMembers(prev => prev.includes(member) ? prev.filter(m => m !== member) : [...prev, member]);
-  };
-
-  const renderStep9 = () => (
-    <div className="step-container list-step">
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(8)}>← Previous</button>
-        <button className="back-btn" style={{ marginBottom: 0, opacity: members.length > 0 ? 1 : 0.6 }} onClick={() => {
-          if(members.length > 0) {
-            setStep(10);
-          } else {
-            toast.error('Please select at least one member');
-          }
-        }}>Next →</button>
-      </div>
-      <h3 className="step-title">Select members you want to insure</h3>
-      <div className="members-grid">
-        {memberOptions.map(member => (
-          <label key={member} className={`member-card ${members.includes(member) ? 'selected' : ''}`}>
-            <input 
-              type="checkbox" 
-              checked={members.includes(member)} 
-              onChange={() => toggleMember(member)} 
-              style={{ display: 'none' }}
-            />
-            <div className={`checkbox-custom ${members.includes(member) ? 'checked' : ''}`}>
-              {members.includes(member) && <span className="checkmark">✓</span>}
-            </div>
-            <span>{member}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderStep11 = () => {
-    const vehicleTypes = ['2', '3', '4', '6', '10', '12', '14', '16', '18', 'Above'];
-    const fuelTypes = ['Petrol', 'Diesel', 'CNG', 'Electric', 'Hybrid'];
-    const isVehicleValid = vehicleCondition === 'old' 
-      ? vehicleNumber.trim() && vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleRegDate && /^\d{6}$/.test(vehiclePincode)
-      : vehicleCondition === 'new'
-      ? vehicleType && vehicleManufacturer.trim() && vehicleModel.trim() && vehicleFuelType && vehicleRegDate && /^\d{6}$/.test(vehiclePincode)
-      : false;
-
+  const renderHealthSteps = () => {
     return (
       <div className="step-container">
-        <h3 className="step-title">Vehicle Details</h3>
-        <p style={{ fontSize: '0.84rem', color: '#6b7280', marginBottom: '1.25rem' }}>Help us give you the most accurate quote</p>
-
-        {/* Vehicle Condition Toggle */}
-        <div style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-          <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#374151', marginBottom: '0.6rem' }}>
-            Vehicle Condition
-          </label>
-          <div className="gender-toggle" style={{ marginBottom: 0 }}>
-            <button
-              type="button"
-              className={`gender-btn ${vehicleCondition === 'new' ? 'active' : ''}`}
-              onClick={() => { setVehicleCondition('new'); setVehicleRegDate(''); setVehicleNumber(''); }}
-            >
-              🚀 Brand New
-            </button>
-            <button
-              type="button"
-              className={`gender-btn ${vehicleCondition === 'old' ? 'active' : ''}`}
-              onClick={() => { setVehicleCondition('old'); setVehicleRegDate(''); }}
-            >
-              🔑 Old Vehicle
-            </button>
-          </div>
+        <div className="progress-bar-container" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem', fontSize: '0.85rem', color: '#666' }}>
+          <span style={{ fontWeight: healthStep === 1 ? 'bold' : 'normal', color: healthStep === 1 ? '#000' : '#666' }}>1. Members</span>
+          <span style={{ fontWeight: healthStep === 2 ? 'bold' : 'normal', color: healthStep === 2 ? '#000' : '#666' }}>2. Medical</span>
+          <span style={{ fontWeight: healthStep === 3 ? 'bold' : 'normal', color: healthStep === 3 ? '#000' : '#666' }}>3. Cover</span>
+          <span style={{ fontWeight: healthStep === 4 ? 'bold' : 'normal', color: healthStep === 4 ? '#000' : '#666' }}>4. Lifestyle</span>
+          <span style={{ fontWeight: healthStep === 5 ? 'bold' : 'normal', color: healthStep === 5 ? '#000' : '#666' }}>5. Confirm</span>
         </div>
 
-        {vehicleCondition && (
-          <>
-            {vehicleCondition === 'old' && (
-              <div className="input-group floating" style={{ textAlign: 'left' }}>
-                <input type="text" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value.toUpperCase())} placeholder=" " className="form-input" />
-                <label className="floating-label">Vehicle Number (e.g. MH12AB1234)</label>
+        {healthStep === 1 && (
+          <div>
+            <h3 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Health Insurance - Family / Individual</h3>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              <button className={`btn ${policyMode === 'Family' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setPolicyMode('Family')}>FAMILY</button>
+              <button className={`btn ${policyMode === 'Individual' ? 'btn-primary' : 'btn-outline'}`} onClick={() => setPolicyMode('Individual')}>INDIVIDUAL</button>
+            </div>
+            <div className="form-group-row" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="required">Proposer Name</label>
+                <div className="input-with-icon">
+                  <User size={18} className="input-icon" />
+                  <input type="text" placeholder="Enter / Select" value={name} onChange={e => setName(e.target.value)} />
+                </div>
               </div>
-            )}
-
-            <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-              <select
-                value={vehicleType}
-                onChange={e => setVehicleType(e.target.value)}
-                className="form-input"
-                style={{ cursor: 'pointer' }}
-              >
-                <option value="" disabled>Select Vehicle Type (wheels)</option>
-                {vehicleTypes.map(v => <option key={v} value={v}>{v} Wheeler</option>)}
-              </select>
-              <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Vehicle Type</label>
-            </div>
-
-            <div className="input-group floating" style={{ textAlign: 'left' }}>
-              <input type="text" value={vehicleManufacturer} onChange={e => setVehicleManufacturer(e.target.value)} placeholder=" " className="form-input" />
-              <label className="floating-label">Manufacturer (e.g. Maruti, Honda)</label>
-            </div>
-
-            <div className="input-group floating" style={{ textAlign: 'left' }}>
-              <input type="text" value={vehicleModel} onChange={e => setVehicleModel(e.target.value)} placeholder=" " className="form-input" />
-              <label className="floating-label">Model (e.g. Swift, Activa)</label>
-            </div>
-
-            <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-              <select
-                value={vehicleFuelType}
-                onChange={e => setVehicleFuelType(e.target.value)}
-                className="form-input"
-                style={{ cursor: 'pointer' }}
-              >
-                <option value="" disabled>Select Fuel Type</option>
-                {fuelTypes.map(f => <option key={f} value={f}>{f}</option>)}
-              </select>
-              <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Fuel Type</label>
-            </div>
-
-            {vehicleCondition === 'old' && (
-              <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
-                <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
-                <label className="floating-label">Registration Date</label>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="required">Email Address</label>
+                <div className="input-with-icon">
+                  <Mail size={18} className="input-icon" />
+                  <input type="email" placeholder="Enter / Select" value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
               </div>
-            )}
-
-            {vehicleCondition === 'new' && (
-              <div className="input-group floating dob-group" style={{ textAlign: 'left' }}>
-                <input type="date" value={vehicleRegDate} onChange={e => setVehicleRegDate(e.target.value)} placeholder=" " className="form-input" />
-                <label className="floating-label">Expected Delivery Date</label>
-              </div>
-            )}
-
-            <div className="input-group floating" style={{ textAlign: 'left' }}>
-              <input type="text" value={vehiclePincode} onChange={e => setVehiclePincode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder=" " className="form-input" />
-              <label className="floating-label">Pincode</label>
             </div>
-          </>
+            <div className="form-group-row" style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="required">Mobile Number</label>
+                <div className="input-with-icon">
+                  <Phone size={18} className="input-icon" />
+                  <input type="tel" placeholder="Enter / Select" value={mobile} onChange={e => setMobile(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group" style={{ flex: 1 }}>
+                <label className="required">Age / Family Members Ages</label>
+                <div className="input-with-icon">
+                  <Calendar size={18} className="input-icon" />
+                  <input type="text" placeholder="Husband, Wife, Children, Father, Mother" value={ages} onChange={e => setAges(e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <button className="btn btn-primary" onClick={handleNextStep1}>NEXT - MEDICAL DETAILS</button>
+            </div>
+          </div>
         )}
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '16px' }}>
-          <button className="back-btn" style={{ marginBottom: 0 }} onClick={() => setStep(2)}>← Previous</button>
-          <button className="back-btn" style={{ marginBottom: 0, opacity: isVehicleValid ? 1 : 0.6 }} onClick={() => {
-            if (!vehicleCondition) return toast.error('Please select vehicle condition (New or Old)');
-            if (vehicleCondition === 'old' && !vehicleNumber.trim()) return toast.error('Please enter vehicle number');
-            if (!vehicleType) return toast.error('Please select vehicle type');
-            if (!vehicleManufacturer.trim()) return toast.error('Please enter manufacturer');
-            if (!vehicleModel.trim()) return toast.error('Please enter model');
-            if (!vehicleFuelType) return toast.error('Please select fuel type');
-            if (!vehicleRegDate) return toast.error(vehicleCondition === 'new' ? 'Please enter expected delivery date' : 'Please enter registration date');
-            if (!/^\d{6}$/.test(vehiclePincode)) return toast.error('Please enter a valid 6-digit pincode');
-            setStep(10);
-          }}>Next →</button>
-        </div>
+        {healthStep === 2 && (
+          <div>
+            <h3 style={{ marginBottom: '1rem', textAlign: 'center' }}>Medical Details</h3>
+            <p style={{ textAlign: 'center', color: '#666', marginBottom: '2rem' }}>For family cover, capture conditions member-wise (Member 1 to Member 8).</p>
+            
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              {['Diabetes', 'Blood Pressure', 'Asthma', 'Cholesterol', 'Other Diseases', 'None of These'].map(condition => (
+                <label key={condition} className="medical-condition-label" style={{ border: medicalConditions.includes(condition) ? "1px solid #3b82f6" : "1px solid #e2e8f0" }}>
+                  <input 
+                    type="checkbox" 
+                    checked={medicalConditions.includes(condition)}
+                    onChange={(e) => {
+                      if(condition === 'None of These') {
+                        setMedicalConditions(['None of These']);
+                      } else {
+                        const newArr = e.target.checked 
+                          ? [...medicalConditions.filter(c => c !== 'None of These'), condition]
+                          : medicalConditions.filter(c => c !== condition);
+                        setMedicalConditions(newArr);
+                      }
+                    }} 
+                  />
+                  {condition}
+                </label>
+              ))}
+            </div>
+
+            {medicalConditions.includes('Other Diseases') && (
+              <div className="form-group" style={{ maxWidth: '400px', margin: '0 auto', marginBottom: '2rem' }}>
+                <label>Disease Name</label>
+                <input type="text" placeholder="If Other Diseases selected" value={otherDiseaseName} onChange={e => setOtherDiseaseName(e.target.value)} />
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setHealthStep(1)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleNextStep2}>NEXT - COVER AMOUNT</button>
+            </div>
+          </div>
+        )}
+
+        {healthStep === 3 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Choose Health Cover Amount</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', maxWidth: '600px', margin: '0 auto', marginBottom: '2rem' }}>
+              {['5 Lakh', '10 Lakh', '15 Lakh', '20 Lakh', '25 Lakh', '50 Lakh', '1 Crore', '2 Crore', '3 Crore'].map(amount => (
+                <button 
+                  key={amount}
+                  className={`btn ${healthCover === amount ? 'btn-primary' : 'btn-outline'}`}
+                  style={{ width: '120px' }}
+                  onClick={() => setHealthCover(amount)}
+                >
+                  {amount}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setHealthStep(2)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleNextStep3}>NEXT</button>
+            </div>
+          </div>
+        )}
+
+        {healthStep === 4 && (
+          <div style={{ textAlign: 'center' }}>
+            <h3 style={{ marginBottom: '1rem' }}>Lifestyle Question</h3>
+            <p style={{ marginBottom: '2rem', fontSize: '1.1rem' }}>Do you smoke or chew tobacco?</p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              <button className={`btn ${smoker === 'Yes' ? 'btn-primary' : 'btn-outline'}`} style={{ width: '100px' }} onClick={() => setSmoker('Yes')}>YES</button>
+              <button className={`btn ${smoker === 'No' ? 'btn-primary' : 'btn-outline'}`} style={{ width: '100px' }} onClick={() => setSmoker('No')}>NO</button>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setHealthStep(3)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleNextStep4}>REVIEW & CONFIRM</button>
+            </div>
+          </div>
+        )}
+
+        {healthStep === 5 && (
+          <div style={{ maxWidth: '500px', margin: '0 auto', textAlign: 'left' }}>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Review & Confirm</h3>
+            <div style={{ background: '#f5f5f5', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
+              <p><strong>Name:</strong> {name}</p>
+              <p><strong>Email:</strong> {email}</p>
+              <p><strong>Mobile:</strong> {mobile}</p>
+              <p><strong>Mode:</strong> {policyMode}</p>
+              <p><strong>Ages:</strong> {ages}</p>
+              <p><strong>Cover:</strong> {healthCover}</p>
+              <p><strong>Smoker:</strong> {smoker}</p>
+              <p><strong>Conditions:</strong> {medicalConditions.join(', ') || 'None'}</p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setHealthStep(4)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? 'SUBMITTING...' : 'CONFIRM & SUBMIT'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
 
-  const renderStep12 = () => {
-    const extraMembers = members.filter(m => m !== 'Self');
-    
-    const handleMemberChange = (member: string, field: string, value: string) => {
-      setMemberDetails(prev => ({
-        ...prev,
-        [member]: {
-          ...(prev[member] || { name: '', gender: '', email: '', dob: '', mobile: '', employmentType: '', annualIncome: '', education: '' }),
-          [field]: value
-        }
-      }));
-    };
-    const isComplete = extraMembers.every(m => {
-      const d = memberDetails[m];
-      return d && d.name.trim() && d.gender && d.dob && d.mobile.length === 10 && d.employmentType && d.annualIncome && d.education;
-    });
-
+  
+  const renderLifeSteps = () => {
     return (
-      <div className="step-container" style={{ textAlign: 'left' }}>
-        <button className="back-btn" onClick={() => setStep(9)}>← Previous</button>
-        <h3 className="step-title">Family Member Details</h3>
-        <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: '8px' }}>
-          {extraMembers.map(member => {
-            const details = memberDetails[member] || { name: '', gender: '', email: '', dob: '', mobile: '' };
-            return (
-              <div key={member} style={{ marginBottom: '2rem', paddingBottom: '1rem', borderBottom: '1px solid #eee' }}>
-                <h4 style={{ marginBottom: '1rem', color: '#374151', fontWeight: 600 }}>{member}'s Details</h4>
-                
-                <div className="gender-toggle" style={{ marginBottom: '1.5rem' }}>
-                  <button className={`gender-btn ${details.gender === 'Male' ? 'active' : ''}`} onClick={() => handleMemberChange(member, 'gender', 'Male')}>Male</button>
-                  <button className={`gender-btn ${details.gender === 'Female' ? 'active' : ''}`} onClick={() => handleMemberChange(member, 'gender', 'Female')}>Female</button>
-                </div>
+      <div className="step-container">
+        <div className="progress-bar-container">
+          <span style={{ fontWeight: lifeStep === 1 ? 'bold' : 'normal', color: lifeStep === 1 ? '#000' : '#666' }}>1. Customer</span>
+          <span style={{ fontWeight: lifeStep === 2 ? 'bold' : 'normal', color: lifeStep === 2 ? '#000' : '#666' }}>2. Plan</span>
+          <span style={{ fontWeight: lifeStep === 3 ? 'bold' : 'normal', color: lifeStep === 3 ? '#000' : '#666' }}>3. Profile</span>
+          <span style={{ fontWeight: lifeStep === 4 ? 'bold' : 'normal', color: lifeStep === 4 ? '#000' : '#666' }}>4. Income</span>
+          <span style={{ fontWeight: lifeStep === 5 ? 'bold' : 'normal', color: lifeStep === 5 ? '#000' : '#666' }}>5. Cover</span>
+          <span style={{ fontWeight: lifeStep === 6 ? 'bold' : 'normal', color: lifeStep === 6 ? '#000' : '#666' }}>6. Review</span>
+        </div>
 
-                <div className="input-group floating">
-                  <input type="text" value={details.name} onChange={e => handleMemberChange(member, 'name', e.target.value)} placeholder=" " className="form-input" />
-                  <label className="floating-label">Name</label>
-                </div>
-
-                <div className="input-group floating">
-                  <input type="email" value={details.email} onChange={e => handleMemberChange(member, 'email', e.target.value)} placeholder=" " className="form-input" />
-                  <label className="floating-label">Email Address (Optional)</label>
-                </div>
-
-                <div className="input-group floating dob-group">
-                  <input type="date" value={details.dob} onChange={e => handleMemberChange(member, 'dob', e.target.value)} placeholder=" " className="form-input" />
-                  <label className="floating-label">Date of Birth</label>
-                </div>
-
-                <div className="input-group floating">
-                  <input type="text" value={details.mobile} onChange={e => handleMemberChange(member, 'mobile', e.target.value.replace(/\D/g, '').slice(0, 10))} placeholder=" " className="form-input" />
-                  <label className="floating-label">Mobile Number</label>
-                </div>
-
-                <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-                  <select
-                    value={details.employmentType || ''}
-                    onChange={e => handleMemberChange(member, 'employmentType', e.target.value)}
-                    className="form-input"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <option value="" disabled>Select Employment Type</option>
-                    <option value="Salaried">Salaried</option>
-                    <option value="Self-employed">Self Employed</option>
-                  </select>
-                  <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Employment Type</label>
-                </div>
-
-                <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-                  <select
-                    value={details.annualIncome || ''}
-                    onChange={e => handleMemberChange(member, 'annualIncome', e.target.value)}
-                    className="form-input"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <option value="" disabled>Select Annual Income</option>
-                    {incomeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
-                  <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Annual Income</label>
-                </div>
-
-                <div className="input-group floating" style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
-                  <select
-                    value={details.education || ''}
-                    onChange={e => handleMemberChange(member, 'education', e.target.value)}
-                    className="form-input"
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <option value="" disabled>Select Education</option>
-                    {eduOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
-                  <label className="floating-label" style={{ top: '-0.6rem', fontSize: '0.75rem', color: '#2e9f68' }}>Education</label>
+        {lifeStep === 1 && (
+          <div>
+            <h3 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Life Insurance - Customer Details</h3>
+            <div className="form-group-row">
+              <div className="form-group">
+                <label className="required">Proposer Name</label>
+                <div className="input-with-icon">
+                  <User size={18} className="input-icon" />
+                  <input type="text" placeholder="Enter / Select" value={name} onChange={e => setName(e.target.value)} />
                 </div>
               </div>
-            );
-          })}
-        </div>
-        <button 
-          className="submit-btn view-plans-btn" 
-          disabled={!isComplete}
-          style={{ opacity: isComplete ? 1 : 0.6, marginTop: '1rem' }}
-          onClick={() => setStep(10)}
-        >
-          Next →
-        </button>
+              <div className="form-group">
+                <label className="required">Email Address</label>
+                <div className="input-with-icon">
+                  <Mail size={18} className="input-icon" />
+                  <input type="email" placeholder="Enter / Select" value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div className="form-group-row">
+              <div className="form-group">
+                <label className="required">Mobile Number</label>
+                <div className="input-with-icon">
+                  <Phone size={18} className="input-icon" />
+                  <input type="tel" placeholder="Enter / Select" value={mobile} onChange={e => setMobile(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="required">Age</label>
+                <div className="input-with-icon">
+                  <Calendar size={18} className="input-icon" />
+                  <input type="text" placeholder="Enter / Select" value={lifeAge} onChange={e => setLifeAge(e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+              <button className="btn btn-primary" onClick={handleLifeNext1}>NEXT - PLAN TYPE</button>
+            </div>
+          </div>
+        )}
+
+        {lifeStep === 2 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center', fontSize: '1.5rem', fontWeight: 600 }}>Select Life Insurance Plan Type</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2.5rem' }}>
+              
+              {/* Term */}
+              <div className="insurance-card" style={{ padding: '1.5rem', borderTop: '4px solid #3b82f6', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: '#eff6ff', padding: '0.75rem', borderRadius: '50%', color: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Shield size={24} />
+                  </div>
+                  <h4 style={{ margin: 0, color: '#1e293b', fontSize: '1.2rem', fontWeight: 700 }}>TERM</h4>
+                </div>
+                {['Pure Term', 'Term + Investment'].map(plan => (
+                   <label key={plan} className={`plan-label ${lifePlanDetail === plan ? 'selected' : ''}`} onClick={() => { setLifePlanCat('Term'); setLifePlanDetail(plan); }}>
+                     <div className="radio-circle"></div>
+                     {plan}
+                   </label>
+                ))}
+              </div>
+
+              {/* Savings */}
+              <div className="insurance-card" style={{ padding: '1.5rem', borderTop: '4px solid #10b981', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: '#ecfdf5', padding: '0.75rem', borderRadius: '50%', color: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <PiggyBank size={24} />
+                  </div>
+                  <h4 style={{ margin: 0, color: '#1e293b', fontSize: '1.2rem', fontWeight: 700 }}>SAVINGS</h4>
+                </div>
+                {['Guaranteed Plans', 'Non-Guaranteed Plans'].map(plan => (
+                   <label key={plan} className={`plan-label ${lifePlanDetail === plan ? 'selected' : ''}`} onClick={() => { setLifePlanCat('Savings'); setLifePlanDetail(plan); }}>
+                     <div className="radio-circle"></div>
+                     {plan}
+                   </label>
+                ))}
+              </div>
+
+              {/* Market Linked */}
+              <div className="insurance-card" style={{ padding: '1.5rem', borderTop: '4px solid #8b5cf6', borderRadius: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: '#f5f3ff', padding: '0.75rem', borderRadius: '50%', color: '#8b5cf6', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <TrendingUp size={24} />
+                  </div>
+                  <h4 style={{ margin: 0, color: '#1e293b', fontSize: '1.2rem', fontWeight: 700 }}>MARKET LINKED</h4>
+                </div>
+                {['Long-Term Investment', 'Guaranteed Savings', 'Money Back Plans'].map(plan => (
+                   <label key={plan} className={`plan-label ${lifePlanDetail === plan ? 'selected' : ''}`} onClick={() => { setLifePlanCat('Market Linked'); setLifePlanDetail(plan); }}>
+                     <div className="radio-circle"></div>
+                     {plan}
+                   </label>
+                ))}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setLifeStep(1)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleLifeNext2}>NEXT - PROFILE</button>
+            </div>
+          </div>
+        )}
+
+        {lifeStep === 3 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Education & Employment Details</h3>
+            <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+              <label className="required">Education</label>
+              <div className="input-with-icon">
+                  <GraduationCap size={18} className="input-icon" />
+                  <select value={education} onChange={e => setEducation(e.target.value)}>
+                <option value="">Select Education</option>
+                <option value="Graduate & Above">Graduate & Above</option>
+                <option value="12th Pass">12th Pass</option>
+                <option value="10th Pass">10th Pass</option>
+                <option value="Below 10th">Below 10th</option>
+              </select>
+                </div>
+            </div>
+            <div className="form-group" style={{ marginBottom: '2rem' }}>
+              <label className="required">Employment</label>
+              <div className="input-with-icon">
+                  <Briefcase size={18} className="input-icon" />
+                  <select value={employment} onChange={e => setEmployment(e.target.value)}>
+                <option value="">Select Employment</option>
+                <option value="Salaried">Salaried</option>
+                <option value="Self Employed">Self Employed</option>
+              </select>
+                </div>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setLifeStep(2)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleLifeNext3}>NEXT - INCOME</button>
+            </div>
+          </div>
+        )}
+
+        {lifeStep === 4 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Annual Income</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              {['Less than 2L', '2L - 2.9L', '3L - 3.9L', '4L - 4.9L', '5L - 7.9L', '8L - 9.9L', '10L - 15L', '15L & Above'].map(inc => (
+                <button 
+                  key={inc}
+                  className={`btn ${income === inc ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setIncome(inc)}
+                >
+                  {inc}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setLifeStep(3)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleLifeNext4}>NEXT - COVER</button>
+            </div>
+          </div>
+        )}
+
+        {lifeStep === 5 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Choose Life Cover Amount</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              {['25 Lakh', '50 Lakh', '1 Crore', '2 Crore', '3 Crore', 'Up to 50 Crore'].map(amount => (
+                <button 
+                  key={amount}
+                  className={`btn ${lifeCoverAmount === amount ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setLifeCoverAmount(amount)}
+                >
+                  {amount}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setLifeStep(4)}>BACK</button>
+              <button className="btn btn-primary" onClick={() => {
+                if (!lifeCoverAmount) return toast.error('Please select a cover amount');
+                setLifeStep(6);
+              }}>
+                REVIEW
+              </button>
+            </div>
+          </div>
+        )}
+
+        {lifeStep === 6 && (
+          <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'left' }}>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Review & Confirm Your Request</h3>
+            <div style={{ background: '#f5f5f5', padding: '1.5rem', borderRadius: '12px', marginBottom: '2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div><strong>Name:</strong> {name}</div>
+                <div><strong>Email:</strong> {email}</div>
+                <div><strong>Mobile:</strong> {mobile}</div>
+                <div><strong>Age:</strong> {lifeAge}</div>
+                <div><strong>Plan Category:</strong> {lifePlanCat}</div>
+                <div><strong>Specific Plan:</strong> {lifePlanDetail}</div>
+                <div><strong>Education:</strong> {education}</div>
+                <div><strong>Employment:</strong> {employment}</div>
+                <div><strong>Annual Income:</strong> {income}</div>
+                <div><strong>Cover Amount:</strong> {lifeCoverAmount}</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setLifeStep(5)}>BACK</button>
+              <button className="btn btn-primary" onClick={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? 'SUBMITTING...' : 'CONFIRM & SUBMIT'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
 
-  const renderStep10 = () => {
-    const handleSubmit = async () => {
-      if(allowContact) {
-        setIsSubmitting(true);
-        try {
-          // Submit to Backend API
-          const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              name,
-              phone: mobile,
-              email,
-              date: dob || new Date().toISOString().split('T')[0],
-              type: insuranceType.toLowerCase() || 'health',
-              gender,
-              specificPlan,
-              location,
-              employmentType,
-              annualIncome,
-              education,
-              smoker,
-              lifeCover,
-              medicalHistory,
-              members,
-              memberDetails,
-              vehicleNumber,
-              vehicleType,
-              vehicleManufacturer,
-              vehicleModel,
-              vehicleFuelType,
-              vehicleCondition,
-              vehicleRegDate,
-              vehiclePincode
-            })
-          });
-
-          if (response.ok) {
-            toast.success('Your application was submitted successfully!');
-            sessionStorage.setItem('lead_submitted_token', 'true');
-            // Clear saved form data on complete
-            Object.keys(localStorage).forEach(key => {
-              if(key.startsWith('leadform_')) {
-                localStorage.removeItem(key);
-              }
-            });
-            if(onComplete) onComplete(); 
-          } else {
-            toast.error('Failed to submit application. Please try again.');
-          }
-        } catch (err) {
-          console.error(err);
-          toast.error('Server error. Please try again later.');
-        } finally {
-          setIsSubmitting(false);
-        }
-      } else {
-        toast.error('Please make a selection');
-      }
-    };
+  const renderVehicleSteps = () => {
+    if (vehicleStep === 5) {
+      return (
+        <div className="step-container" style={{ textAlign: 'center' }}>
+          <div style={{ width: '80px', height: '80px', background: '#ecfdf5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
+            <span style={{ fontSize: '40px', color: '#10b981' }}>✓</span>
+          </div>
+          <h2 style={{ color: '#0f172a', marginBottom: '1rem' }}>Booking Confirmed</h2>
+          <p style={{ color: '#64748b', marginBottom: '2rem' }}>Your insurance consultation request has been submitted successfully.</p>
+          <div style={{ background: '#f8fafc', padding: '1.5rem', borderRadius: '12px', display: 'inline-block', textAlign: 'left', minWidth: '300px', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+              <span style={{ color: '#64748b' }}>Request ID</span>
+              <span style={{ fontWeight: 'bold' }}>IS-{Math.floor(Math.random() * 900000) + 100000}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+              <span style={{ color: '#64748b' }}>Status</span>
+              <span style={{ color: '#10b981', fontWeight: 'bold' }}>Confirmed</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span style={{ color: '#64748b' }}>Support</span>
+              <span style={{ fontWeight: 'bold' }}>Call to Expert</span>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <button className="btn btn-outline" onClick={() => toast.success('Connecting to expert...')}>CALL TO EXPERT</button>
+            <button className="btn btn-primary" onClick={() => window.location.href = '/'}>GO TO MY ACCOUNT</button>
+          </div>
+        </div>
+      );
+    }
 
     return (
       <div className="step-container">
-        <button className="back-btn" onClick={() => insuranceType === 'Vehicle' ? setStep(11) : setStep(9)}>← Previous</button>
-        
-        <h3 className="step-title" style={{ marginTop: '24px' }}>Allow us to get in touch to explain Insurance better</h3>
-        <div className="gender-toggle" style={{ marginBottom: '32px' }}>
-          <button className={`gender-btn ${allowContact === 'Yes' ? 'active' : ''}`} onClick={() => setAllowContact('Yes')}>Yes</button>
-          <button className={`gender-btn ${allowContact === 'Maybe later' ? 'active' : ''}`} onClick={() => setAllowContact('Maybe later')}>Maybe later</button>
+        <div className="progress-bar-container">
+          <span style={{ fontWeight: vehicleStep === 1 ? 'bold' : 'normal', color: vehicleStep === 1 ? '#000' : '#666' }}>1. Details</span>
+          <span style={{ fontWeight: vehicleStep === 2 ? 'bold' : 'normal', color: vehicleStep === 2 ? '#000' : '#666' }}>2. Eligibility</span>
+          <span style={{ fontWeight: vehicleStep === 3 ? 'bold' : 'normal', color: vehicleStep === 3 ? '#000' : '#666' }}>3. Cover Type</span>
+          <span style={{ fontWeight: vehicleStep === 4 ? 'bold' : 'normal', color: vehicleStep === 4 ? '#000' : '#666' }}>4. Review</span>
         </div>
 
-        <button 
-          className="submit-btn view-plans-btn" 
-          onClick={handleSubmit} 
-          disabled={isSubmitting || !allowContact}
-          style={{ 
-            opacity: (!isSubmitting && allowContact) ? 1 : 0.6,
-            marginTop: '24px'
-          }}
-        >
-          {isSubmitting ? 'Submitting...' : 'Submit Request'}
-        </button>
+        {vehicleStep === 1 && (
+          <div>
+            <h3 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Customer Details</h3>
+            <div className="form-group-row">
+              <div className="form-group">
+                <label className="required">Proposer Name</label>
+                <div className="input-with-icon">
+                  <User size={18} className="input-icon" />
+                  <input type="text" placeholder="Enter / Select" value={name} onChange={e => setName(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="required">Email Address</label>
+                <div className="input-with-icon">
+                  <Mail size={18} className="input-icon" />
+                  <input type="email" placeholder="Enter / Select" value={email} onChange={e => setEmail(e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div className="form-group" style={{ maxWidth: '50%', marginBottom: '2rem' }}>
+              <label className="required">Mobile Number</label>
+              <div className="input-with-icon">
+                <Phone size={18} className="input-icon" />
+                <input type="tel" placeholder="Enter / Select" value={mobile} onChange={e => setMobile(e.target.value)} />
+              </div>
+            </div>
+
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Vehicle Details</h3>
+            <div className="form-group-row">
+              <div className="form-group">
+                <label className="required">Vehicle Number</label>
+                <div className="input-with-icon">
+                  <Hash size={18} className="input-icon" />
+                  <input type="text" placeholder="MH 01 AB 1234" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="required">Vehicle Type</label>
+                <div className="input-with-icon">
+                  <CarFront size={18} className="input-icon" />
+                  <select value={vehicleType} onChange={e => setVehicleType(e.target.value)}>
+                  <option value="">Select Type</option>
+                  <option value="2-Wheeler">2-Wheeler</option>
+                  <option value="4-Wheeler">4-Wheeler</option>
+                  <option value="Commercial">Commercial</option>
+                </select>
+                </div>
+              </div>
+            </div>
+            <div className="form-group-row">
+              <div className="form-group">
+                <label className="required">Manufacturer</label>
+                <div className="input-with-icon">
+                  <Factory size={18} className="input-icon" />
+                  <input type="text" placeholder="e.g. Honda, Maruti" value={manufacturer} onChange={e => setManufacturer(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="required">Model</label>
+                <div className="input-with-icon">
+                  <Car size={18} className="input-icon" />
+                  <input type="text" placeholder="e.g. City, Swift" value={model} onChange={e => setModel(e.target.value)} />
+                </div>
+              </div>
+            </div>
+            <div className="form-group-row">
+              <div className="form-group">
+                <label className="required">Registration Date</label>
+                <div className="input-with-icon">
+                  <Calendar size={18} className="input-icon" />
+                  <input type="date" value={registrationDate} onChange={e => setRegistrationDate(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Fuel Type</label>
+                <div className="input-with-icon">
+                  <FileText size={18} className="input-icon" />
+                  <select value={fuelType} onChange={e => setFuelType(e.target.value)}>
+                  <option value="">Select Fuel</option>
+                  <option value="Petrol">Petrol</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="EV">EV</option>
+                  <option value="CNG">CNG</option>
+                </select>
+                </div>
+              </div>
+            </div>
+            <div className="form-group" style={{ maxWidth: '50%', margin: '0 auto 2rem' }}>
+              <label>PIN Code</label>
+              <div className="input-with-icon">
+                  <MapPin size={18} className="input-icon" />
+                  <input type="text" placeholder="Enter PIN" value={pinCode} onChange={e => setPinCode(e.target.value)} />
+                </div>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <button className="btn btn-primary" onClick={handleVehicleNext1}>CHECK ELIGIBILITY</button>
+            </div>
+          </div>
+        )}
+
+        {vehicleStep === 2 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Vehicle Insurance Options</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+              <div className={`insurance-card ${vehicleCover === 'NIL DEP' ? 'selected' : ''}`} onClick={() => setVehicleCover('NIL DEP')}>
+                <h4 style={{ color: '#3b82f6', marginBottom: '0.5rem' }}>NIL DEP</h4>
+                <p style={{ fontSize: '0.8rem' }}>Meets configured eligibility rule for new vehicles.</p>
+              </div>
+              <div className={`insurance-card ${vehicleCover === 'FULL' ? 'selected' : ''}`} onClick={() => setVehicleCover('FULL')}>
+                <h4 style={{ color: '#10b981', marginBottom: '0.5rem' }}>FULL / COMPREHENSIVE</h4>
+                <p style={{ fontSize: '0.8rem' }}>Meets configured eligibility rule for standard cover.</p>
+              </div>
+              <div className={`insurance-card ${vehicleCover === 'THIRD PARTY' ? 'selected' : ''}`} onClick={() => setVehicleCover('THIRD PARTY')}>
+                <h4 style={{ color: '#8b5cf6', marginBottom: '0.5rem' }}>THIRD PARTY</h4>
+                <p style={{ fontSize: '0.8rem' }}>Available as the baseline mandatory option.</p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setVehicleStep(1)}>BACK</button>
+              <button className="btn btn-primary" onClick={() => {
+                if (!vehicleCover) return toast.error('Please select an option');
+                setVehicleStep(3);
+              }}>CONTINUE</button>
+            </div>
+          </div>
+        )}
+
+        {vehicleStep === 3 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Choose Coverage Amount</h3>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
+              {['1 Lakh', '3 Lakh', '5 Lakh', '10 Lakh', '15 Lakh', '20 Lakh+'].map(amount => (
+                <button 
+                  key={amount}
+                  className={`btn ${vehicleCoverAmount === amount ? 'btn-primary' : 'btn-outline'}`}
+                  onClick={() => setVehicleCoverAmount(amount)}
+                >
+                  {amount}
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button className="btn btn-outline" onClick={() => setVehicleStep(2)}>BACK</button>
+              <button className="btn btn-primary" onClick={() => {
+                if (!vehicleCoverAmount) return toast.error('Please select a coverage amount');
+                setVehicleStep(4);
+              }}>NEXT - REVIEW</button>
+            </div>
+          </div>
+        )}
+
+        {vehicleStep === 4 && (
+          <div>
+            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Review Your Request</h3>
+            <div style={{ background: '#f8fafc', padding: '2rem', borderRadius: '16px', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                <span style={{ color: '#64748b' }}>Insurance Type</span>
+                <span style={{ fontWeight: 'bold' }}>Vehicle Insurance</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                <span style={{ color: '#64748b' }}>Vehicle Info</span>
+                <span style={{ fontWeight: 'bold' }}>{manufacturer} {model} ({vehicleNumber})</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
+                <span style={{ color: '#64748b' }}>Plan Preference</span>
+                <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{vehicleCover} - {vehicleCoverAmount}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span style={{ color: '#64748b' }}>Next Action</span>
+                <span style={{ fontWeight: 'bold' }}>Expert Assistance</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button className="btn btn-outline" onClick={() => setVehicleStep(3)}>BACK</button>
+              <button className="btn btn-outline" onClick={() => toast.success('Connecting to expert...')}>CALL TO EXPERT</button>
+              <button className="btn btn-primary" onClick={async () => {
+                await handleSubmit();
+                setVehicleStep(5);
+              }} disabled={isSubmitting}>
+                {isSubmitting ? 'CONFIRMING...' : 'CONFIRM BOOKING'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
 
-  const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
 
-  if (hasSubmitted) {
-    return (
-      <div className="lead-form-wrapper" style={{ padding: '4rem 2rem', textAlign: 'center', backgroundColor: '#f9fafb', borderRadius: '12px' }}>
-        <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🎉</div>
-        <h2 style={{ color: 'var(--text-dark, #1f2937)', marginBottom: '1rem' }}>Request Already Submitted</h2>
-        <p style={{ color: '#6b7280', marginBottom: '2rem' }}>
-          We have received your details! Our experts are reviewing your request and will contact you shortly to explain the best insurance plans.
-        </p>
-        <button 
-          className="submit-btn" 
-          onClick={onComplete}
-          style={{ maxWidth: '250px', margin: '0 auto' }}
-        >
-          Return to Website
-        </button>
+  const renderOtherSteps = () => (
+    <div className="step-container" style={{ textAlign: 'center' }}>
+      <h3 style={{ marginBottom: '2rem' }}>{insuranceType} Insurance Application</h3>
+      <p style={{ color: '#666', marginBottom: '2rem' }}>This flow is under construction. Let's submit your basic info.</p>
+      
+      <div className="form-group" style={{ maxWidth: '400px', margin: '0 auto 1rem', textAlign: 'left' }}>
+        <label>Name</label>
+        <input type="text" value={name} onChange={e => setName(e.target.value)} />
       </div>
-    );
-  }
+      <div className="form-group" style={{ maxWidth: '400px', margin: '0 auto 1rem', textAlign: 'left' }}>
+        <label>Mobile</label>
+        <input type="tel" value={mobile} onChange={e => setMobile(e.target.value)} />
+      </div>
+      <div className="form-group" style={{ maxWidth: '400px', margin: '0 auto 2rem', textAlign: 'left' }}>
+        <label>Email</label>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+      </div>
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+        <button className="btn btn-outline" onClick={() => setStep(1)}>BACK</button>
+        <button className="btn btn-primary" onClick={handleSubmit} disabled={isSubmitting}>SUBMIT</button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="lead-form-wrapper">
-      {step === 1 && (
-        <>
-          <div className="lead-form-nav">
-            <div className="site-logo-container">
-              <img src="/logo-icon.png" alt="Icon" className="site-logo-icon" />
-              <div className="site-logo-text">Insurance<span style={{ color: '#f1592a' }}>Shiva</span></div>
-            </div>
-          </div>
-          <div className="lead-form-header">
-            <div className="lead-form-header-content">
-              <h1>
-                Best Insurance to <br />
-                <span className="highlight-blue" style={{ color: 'var(--primary-color)' }}>Protect your family</span> <br />
-                against liability
-              </h1>
-              <p className="price-tag">
-                Starting from <span className="price-amount">₹361</span>/month<sup className="plus-sign">+</sup>
-              </p>
-            </div>
-            <div className="lead-form-hero-img">
-              <img src="/insurance_agent.png" alt="Insurance Agent" className="agent-avatar" />
-            </div>
-          </div>
-
-          <div className="savings-banner" style={{ backgroundColor: 'var(--success-color)' }}>
-            <span className="savings-icon">%</span>
-            <p>Compare and <strong>Save upto 72%</strong> on premiums</p>
-          </div>
-        </>
-      )}
-
-      <div className="lead-form-card" style={{ borderTop: '4px solid var(--primary-color)' }}>
-        {step === 1 && renderStep1()}
-        {step === 2 && renderStep2()}
-        {step === 3 && renderStep3()}
-        {step === 4 && renderStep4()}
-        {step === 5 && renderStep5()}
-        {step === 6 && renderStep6()}
-        {step === 7 && renderStep7()}
-        {step === 14 && renderStep14()}
-        {step === 15 && renderStep15()}
-        {step === 8 && renderStep8()}
-        {step === 9 && renderStep9()}
-        {step === 10 && renderStep10()}
-        {step === 11 && renderStep11()}
-        {step === 12 && renderStep12()}
-      </div>
+      {step === 1 && renderInsuranceSelection()}
+      {step === 2 && insuranceType === 'Health' && renderHealthSteps()}
+      {step === 2 && insuranceType === 'Life' && renderLifeSteps()}
+      {step === 2 && insuranceType === 'Vehicle' && renderVehicleSteps()}
+      {step === 2 && insuranceType !== 'Life' && insuranceType !== 'Vehicle' && insuranceType !== 'Health' && renderOtherSteps()}
     </div>
   );
 };

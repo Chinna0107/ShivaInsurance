@@ -26,7 +26,7 @@ const BestPlansManager: React.FC = () => {
 
   const [formData, setFormData] = useState({
     category: 'term', rank: 1, name: '', badge: '', premium: '', cover: '',
-    claim_ratio: '', highlight: '', plan_type: 'Individual/Multi Individual', insurer_type: 'Private'
+    claim_ratio: '', highlight: '', plan_type: 'Term', insurer_type: 'Private'
   });
 
   const fetchPlans = async () => {
@@ -43,7 +43,7 @@ const BestPlansManager: React.FC = () => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     if (name === 'category') {
-      const defaultPlanType = value === 'health' ? 'Individual/Multi Individual' : value === 'term' ? 'Self' : 'Nil Dep';
+      const defaultPlanType = value === 'health' ? 'Individual' : value === 'term' ? 'Term' : 'Comprehensive / Full Insurance';
       setFormData({ ...formData, category: value, plan_type: defaultPlanType });
     } else {
       setFormData({ ...formData, [name]: name === 'rank' ? parseInt(value) || 0 : value });
@@ -56,11 +56,11 @@ const BestPlansManager: React.FC = () => {
       setFormData({
         category: plan.category, rank: plan.rank, name: plan.name, badge: plan.badge || '',
         premium: plan.premium || '', cover: plan.cover || '', claim_ratio: plan.claim_ratio || '',
-        highlight: plan.highlight || '', plan_type: plan.plan_type || 'Individual/Multi Individual', insurer_type: plan.insurer_type || 'Private'
+        highlight: plan.highlight || '', plan_type: plan.plan_type || 'Individual', insurer_type: plan.insurer_type || 'Private'
       });
     } else {
       setEditingPlan(null);
-      const defaultPlanType = activeCategory === 'health' ? 'Individual/Multi Individual' : activeCategory === 'term' ? 'Self' : 'Nil Dep';
+      const defaultPlanType = activeCategory === 'health' ? 'Individual' : activeCategory === 'term' ? 'Term' : 'Comprehensive / Full Insurance';
       setFormData({ category: activeCategory, rank: plans.length + 1, name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: defaultPlanType, insurer_type: 'Private' });
     }
     setIsModalOpen(true);
@@ -132,7 +132,7 @@ const BestPlansManager: React.FC = () => {
               <tr key={plan.id}>
                 <td><span className={getRankClass(plan.rank)}>#{plan.rank}</span></td>
                 <td><span style={{ fontWeight: 600, color: '#111827' }}>{plan.name}</span></td>
-                <td><span className="pill pill-blue">{plan.plan_type || 'Individual/Multi Individual'}</span></td>
+                <td><span className="pill pill-blue">{plan.plan_type || 'Individual'}</span></td>
                 <td><span className={`pill ${plan.insurer_type === 'Public' ? 'pill-green' : 'pill-purple'}`}>{plan.insurer_type === 'Public' ? '🏛️' : '🏢'} {plan.insurer_type || 'Private'}</span></td>
                 <td>{plan.badge ? <span className="pill pill-gold">⭐ {plan.badge}</span> : <span style={{ color: '#9ca3af' }}>—</span>}</td>
                 <td >{plan.premium || <span style={{ color: '#9ca3af' }}>—</span>}</td>
@@ -174,20 +174,23 @@ const BestPlansManager: React.FC = () => {
                     <select name="plan_type" value={formData.plan_type} onChange={handleInputChange} className="bpm-form-control">
                       {formData.category === 'health' && (
                         <>
-                          <option value="Individual/Multi Individual">Individual/Multi Individual</option>
                           <option value="Family Floater">Family Floater</option>
+                          <option value="Multi Individual">Multi Individual</option>
+                          <option value="Individual">Individual</option>
+                          <option value="Maternity Plan">Maternity Plan</option>
                         </>
                       )}
                       {formData.category === 'term' && (
                         <>
-                          <option value="Self">Self</option>
-                          <option value="Non Self">Non Self</option>
+                          <option value="Term">Term</option>
+                          <option value="Savings">Savings</option>
+                          <option value="Market Linked Plans">Market Linked Plans</option>
                         </>
                       )}
                       {formData.category === 'vehicle' && (
                         <>
                           <option value="Nil Dep">Nil Dep</option>
-                          <option value="Comprehensive">Full Insurance</option>
+                          <option value="Comprehensive / Full Insurance">Comprehensive / Full Insurance</option>
                           <option value="Third Party Insurance">Third Party Insurance</option>
                         </>
                       )}

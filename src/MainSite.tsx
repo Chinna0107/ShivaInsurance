@@ -207,7 +207,7 @@ const CSS = `
 
   /* FORM STAGE */
   .lf-form-stage { min-height: 100vh; background: #f4f6fb; display: flex; align-items: flex-start; justify-content: center; padding: 2.5rem 1.5rem 5rem; }
-  .lf-form-wrap { width: 100%; max-width: 440px; }
+  .lf-form-wrap { width: 100%; max-width: 950px; }
   .lf-form-header { background: linear-gradient(135deg,#0f172a,#1a3350); border-radius: 16px 16px 0 0; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 0.85rem; border-bottom: 2px solid #22c55e; }
   .lf-form-avatar { width: 46px; height: 46px; border-radius: 11px; overflow: hidden; flex-shrink: 0; border: 2px solid rgba(34,197,94,0.45); }
   .lf-form-avatar img { width: 100%; height: 100%; object-fit: cover; }

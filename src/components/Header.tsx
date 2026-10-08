@@ -163,6 +163,9 @@ const Header: React.FC<HeaderProps> = ({ onBookCall }) => {
                               </ul>
                             </>
                           )}
+                          <div style={{ marginTop: '1.25rem' }}>
+                            <button onClick={(e) => handleSubOptionClick(e, 'vehicle-plans')} style={{ padding: '0.6rem 1rem', width: '100%', backgroundColor: '#d97706', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600 }}>View All Vehicles</button>
+                          </div>
                         </div>
                       </div>
                     </div>

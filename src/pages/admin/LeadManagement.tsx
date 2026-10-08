@@ -41,7 +41,7 @@ interface Lead {
 }
 
 const LeadManagement = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const typeFilter = searchParams.get('type') || 'health';
 
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -53,15 +53,25 @@ const LeadManagement = () => {
 
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
+
   const [uploadingPdf, setUploadingPdf] = useState(false);
+
+  // Audio for ring sound
+  const ringSound = useMemo(() => new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg'), []);
+
 
   useEffect(() => {
     fetchLeads();
   }, [typeFilter]);
 
   useEffect(() => {
+    
     const handleNewLeadEvent = (e: any) => {
       const newLead = e.detail;
+      // Play mandatory ring sound
+      ringSound.play().catch(e => console.log('Audio play blocked by browser', e));
+      toast.success(`New ${newLead.type} lead received!`);
+      
       // Only add to table if it matches current type filter
       if (newLead.type === typeFilter) {
         setLeads(prev => [newLead, ...prev]);
@@ -70,7 +80,8 @@ const LeadManagement = () => {
 
     leadEventEmitter.addEventListener('new-lead', handleNewLeadEvent);
     return () => leadEventEmitter.removeEventListener('new-lead', handleNewLeadEvent);
-  }, [typeFilter]);
+  }, [typeFilter, ringSound]);
+
 
   const fetchLeads = async () => {
     setLoading(true);
@@ -243,9 +254,9 @@ const LeadManagement = () => {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <h1 style={{ fontSize: '1.8rem', color: 'var(--text-dark, #1f2937)', margin: 0, textTransform: 'capitalize' }}>
-          {typeFilter} Insurance Leads
+          Lead Management
         </h1>
         <div style={{ display: 'flex', gap: '1rem' }}>
           {selectedLeads.length > 0 && (
@@ -269,6 +280,32 @@ const LeadManagement = () => {
             <FiDownload /> Export Excel
           </button>
         </div>
+      </div>
+
+      
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem', borderBottom: '2px solid #e5e7eb' }}>
+        {['health', 'life', 'vehicle'].map(tab => (
+          <button
+            key={tab}
+            onClick={() => setSearchParams({ type: tab })}
+            style={{
+              padding: '0.75rem 1.5rem',
+              background: 'none',
+              border: 'none',
+              borderBottom: typeFilter === tab ? '3px solid var(--primary-color, #2e9f68)' : '3px solid transparent',
+              color: typeFilter === tab ? 'var(--primary-color, #2e9f68)' : '#6b7280',
+              fontWeight: typeFilter === tab ? 700 : 500,
+              fontSize: '1rem',
+              textTransform: 'capitalize',
+              cursor: 'pointer',
+              marginBottom: '-2px',
+              transition: 'all 0.2s'
+            }}
+          >
+            {tab} Insurance
+          </button>
+        ))}
       </div>
 
       {/* Filters */}
@@ -384,6 +421,11 @@ const LeadManagement = () => {
                   </td>
                   <td onClick={() => setSelectedLead(lead)} style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', cursor: 'pointer' }}>
                     <div style={{ fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>{lead.name}</div>
+                    {lead.type === 'health' && lead.specific_plan && (
+                      <div style={{ fontSize: '0.8rem', color: 'var(--primary-color, #2e9f68)', marginTop: '0.25rem', fontWeight: 600 }}>
+                        Cover: {lead.specific_plan}
+                      </div>
+                    )}
                     {lead.type === 'life' && lead.specific_plan && (
                       <div style={{ fontSize: '0.8rem', color: 'var(--primary-color, #2e9f68)', marginTop: '0.25rem', fontWeight: 600 }}>
                         {lead.specific_plan} Insurance
@@ -392,6 +434,7 @@ const LeadManagement = () => {
                     {lead.type === 'vehicle' && lead.vehicle_manufacturer && (
                       <div style={{ fontSize: '0.8rem', color: '#d97706', marginTop: '0.25rem', fontWeight: 600 }}>
                         {lead.vehicle_manufacturer} {lead.vehicle_model}
+                        {lead.specific_plan && ` • ${lead.specific_plan}`}
                       </div>
                     )}
                   </td>
@@ -522,14 +565,14 @@ const LeadManagement = () => {
                       {selectedLead.phone}
                     </a>
                   </div>
-                  <div>
-                    <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Location / Pincode</div>
-                    <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
-                      {selectedLead.type === 'vehicle'
-                        ? (selectedLead.vehicle_pincode || 'Not provided')
-                        : (selectedLead.location || 'Not provided')}
+                  {selectedLead.type === 'vehicle' && (
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Location / Pincode</div>
+                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
+                        {selectedLead.vehicle_pincode || 'Not provided'}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -538,25 +581,29 @@ const LeadManagement = () => {
                 <div>
                   <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Personal Details</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Gender</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.gender || 'Not provided'}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Smoker / Chews Tobacco</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.smoker || 'Not provided'}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Medical History</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.medical_history || 'Not provided'}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.education || 'Not provided'}</div>
-                    </div>
+                    {selectedLead.type === 'health' && (
+                      <>
+                        <div>
+                          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Smoker / Chews Tobacco</div>
+                          <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.smoker || 'Not provided'}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Medical History</div>
+                          <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.medical_history || 'Not provided'}</div>
+                        </div>
+                      </>
+                    )}
+                    {selectedLead.type === 'life' && (
+                      <div>
+                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education</div>
+                        <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.education || 'Not provided'}</div>
+                      </div>
+                    )}
                     <div>
                       <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Cover Amount</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.life_cover || 'Not provided'}</div>
+                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
+                        {selectedLead.type === 'health' ? (selectedLead.specific_plan || 'Not provided') : (selectedLead.life_cover || 'Not provided')}
+                      </div>
                     </div>
                     {(selectedLead.type === 'health' || selectedLead.type === 'life') && selectedLead.members && (
                       <div>
@@ -577,20 +624,22 @@ const LeadManagement = () => {
                 <div>
                   <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Financial &amp; Request</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Employment Type</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.employment_type || 'Not provided'}</div>
-                    </div>
-                    <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Annual Income</div>
-                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.annual_income || 'Not provided'}</div>
-                    </div>
+                    {selectedLead.type === 'life' && (
+                      <>
+                        <div>
+                          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Employment Type</div>
+                          <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.employment_type || 'Not provided'}</div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Annual Income</div>
+                          <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.annual_income || 'Not provided'}</div>
+                        </div>
+                      </>
+                    )}
                     <div>
                       <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Plan Requested</div>
                       <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
-                        {selectedLead.type === 'health'
-                          ? 'Health Insurance'
-                          : `${selectedLead.type.charAt(0).toUpperCase() + selectedLead.type.slice(1)} Insurance${selectedLead.specific_plan ? ` (${selectedLead.specific_plan})` : ''}`}
+                        {`${selectedLead.type.charAt(0).toUpperCase() + selectedLead.type.slice(1)} Insurance${selectedLead.specific_plan ? ` (${selectedLead.specific_plan})` : ''}`}
                       </div>
                     </div>
                     {selectedLead.type === 'life' && selectedLead.life_cover && (

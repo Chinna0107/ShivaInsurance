@@ -34,7 +34,7 @@ const PolicyManager = () => {
     cover_amount: '',
     pros: '',
     cons: '',
-    plan_type: 'Individual/Multi Individual',
+    plan_type: 'Individual',
     insurer_type: 'Private',
     policy_link: ''
   });
@@ -70,13 +70,13 @@ const PolicyManager = () => {
         cover_amount: policy.cover_amount || '',
         pros: policy.pros || '',
         cons: policy.cons || '',
-        plan_type: policy.plan_type || 'Individual/Multi Individual',
+        plan_type: policy.plan_type || 'Individual',
         insurer_type: policy.insurer_type || 'Private',
         policy_link: policy.policy_link || ''
       });
     } else {
       setEditingPolicy(null);
-      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual/Multi Individual', insurer_type: 'Private', policy_link: '' });
+      setFormData({ name: '', type: 'Health', provider: '', description: '', cover_amount: '', pros: '', cons: '', plan_type: 'Individual', insurer_type: 'Private', policy_link: '' });
     }
     setImages([]);
     setPdfFile(null);
@@ -214,7 +214,7 @@ const PolicyManager = () => {
                 <td >{policy.provider}</td>
                 <td >
                   <span style={{ padding: '3px 8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 600, background: '#eff6ff', color: '#1d4ed8' }}>
-                    {policy.plan_type || 'Individual/Multi Individual'}
+                    {policy.plan_type || 'Individual'}
                   </span>
                 </td>
                 <td >
@@ -329,7 +329,7 @@ const PolicyManager = () => {
                   <select 
                     value={formData.type} onChange={e => {
                       const newType = e.target.value;
-                      const defaultPlanType = newType === 'Health' ? 'Individual/Multi Individual' : newType === 'Term' ? 'Self' : 'Nil Dep';
+                      const defaultPlanType = newType === 'Health' ? 'Individual' : newType === 'Term' ? 'Term' : 'Comprehensive / Full Insurance';
                       setFormData({...formData, type: newType, provider: '', plan_type: defaultPlanType});
                     }} required
                     style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-color, #e5e7eb)', outline: 'none', backgroundColor: 'white' }}
@@ -364,20 +364,23 @@ const PolicyManager = () => {
                     >
                       {formData.type === 'Health' && (
                         <>
-                          <option value="Individual/Multi Individual">Individual/Multi Individual</option>
                           <option value="Family Floater">Family Floater</option>
+                          <option value="Multi Individual">Multi Individual</option>
+                          <option value="Individual">Individual</option>
+                          <option value="Maternity Plan">Maternity Plan</option>
                         </>
                       )}
                       {formData.type === 'Term' && (
                         <>
-                          <option value="Self">Self</option>
-                          <option value="Non Self">Non Self</option>
+                          <option value="Term">Term</option>
+                          <option value="Savings">Savings</option>
+                          <option value="Market Linked Plans">Market Linked Plans</option>
                         </>
                       )}
                       {formData.type === 'Vehicle' && (
                         <>
                           <option value="Nil Dep">Nil Dep</option>
-                          <option value="Comprehensive">Full Insurance</option>
+                          <option value="Comprehensive / Full Insurance">Comprehensive / Full Insurance</option>
                           <option value="Third Party Insurance">Third Party Insurance</option>
                         </>
                       )}

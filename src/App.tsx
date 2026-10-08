@@ -27,6 +27,9 @@ import AboutPage from './pages/AboutPage';
 import ReelsManager from './pages/admin/ReelsManager';
 import ClaimRatiosManager from './pages/admin/ClaimRatiosManager';
 import ClaimRatiosPage from './pages/ClaimRatiosPage';
+import ClaimRequests from './pages/admin/ClaimRequests';
+import EmployeeClaimRequests from './pages/employee/EmployeeClaimRequests';
+import ClaimSupportPage from './pages/ClaimSupportPage';
 import DynamicPage from './pages/DynamicPage';
 import ArticlePageWrapper from './pages/ArticlePageWrapper';
 
@@ -83,7 +86,7 @@ function App() {
           <Route path="/contact" element={<Gated element={<ContactPage />} />} />
           <Route path="/policy/:id" element={<Gated element={<PolicyDescription />} />} />
           <Route path="/dashboard" element={<Gated element={<UserDashboard />} />} />
-          <Route path="/claims" element={<Gated element={<ClaimRatiosPage />} />} />
+          <Route path="/claims" element={<Gated element={<ClaimSupportPage />} />} />
           <Route path="/article/:topic" element={<Gated element={<ArticlePageWrapper />} />} />
 
           {/* All sub-pages — also gated */}
@@ -141,6 +144,7 @@ function App() {
             <Route path="careers" element={<CareersManager />} />
             <Route path="reels" element={<ReelsManager />} />
             <Route path="claim-ratios" element={<ClaimRatiosManager />} />
+            <Route path="claims" element={<ClaimRequests />} />
           </Route>
 
           {/* Employee Routes — NOT gated (separate auth) */}
@@ -151,6 +155,7 @@ function App() {
             <Route path="leads" element={<LeadManagement />} />
             <Route path="premium-requests" element={<EmployeePremiumRequests />} />
             <Route path="call-requests" element={<CallRequests />} />
+            <Route path="claims" element={<EmployeeClaimRequests />} />
           </Route>
 
           {/* Catch-all → lead form for new users, home for existing */}
