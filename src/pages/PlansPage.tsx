@@ -20,7 +20,6 @@ interface PlansPageProps {
   type: 'Health' | 'Term' | 'Vehicle';
   provider?: string;
   onBookCall: () => void;
-  onGetQuote: (planName?: string) => void;
 }
 
 const config = {
@@ -86,7 +85,7 @@ const config = {
   },
 };
 
-const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall, onGetQuote }) => {
+const PlansPage: React.FC<PlansPageProps> = ({ type, provider, onBookCall }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [policies, setPolicies] = useState<Policy[]>([]);

@@ -26,7 +26,6 @@ import CareersPage from './pages/CareersPage';
 import AboutPage from './pages/AboutPage';
 import ReelsManager from './pages/admin/ReelsManager';
 import ClaimRatiosManager from './pages/admin/ClaimRatiosManager';
-import ClaimRatiosPage from './pages/ClaimRatiosPage';
 import ClaimRequests from './pages/admin/ClaimRequests';
 import EmployeeClaimRequests from './pages/employee/EmployeeClaimRequests';
 import ClaimSupportPage from './pages/ClaimSupportPage';

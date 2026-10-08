@@ -43,18 +43,18 @@ function DynamicPage() {
       return <BestPlansPage onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
     }
     if (resolvedSlug === 'health-plans') {
-      return <PlansPage type="Health" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+      return <PlansPage type="Health" onBookCall={handleBookCall} />;
     }
     if (resolvedSlug === 'term-plans') {
-      return <PlansPage type="Term" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+      return <PlansPage type="Term" onBookCall={handleBookCall} />;
     }
     if (resolvedSlug === 'vehicle-plans') {
-      return <PlansPage type="Vehicle" onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+      return <PlansPage type="Vehicle" onBookCall={handleBookCall} />;
     }
     // /plans/Health/HDFC Ergo  etc.
     const plansMatch = resolvedSlug.match(/^plans\/(Health|Term|Vehicle)\/(.+)$/);
     if (plansMatch) {
-      return <PlansPage type={plansMatch[1] as 'Health'|'Term'|'Vehicle'} provider={decodeURIComponent(plansMatch[2])} onBookCall={handleBookCall} onGetQuote={handleGetQuote} />;
+      return <PlansPage type={plansMatch[1] as 'Health'|'Term'|'Vehicle'} provider={decodeURIComponent(plansMatch[2])} onBookCall={handleBookCall} />;
     }
     if (resolvedSlug === 'vehicle-compare') {
       return <VehicleComparePage onBookCall={handleBookCall} />;
