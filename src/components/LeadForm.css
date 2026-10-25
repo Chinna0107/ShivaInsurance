@@ -288,23 +288,37 @@ label.required::after {
 }
 
 /* CIRCULAR CORNERS & MODERN INPUTS */
-.form-group input, .form-group select {
+.input-with-icon input,
+.form-group input, 
+.form-group select {
   width: 100%;
-  padding: 0.875rem 1rem 0.875rem 2.75rem !important; /* Left padding for icons */
-  border: 2px solid #e2e8f0;
+  padding: 0.85rem 1.25rem 0.85rem 2.85rem !important; /* Left padding for icons */
+  border: 1.5px solid #e2e8f0;
   border-radius: 99px !important;
   font-size: 0.95rem;
   color: #1e293b;
-  transition: all 0.3s ease;
-  background: #f8fafc;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.25s ease;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
-.form-group input:focus, .form-group select:focus {
+.input-with-icon input:focus,
+.form-group input:focus, 
+.form-group select:focus {
   outline: none;
   border-color: #3b82f6;
   background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+/* Hide spin buttons on number inputs for clean look */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .btn {
@@ -313,16 +327,25 @@ label.required::after {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   font-size: 0.9rem !important;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .btn-outline {
   border: 2px solid #cbd5e1 !important;
-  background: transparent;
+  background: #ffffff;
+  color: #475569;
 }
 
 .btn-outline:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8 !important;
+  background: #f8fafc;
+  border-color: #3b82f6 !important;
+  color: #1d4ed8;
 }
 
 /* Remove default appearance for select to let the icon show cleanly */
@@ -386,3 +409,237 @@ label.required::after {
   border-radius: 50%;
   position: absolute;
 }
+
+/* Family Member Section Styling */
+.family-card-wrapper {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 1.75rem;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  max-width: 680px;
+  margin: 0 auto 2.25rem;
+}
+
+.family-member-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 1.5rem;
+}
+
+.family-member-row:first-of-type {
+  padding-top: 0;
+}
+
+.family-member-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.member-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 120px;
+}
+
+.member-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.member-title {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.98rem;
+}
+
+/* Stepper Counter Component */
+.member-counter {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 99px;
+  padding: 3px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+
+.member-counter:hover {
+  border-color: #94a3b8;
+}
+
+.member-counter-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: #f8fafc;
+  color: #334155;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.member-counter-btn:hover {
+  background: #3b82f6;
+  color: #ffffff;
+  transform: scale(1.06);
+}
+
+.member-counter-btn:active {
+  transform: scale(0.95);
+}
+
+.member-counter-value {
+  min-width: 38px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.child-age-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  padding-left: 3.5rem;
+  animation: slideDownFade 0.25s ease-out;
+}
+
+@keyframes slideDownFade {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dedicated Age Tag Input */
+.age-tag-input {
+  position: relative;
+  width: 120px;
+  flex-shrink: 0;
+}
+
+.age-tag-input input {
+  width: 100% !important;
+  padding: 0.65rem 2.2rem 0.65rem 1rem !important; /* Proper text space without icon clash */
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: 1.5px solid #cbd5e1 !important;
+  border-radius: 99px !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  transition: all 0.2s ease;
+}
+
+.age-tag-input input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+.age-tag-input input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+  font-size: 0.88rem;
+}
+
+.age-tag-suffix {
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.child-age-item {
+  width: 140px;
+}
+
+/* Mobile responsive adjustments for family member card */
+@media (max-width: 640px) {
+  .family-card-wrapper {
+    padding: 1.25rem 1rem;
+    border-radius: 16px;
+  }
+
+  .family-member-row {
+    gap: 0.75rem;
+  }
+
+  .member-label {
+    min-width: 0;
+    flex: 1;
+    gap: 0.5rem;
+  }
+
+  .member-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .member-title {
+    font-size: 0.92rem;
+  }
+
+  .age-tag-input {
+    width: 105px;
+  }
+
+  .age-tag-input input {
+    padding: 0.6rem 1.85rem 0.6rem 0.75rem !important;
+    font-size: 0.9rem;
+  }
+
+  .age-tag-suffix {
+    right: 0.65rem;
+    font-size: 0.7rem;
+  }
+
+  .member-counter {
+    padding: 2px;
+  }
+
+  .member-counter-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 1rem;
+  }
+
+  .member-counter-value {
+    min-width: 30px;
+    font-size: 0.95rem;
+  }
+
+  .child-age-grid {
+    padding-left: 0;
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+
+  .child-age-item {
+    width: calc(50% - 0.25rem);
+  }
+}
+

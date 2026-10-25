@@ -29,6 +29,9 @@ interface Lead {
   members?: string;
   reminder?: string;
   policy_document_url?: string;
+  policy_intent?: string;
+  home_visit?: string;
+  home_visit_datetime?: string;
   // Vehicle-specific fields
   vehicle_number?: string;
   vehicle_type?: string;
@@ -222,11 +225,30 @@ const LeadManagement = () => {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
+    const doc = new jsPDF('landscape');
     doc.text(`${typeFilter.toUpperCase()} Insurance Leads`, 14, 15);
 
-    const tableColumn = ["Name", "Phone", "Email", "Date", "Status"];
-    const tableRows = filteredLeads.map(lead => [lead.name, lead.phone, lead.email, lead.date, lead.status]);
+    const tableColumn = typeFilter === 'health' 
+      ? ["Name", "Phone", "Email", "Coverage", "Plan Option", "Home Visit", "Smoke", "Conditions", "Date", "Status"]
+      : ["Name", "Phone", "Email", "Coverage/Plan", "Date", "Status"];
+
+    const tableRows = filteredLeads.map(lead => {
+      if (typeFilter === 'health') {
+        return [
+          lead.name,
+          lead.phone,
+          lead.email,
+          lead.specific_plan || '-',
+          lead.policy_intent || '-',
+          lead.home_visit === 'Yes' ? `Yes (${lead.home_visit_datetime || ''})` : (lead.home_visit || '-'),
+          lead.smoker || '-',
+          lead.medical_history || 'None',
+          lead.date,
+          lead.status
+        ];
+      }
+      return [lead.name, lead.phone, lead.email, lead.specific_plan || lead.life_cover || '-', lead.date, lead.status];
+    });
 
     autoTable(doc, {
       head: [tableColumn],
@@ -242,7 +264,20 @@ const LeadManagement = () => {
 
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(filteredLeads.map(lead => ({
-      Name: lead.name, Phone: lead.phone, Email: lead.email, Date: lead.date, Status: lead.status
+      Name: lead.name,
+      Phone: lead.phone,
+      Email: lead.email,
+      Type: lead.type,
+      Coverage: lead.specific_plan || lead.life_cover || '',
+      Members: lead.members || '',
+      PlanOption: lead.policy_intent || '',
+      HomeVisit: lead.home_visit || '',
+      HomeVisitDateTime: lead.home_visit_datetime || '',
+      Smoker: lead.smoker || '',
+      MedicalHistory: lead.medical_history || '',
+      Date: lead.date,
+      Status: lead.status,
+      Reminder: lead.reminder || ''
     })));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Leads");
@@ -376,6 +411,12 @@ const LeadManagement = () => {
               </th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Name</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact Info</th>
+              {typeFilter === 'health' && (
+                <>
+                  <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Plan Option</th>
+                  <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Home Visit</th>
+                </>
+              )}
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Date</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Reminder</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
@@ -446,6 +487,41 @@ const LeadManagement = () => {
                       </a>
                     </div>
                   </td>
+                  {typeFilter === 'health' && (
+                    <>
+                      <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.85rem' }}>
+                        {lead.policy_intent ? (
+                          <span style={{ 
+                            background: lead.policy_intent === 'Buy new policy' ? '#eff6ff' : '#fef3c7',
+                            color: lead.policy_intent === 'Buy new policy' ? '#1d4ed8' : '#b45309',
+                            padding: '3px 8px', borderRadius: '6px', fontWeight: 600, fontSize: '0.75rem', display: 'inline-block'
+                          }}>
+                            {lead.policy_intent}
+                          </span>
+                        ) : (
+                          <span style={{ color: '#9ca3af' }}>-</span>
+                        )}
+                      </td>
+                      <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.82rem' }}>
+                        {lead.home_visit === 'Yes' ? (
+                          <div>
+                            <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 7px', borderRadius: '6px', fontWeight: 700, fontSize: '0.75rem' }}>
+                              ✓ Yes
+                            </span>
+                            {lead.home_visit_datetime && (
+                              <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: '0.2rem', fontWeight: 500 }}>
+                                📅 {lead.home_visit_datetime}
+                              </div>
+                            )}
+                          </div>
+                        ) : lead.home_visit ? (
+                          <span style={{ color: '#6b7280' }}>{lead.home_visit}</span>
+                        ) : (
+                          <span style={{ color: '#9ca3af' }}>-</span>
+                        )}
+                      </td>
+                    </>
+                  )}
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}>{lead.date}</td>
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}>
                     <input
@@ -565,37 +641,67 @@ const LeadManagement = () => {
                       {selectedLead.phone}
                     </a>
                   </div>
-                  {selectedLead.type === 'vehicle' && (
+                  {selectedLead.gender && (
                     <div>
-                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Location / Pincode</div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Gender</div>
+                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.gender}</div>
+                    </div>
+                  )}
+                  {(selectedLead.location || selectedLead.vehicle_pincode) && (
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Pincode / Location</div>
                       <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>
-                        {selectedLead.vehicle_pincode || 'Not provided'}
+                        {selectedLead.location || selectedLead.vehicle_pincode}
                       </div>
                     </div>
                   )}
                 </div>
               </div>
 
+
+              
+
               {/* Personal Details — hidden for vehicle leads */}
               {selectedLead.type !== 'vehicle' && (
                 <div>
                   <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Personal Details</h4>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div>
+                      <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Smoker / Chews Tobacco</div>
+                      <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.smoker || 'Not provided'}</div>
+                    </div>
                     {selectedLead.type === 'health' && (
-                      <>
-                        <div>
-                          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Smoker / Chews Tobacco</div>
-                          <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.smoker || 'Not provided'}</div>
-                        </div>
-                        <div>
-                          <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Medical History</div>
-                          <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.medical_history || 'Not provided'}</div>
-                        </div>
-                      </>
+                      <div>
+                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.35rem' }}>Medical History (Per Member)</div>
+                        {selectedLead.medical_history ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', background: '#f8fafc', padding: '0.75rem', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                            {selectedLead.medical_history.includes('|') ? (
+                              selectedLead.medical_history.split('|').map((item, idx) => {
+                                const [memberKey, ...condParts] = item.split(':');
+                                const condText = condParts.join(':').trim();
+                                return (
+                                  <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.88rem', padding: '0.2rem 0', borderBottom: idx < selectedLead.medical_history!.split('|').length - 1 ? '1px dashed #e2e8f0' : 'none' }}>
+                                    <strong style={{ color: '#1e293b' }}>{memberKey.trim()}:</strong>
+                                    <span style={{ color: condText.toLowerCase().includes('none') ? '#059669' : '#dc2626', fontWeight: 500, textAlign: 'right', maxWidth: '240px' }}>
+                                      {condText || 'None'}
+                                    </span>
+                                  </div>
+                                );
+                              })
+                            ) : (
+                              <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500, fontSize: '0.88rem' }}>
+                                {selectedLead.medical_history}
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div style={{ color: '#94a3b8', fontStyle: 'italic', fontSize: '0.88rem' }}>Not provided</div>
+                        )}
+                      </div>
                     )}
                     {selectedLead.type === 'life' && (
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education</div>
+                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Education / Qualification</div>
                         <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.education || 'Not provided'}</div>
                       </div>
                     )}
@@ -607,10 +713,12 @@ const LeadManagement = () => {
                     </div>
                     {(selectedLead.type === 'health' || selectedLead.type === 'life') && selectedLead.members && (
                       <div>
-                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Members to Insure</div>
+                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Members &amp; Ages</div>
                         <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500, display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-                          {selectedLead.members.split(',').map(m => (
-                            <span key={m} style={{ background: '#eef2ff', color: '#4f46e5', padding: '2px 8px', borderRadius: '12px', fontSize: '0.8rem' }}>{m.trim()}</span>
+                          {selectedLead.members.split(',').map((m, idx) => (
+                            <span key={idx} style={{ background: '#eef2ff', color: '#4f46e5', padding: '3px 10px', borderRadius: '12px', fontSize: '0.82rem', fontWeight: 500 }}>
+                              {m.trim()}
+                            </span>
                           ))}
                         </div>
                       </div>
@@ -642,6 +750,20 @@ const LeadManagement = () => {
                         {`${selectedLead.type.charAt(0).toUpperCase() + selectedLead.type.slice(1)} Insurance${selectedLead.specific_plan ? ` (${selectedLead.specific_plan})` : ''}`}
                       </div>
                     </div>
+                    {selectedLead.policy_intent && (
+                      <div>
+                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Plan Option</div>
+                        <div style={{ color: 'var(--text-dark, #1f2937)', fontWeight: 500 }}>{selectedLead.policy_intent}</div>
+                      </div>
+                    )}
+                    {selectedLead.home_visit && (
+                      <div>
+                        <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Free Home Visit Booking</div>
+                        <div style={{ color: selectedLead.home_visit === 'Yes' ? '#059669' : '#374151', fontWeight: 600 }}>
+                          {selectedLead.home_visit === 'Yes' ? `Yes (${selectedLead.home_visit_datetime || 'Time not specified'})` : selectedLead.home_visit}
+                        </div>
+                      </div>
+                    )}
                     {selectedLead.type === 'life' && selectedLead.life_cover && (
                       <div>
                         <div style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '0.25rem' }}>Life Cover Amount</div>
