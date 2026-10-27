@@ -329,7 +329,11 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
       if (response.ok) {
         toast.success('Your application was submitted successfully!');
-        sessionStorage.setItem('lead_submitted_token', 'true');
+        const token = `lead_tok_${Date.now()}`;
+        localStorage.setItem('lead_submitted_token', token);
+        if (mobile) localStorage.setItem('user_phone', mobile);
+        sessionStorage.setItem('lead_submitted_token', token);
+        if (mobile) sessionStorage.setItem('user_phone', mobile);
         if(onComplete) onComplete(); 
       } else {
         toast.error('Failed to submit application. Please try again.');

@@ -231,7 +231,7 @@ function MainSite() {
   const [checkingAccount, setCheckingAccount] = useState(false);
 
   useEffect(() => {
-    const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
+    const hasSubmitted = localStorage.getItem('lead_submitted_token') || sessionStorage.getItem('lead_submitted_token');
     if (hasSubmitted) navigate('/', { replace: true });
   }, [navigate]);
 
@@ -253,7 +253,10 @@ function MainSite() {
         const data = await res.json();
         if (data.exists) {
           toast.success('Account found! Welcome back.');
-          sessionStorage.setItem('lead_submitted_token', 'true');
+          const token = data.token || `lead_tok_${Date.now()}`;
+          localStorage.setItem('lead_submitted_token', token);
+          localStorage.setItem('user_phone', cleanPhone);
+          sessionStorage.setItem('lead_submitted_token', token);
           sessionStorage.setItem('user_phone', cleanPhone);
           setTimeout(() => navigate('/'), 600);
         } else {
