@@ -60,7 +60,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   const [fuelType, setFuelType] = useState('');
   const [registrationDate, setRegistrationDate] = useState('');
   const [vehicleCover, setVehicleCover] = useState('');
-  const [vehicleCoverAmount, setVehicleCoverAmount] = useState('');
 
   const handleSonCountChange = (delta: number) => {
     const newCount = Math.max(0, Math.min(5, sonCount + delta));
@@ -112,7 +111,9 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   };
 
   const handleLifeNext5 = () => {
-    if (!lifeCoverAmount) return toast.error('Please select Coverage Amount');
+    if (!lifeCoverAmount) {
+      return toast.error(lifePlanType === 'Savings' ? 'Please select or enter Premium Amount' : 'Please select Coverage Amount');
+    }
     setLifeStep(6);
   };
 
@@ -120,11 +121,46 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
     if (!lifeSmoker) return toast.error('Please select Smoke option');
     setLifeStep(7);
   };
+
+  const handleLifeNext7 = () => {
+    if (!homeVisit) return toast.error('Please choose whether you want to book a free home visit');
+    if (homeVisit === 'Yes' && (!homeVisitDate || !homeVisitTime)) {
+      return toast.error('Please select visit date and time');
+    }
+    setLifeStep(8);
+  };
+  const formatVehicleNumber = (val: string) => {
+    // Strip non-alphanumeric and uppercase
+    const clean = val.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    let part1 = clean.slice(0, 2); // State code e.g. AP
+    let part2 = clean.slice(2, 4); // District code e.g. 23
+    let part3 = '';
+    let part4 = '';
+
+    // Next characters can be series letters (1 or 2 letters) or directly digits
+    const rest = clean.slice(4);
+    const lettersMatch = rest.match(/^[A-Z]{1,3}/);
+    if (lettersMatch) {
+      part3 = lettersMatch[0];
+      part4 = rest.slice(part3.length, part3.length + 4);
+    } else {
+      part4 = rest.slice(0, 4);
+    }
+
+    const parts = [part1, part2, part3, part4].filter(Boolean);
+    return parts.join(' ');
+  };
+
   const handleVehicleNext1 = () => {
     if (!name.trim()) return toast.error('Please enter Proposer Name');
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error('Please enter a valid email address');
     if (!mobile.trim() || !/^[0-9]{10}$/.test(mobile)) return toast.error('Please enter a valid 10-digit mobile number');
-    if (!vehicleNumber.trim()) return toast.error('Please enter Vehicle Number');
+    
+    const cleanVehicle = vehicleNumber.replace(/\s+/g, '').toUpperCase();
+    const vehicleRegex = /^[A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}$/;
+    if (!cleanVehicle || !vehicleRegex.test(cleanVehicle)) {
+      return toast.error('Please enter a valid Vehicle Number (e.g. AP 23 BB 1055)');
+    }
     if (!vehicleType) return toast.error('Please select Vehicle Type');
     if (!manufacturer) return toast.error('Please select Manufacturer');
     if (!model) return toast.error('Please select Model');
@@ -272,12 +308,12 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           location: pinCode || undefined,
           smoker: insuranceType === 'Health' ? smoker : (insuranceType === 'Life' ? lifeSmoker : undefined),
           medicalHistory: insuranceType === 'Health' ? [healthMedicalHistory] : [],
-          specificPlan: insuranceType === 'Vehicle' ? `${vehicleCover} - ${vehicleCoverAmount}` : (insuranceType === 'Health' ? healthCover : (lifeSubType ? `${lifePlanType}: ${lifeSubType} (${lifeCoverAmount})` : lifeCoverAmount)),
+          specificPlan: insuranceType === 'Vehicle' ? vehicleCover : (insuranceType === 'Health' ? healthCover : (lifeSubType ? `${lifePlanType}: ${lifeSubType} (${lifeCoverAmount})` : lifeCoverAmount)),
           members: [insuranceType === 'Health' ? policyMode : 'Individual', insuranceType === 'Life' ? lifeAge : ages],
           date: new Date().toISOString().split('T')[0],
           policyIntent: insuranceType === 'Health' ? policyIntent : undefined,
-          homeVisit: insuranceType === 'Health' ? homeVisit : undefined,
-          homeVisitDateTime: insuranceType === 'Health' ? homeVisitDateTimeStr : undefined,
+          homeVisit: (insuranceType === 'Health' || insuranceType === 'Life') ? homeVisit : undefined,
+          homeVisitDateTime: (insuranceType === 'Health' || insuranceType === 'Life') ? homeVisitDateTimeStr : undefined,
           vehicleNumber,
           vehicleType: insuranceType === 'Vehicle' ? vehicleType : undefined,
           vehicleManufacturer: insuranceType === 'Vehicle' ? manufacturer : undefined,
@@ -670,7 +706,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
             {/* Disease checklist for active member */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem', maxWidth: '650px', margin: '0 auto 2rem' }}>
               {[
-                'Depression',
+                
                 'Diabetes',
                 'Asthma',
                 'Hypertension',
@@ -733,7 +769,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               Select the sum insured cover amount required
             </p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', maxWidth: '600px', margin: '0 auto', marginBottom: '2.5rem' }}>
-              {['5 Lakh', '10 Lakh', '15 Lakh', '20 Lakh', '25 Lakh', '50 Lakh', '1 Crore', '2 Crore', '3 Crore'].map(amount => (
+              {['5 Lakh', '10 Lakh', '15 Lakh', '20 Lakh', '25 Lakh', '50 Lakh', '1 Crore', '2 Crore', '3 Crore', 'Unlimited'].map(amount => (
                 <button 
                   type="button"
                   key={amount}
@@ -991,9 +1027,10 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           <span style={{ fontWeight: lifeStep === 2 ? 'bold' : 'normal', color: lifeStep === 2 ? '#000' : '#666' }}>Step 2. Plan Type</span>
           <span style={{ fontWeight: lifeStep === 3 ? 'bold' : 'normal', color: lifeStep === 3 ? '#000' : '#666' }}>Step 3. Customer Details</span>
           <span style={{ fontWeight: lifeStep === 4 ? 'bold' : 'normal', color: lifeStep === 4 ? '#000' : '#666' }}>Step 4. Qualification &amp; Income</span>
-          <span style={{ fontWeight: lifeStep === 5 ? 'bold' : 'normal', color: lifeStep === 5 ? '#000' : '#666' }}>Step 5. Coverage</span>
+          <span style={{ fontWeight: lifeStep === 5 ? 'bold' : 'normal', color: lifeStep === 5 ? '#000' : '#666' }}>{lifePlanType === 'Savings' ? 'Step 5. Premium' : 'Step 5. Coverage'}</span>
           <span style={{ fontWeight: lifeStep === 6 ? 'bold' : 'normal', color: lifeStep === 6 ? '#000' : '#666' }}>Step 6. Smoke</span>
-          <span style={{ fontWeight: lifeStep === 7 ? 'bold' : 'normal', color: lifeStep === 7 ? '#000' : '#666' }}>Step 7. Confirm</span>
+          <span style={{ fontWeight: lifeStep === 7 ? 'bold' : 'normal', color: lifeStep === 7 ? '#000' : '#666' }}>Step 7. Home Visit</span>
+          <span style={{ fontWeight: lifeStep === 8 ? 'bold' : 'normal', color: lifeStep === 8 ? '#000' : '#666' }}>Step 8. Confirm</span>
         </div>
 
         {/* Step 2 (Sketch Step-2): Life Insurance Plan Selection */}
@@ -1262,30 +1299,64 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
           </div>
         )}
 
-        {/* Step 5: Coverage Details */}
+        {/* Step 5: Coverage Details (Term) or Premium Details (Savings) */}
         {lifeStep === 5 && (
           <div>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <span style={{ display: 'inline-block', background: '#eff6ff', color: '#2563eb', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>
                 Step 5
               </span>
-              <h3 style={{ margin: 0 }}>Coverage Details</h3>
-              <p style={{ color: '#6b7280', fontSize: '0.9rem', marginTop: '0.25rem' }}>Select the life cover amount required</p>
+              <h3 style={{ margin: 0 }}>{lifePlanType === 'Savings' ? 'Premium Details' : 'Coverage Details'}</h3>
+              <p style={{ color: '#6b7280', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                {lifePlanType === 'Savings' ? 'Select or enter your desired premium amount' : 'Select the life cover amount required'}
+              </p>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', maxWidth: '600px', margin: '0 auto 2.5rem' }}>
-              {['25 Lakh', '50 Lakh', '1 Crore', '2 Crore', '3 Crore', 'Up to 50 Crore'].map(amount => (
-                <button 
-                  type="button"
-                  key={amount}
-                  className={`btn ${lifeCoverAmount === amount ? 'btn-primary' : 'btn-outline'}`}
-                  style={{ width: '140px', padding: '0.9rem 0.5rem', fontWeight: 600 }}
-                  onClick={() => setLifeCoverAmount(amount)}
-                >
-                  {amount}
-                </button>
-              ))}
-            </div>
+            {lifePlanType === 'Savings' ? (
+              <div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.85rem', justifyContent: 'center', maxWidth: '640px', margin: '0 auto 1.5rem' }}>
+                  {['25K', '50K', '75K', '1 Lakh', '2 Lakh', '3 Lakh', '5 Lakh', '7 Lakh', '10 Lakh'].map(amount => (
+                    <button 
+                      type="button"
+                      key={amount}
+                      className={`btn ${lifeCoverAmount === amount ? 'btn-primary' : 'btn-outline'}`}
+                      style={{ minWidth: '100px', padding: '0.75rem 1rem', fontWeight: 600 }}
+                      onClick={() => setLifeCoverAmount(amount)}
+                    >
+                      {amount}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ maxWidth: '380px', margin: '0 auto 2.5rem' }}>
+                  <label style={{ display: 'block', fontWeight: 600, color: '#334155', marginBottom: '0.5rem', textAlign: 'center', fontSize: '0.9rem' }}>
+                    Or Enter Custom Premium Amount
+                  </label>
+                  <div className="input-with-icon">
+                    <input 
+                      type="text" 
+                      placeholder="e.g. ₹ 1,50,000 / year" 
+                      value={!['25K', '50K', '75K', '1 Lakh', '2 Lakh', '3 Lakh', '5 Lakh', '7 Lakh', '10 Lakh'].includes(lifeCoverAmount) ? lifeCoverAmount : ''} 
+                      onChange={e => setLifeCoverAmount(e.target.value)} 
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', maxWidth: '600px', margin: '0 auto 2.5rem' }}>
+                {['25 Lakh', '50 Lakh', '1 Crore', '2 Crore', '3 Crore', 'Up to 50 Crore'].map(amount => (
+                  <button 
+                    type="button"
+                    key={amount}
+                    className={`btn ${lifeCoverAmount === amount ? 'btn-primary' : 'btn-outline'}`}
+                    style={{ width: '140px', padding: '0.9rem 0.5rem', fontWeight: 600 }}
+                    onClick={() => setLifeCoverAmount(amount)}
+                  >
+                    {amount}
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button type="button" className="btn btn-outline" onClick={() => setLifeStep(4)}>BACK (STEP 4)</button>
@@ -1322,17 +1393,101 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
             </div>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
               <button type="button" className="btn btn-outline" onClick={() => setLifeStep(5)}>BACK (STEP 5)</button>
-              <button type="button" className="btn btn-primary" onClick={handleLifeNext6}>PREVIEW &amp; CONFIRM (STEP 7)</button>
+              <button type="button" className="btn btn-primary" onClick={handleLifeNext6}>NEXT - HOME VISIT (STEP 7)</button>
             </div>
           </div>
         )}
 
-        {/* Step 7: Preview and Confirm */}
+        {/* Step 7: Home Visit (Same as Health Insurance) */}
         {lifeStep === 7 && (
+          <div style={{ maxWidth: '520px', margin: '0 auto', textAlign: 'center' }}>
+            <span style={{ display: 'inline-block', background: '#eff6ff', color: '#2563eb', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+              Step 7
+            </span>
+            <h3 style={{ marginBottom: '0.5rem' }}>Book a Free Home Visit</h3>
+            <p style={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: '2rem' }}>
+              Would you like our certified insurance expert to visit you for personalized guidance?
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2rem', textAlign: 'left' }}>
+              {[
+                { val: 'Yes', label: 'Yes', desc: 'Schedule a certified expert at your home' },
+                { val: 'No', label: 'No', desc: 'I prefer online & telephonic consultation only' },
+                { val: 'I will do later', label: 'I will do later', desc: 'Decide after comparing the plans' }
+              ].map(opt => (
+                <label 
+                  key={opt.val}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    padding: '1.1rem 1.25rem',
+                    borderRadius: '14px',
+                    border: homeVisit === opt.val ? '2px solid #2e9f68' : '1px solid #e2e8f0',
+                    background: homeVisit === opt.val ? '#f0fdf4' : '#ffffff',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                  onClick={() => setHomeVisit(opt.val as any)}
+                >
+                  <input 
+                    type="radio" 
+                    name="lifeHomeVisit" 
+                    checked={homeVisit === opt.val} 
+                    onChange={() => setHomeVisit(opt.val as any)}
+                    style={{ width: '1.15rem', height: '1.15rem', accentColor: '#2e9f68' }}
+                  />
+                  <div>
+                    <div style={{ fontWeight: 600, color: '#1f2937', fontSize: '0.95rem' }}>{opt.label}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>{opt.desc}</div>
+                  </div>
+                </label>
+              ))}
+            </div>
+
+            {homeVisit === 'Yes' && (
+              <div style={{ background: '#f8fafc', padding: '1.25rem', borderRadius: '14px', border: '1px solid #e2e8f0', marginBottom: '2rem', textAlign: 'left' }}>
+                <div style={{ fontWeight: 700, color: '#1f2937', fontSize: '0.95rem', marginBottom: '1rem' }}>
+                  Select Visit Date and Time:
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div className="form-group">
+                    <label className="required" style={{ fontSize: '0.85rem' }}>Visit Date</label>
+                    <input 
+                      type="date" 
+                      min={new Date().toISOString().split('T')[0]} 
+                      value={homeVisitDate} 
+                      onChange={e => setHomeVisitDate(e.target.value)} 
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="required" style={{ fontSize: '0.85rem' }}>Visit Time</label>
+                    <select value={homeVisitTime} onChange={e => setHomeVisitTime(e.target.value)}>
+                      <option value="">Select Time Slot</option>
+                      <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+                      <option value="12:00 PM - 02:00 PM">12:00 PM - 02:00 PM</option>
+                      <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+                      <option value="04:00 PM - 06:00 PM">04:00 PM - 06:00 PM</option>
+                      <option value="06:00 PM - 08:00 PM">06:00 PM - 08:00 PM</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+              <button type="button" className="btn btn-outline" onClick={() => setLifeStep(6)}>BACK (STEP 6)</button>
+              <button type="button" className="btn btn-primary" onClick={handleLifeNext7}>PREVIEW &amp; CONFIRM (STEP 8)</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 8: Preview and Confirm */}
+        {lifeStep === 8 && (
           <div style={{ maxWidth: '540px', margin: '0 auto', textAlign: 'left' }}>
             <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
               <span style={{ display: 'inline-block', background: '#eff6ff', color: '#2563eb', padding: '0.25rem 0.75rem', borderRadius: '9999px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-                Step 7
+                Step 8
               </span>
               <h3 style={{ margin: 0 }}>Preview and Confirm</h3>
               <p style={{ color: '#6b7280', fontSize: '0.9rem', marginTop: '0.25rem' }}>
@@ -1377,16 +1532,22 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
                 <strong>{income}</strong>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem' }}>
-                <span style={{ color: '#64748b' }}>Coverage Details:</span>
+                <span style={{ color: '#64748b' }}>{lifePlanType === 'Savings' ? 'Premium Details:' : 'Coverage Details:'}</span>
                 <strong style={{ color: '#2563eb' }}>{lifeCoverAmount}</strong>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '0.2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.4rem' }}>
                 <span style={{ color: '#64748b' }}>Smoke / Tobacco:</span>
                 <strong>{lifeSmoker}</strong>
               </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '0.2rem' }}>
+                <span style={{ color: '#64748b' }}>Free Home Visit:</span>
+                <strong style={{ color: homeVisit === 'Yes' ? '#2e9f68' : '#1f2937' }}>
+                  {homeVisit === 'Yes' ? `Yes (${homeVisitDate} ${homeVisitTime})` : homeVisit}
+                </strong>
+              </div>
             </div>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button type="button" className="btn btn-outline" onClick={() => setLifeStep(6)}>BACK (STEP 6)</button>
+              <button type="button" className="btn btn-outline" onClick={() => setLifeStep(7)}>BACK (STEP 7)</button>
               <button type="button" className="btn btn-primary" onClick={handleSubmit} disabled={isSubmitting}>
                 {isSubmitting ? 'SUBMITTING...' : 'CONFIRM & SUBMIT'}
               </button>
@@ -1398,7 +1559,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
   };
 
   const renderVehicleSteps = () => {
-    if (vehicleStep === 5) {
+    if (vehicleStep === 4) {
       return (
         <div className="step-container" style={{ textAlign: 'center' }}>
           <div style={{ width: '80px', height: '80px', background: '#ecfdf5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem' }}>
@@ -1433,8 +1594,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
         <div className="progress-bar-container">
           <span style={{ fontWeight: vehicleStep === 1 ? 'bold' : 'normal', color: vehicleStep === 1 ? '#000' : '#666' }}>1. Details</span>
           <span style={{ fontWeight: vehicleStep === 2 ? 'bold' : 'normal', color: vehicleStep === 2 ? '#000' : '#666' }}>2. Eligibility</span>
-          <span style={{ fontWeight: vehicleStep === 3 ? 'bold' : 'normal', color: vehicleStep === 3 ? '#000' : '#666' }}>3. Cover Type</span>
-          <span style={{ fontWeight: vehicleStep === 4 ? 'bold' : 'normal', color: vehicleStep === 4 ? '#000' : '#666' }}>4. Review</span>
+          <span style={{ fontWeight: vehicleStep === 3 ? 'bold' : 'normal', color: vehicleStep === 3 ? '#000' : '#666' }}>3. Review</span>
         </div>
 
         {vehicleStep === 1 && (
@@ -1460,7 +1620,13 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               <label className="required">Mobile Number</label>
               <div className="input-with-icon">
                 <Phone size={18} className="input-icon" />
-                <input type="tel" placeholder="Enter / Select" value={mobile} onChange={e => setMobile(e.target.value)} />
+                <input
+                  type="tel"
+                  maxLength={10}
+                  placeholder="10-digit mobile number"
+                  value={mobile}
+                  onChange={e => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                />
               </div>
             </div>
 
@@ -1470,7 +1636,14 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
                 <label className="required">Vehicle Number</label>
                 <div className="input-with-icon">
                   <Hash size={18} className="input-icon" />
-                  <input type="text" placeholder="MH 01 AB 1234" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value)} />
+                  <input
+                    type="text"
+                    maxLength={13}
+                    placeholder="e.g. AP 23 BB 1055"
+                    value={vehicleNumber}
+                    onChange={e => setVehicleNumber(formatVehicleNumber(e.target.value))}
+                    style={{ textTransform: 'uppercase' }}
+                  />
                 </div>
               </div>
               <div className="form-group">
@@ -1566,30 +1739,6 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
 
         {vehicleStep === 3 && (
           <div>
-            <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Choose Coverage Amount</h3>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center', marginBottom: '2rem' }}>
-              {['1 Lakh', '3 Lakh', '5 Lakh', '10 Lakh', '15 Lakh', '20 Lakh+'].map(amount => (
-                <button 
-                  key={amount}
-                  className={`btn ${vehicleCoverAmount === amount ? 'btn-primary' : 'btn-outline'}`}
-                  onClick={() => setVehicleCoverAmount(amount)}
-                >
-                  {amount}
-                </button>
-              ))}
-            </div>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <button className="btn btn-outline" onClick={() => setVehicleStep(2)}>BACK</button>
-              <button className="btn btn-primary" onClick={() => {
-                if (!vehicleCoverAmount) return toast.error('Please select a coverage amount');
-                setVehicleStep(4);
-              }}>NEXT - REVIEW</button>
-            </div>
-          </div>
-        )}
-
-        {vehicleStep === 4 && (
-          <div>
             <h3 style={{ marginBottom: '2rem', textAlign: 'center' }}>Review Your Request</h3>
             <div style={{ background: '#f8fafc', padding: '2rem', borderRadius: '16px', marginBottom: '2rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
@@ -1602,7 +1751,7 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', borderBottom: '1px solid #e2e8f0', paddingBottom: '0.5rem' }}>
                 <span style={{ color: '#64748b' }}>Plan Preference</span>
-                <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{vehicleCover} - {vehicleCoverAmount}</span>
+                <span style={{ fontWeight: 'bold', color: '#3b82f6' }}>{vehicleCover}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: '#64748b' }}>Next Action</span>
@@ -1610,11 +1759,11 @@ const LeadForm: React.FC<LeadFormProps> = ({ onComplete, onStepChange }) => {
               </div>
             </div>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn btn-outline" onClick={() => setVehicleStep(3)}>BACK</button>
+              <button className="btn btn-outline" onClick={() => setVehicleStep(2)}>BACK</button>
               <button className="btn btn-outline" onClick={() => toast.success('Connecting to expert...')}>CALL TO EXPERT</button>
               <button className="btn btn-primary" onClick={async () => {
                 await handleSubmit();
-                setVehicleStep(5);
+                setVehicleStep(4);
               }} disabled={isSubmitting}>
                 {isSubmitting ? 'CONFIRMING...' : 'CONFIRM BOOKING'}
               </button>

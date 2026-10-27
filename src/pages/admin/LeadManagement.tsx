@@ -29,6 +29,7 @@ interface Lead {
   members?: string;
   reminder?: string;
   policy_document_url?: string;
+  policy_company_name?: string;
   policy_intent?: string;
   home_visit?: string;
   home_visit_datetime?: string;
@@ -58,6 +59,7 @@ const LeadManagement = () => {
   const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
 
   const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [policyCompany, setPolicyCompany] = useState('');
 
   // Audio for ring sound
   const ringSound = useMemo(() => new Audio('https://actions.google.com/sounds/v1/alarms/beep_short.ogg'), []);
@@ -199,6 +201,9 @@ const LeadManagement = () => {
     setUploadingPdf(true);
     const formData = new FormData();
     formData.append('document', file);
+    if (policyCompany.trim()) {
+      formData.append('company_name', policyCompany.trim());
+    }
 
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL || `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}`}/api/leads/${id}/document`, {
@@ -208,9 +213,9 @@ const LeadManagement = () => {
 
       if (res.ok) {
         const updatedLead = await res.json();
-        setLeads(leads.map(lead => lead.id === id ? { ...lead, policy_document_url: updatedLead.policy_document_url } : lead));
+        setLeads(leads.map(lead => lead.id === id ? { ...lead, policy_document_url: updatedLead.policy_document_url, policy_company_name: updatedLead.policy_company_name } : lead));
         if (selectedLead && selectedLead.id === id) {
-          setSelectedLead({ ...selectedLead, policy_document_url: updatedLead.policy_document_url });
+          setSelectedLead({ ...selectedLead, policy_document_url: updatedLead.policy_document_url, policy_company_name: updatedLead.policy_company_name });
         }
         toast.success('Policy document uploaded successfully!');
       } else {
@@ -224,13 +229,37 @@ const LeadManagement = () => {
     }
   };
 
+  const handleUpdatePolicyCompany = async (id: string, companyName: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/${id}/company`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ policy_company_name: companyName })
+      });
+      if (res.ok) {
+        setLeads(leads.map(lead => lead.id === id ? { ...lead, policy_company_name: companyName } : lead));
+        if (selectedLead && selectedLead.id === id) {
+          setSelectedLead({ ...selectedLead, policy_company_name: companyName });
+        }
+        toast.success('Company name updated');
+      } else {
+        toast.error('Failed to update company name');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error updating company name');
+    }
+  };
+
   const exportToPDF = () => {
     const doc = new jsPDF('landscape');
     doc.text(`${typeFilter.toUpperCase()} Insurance Leads`, 14, 15);
 
     const tableColumn = typeFilter === 'health' 
-      ? ["Name", "Phone", "Email", "Coverage", "Plan Option", "Home Visit", "Smoke", "Conditions", "Date", "Status"]
-      : ["Name", "Phone", "Email", "Coverage/Plan", "Date", "Status"];
+      ? ["Name", "Phone", "Email", "Coverage", "Plan Option", "Home Visit", "Smoke", "Conditions", "Date", "Status", "Company"]
+      : (typeFilter === 'life'
+        ? ["Name", "Phone", "Email", "Coverage/Plan", "Home Visit", "Date", "Status", "Company"]
+        : ["Name", "Phone", "Email", "Coverage/Plan", "Date", "Status", "Company"]);
 
     const tableRows = filteredLeads.map(lead => {
       if (typeFilter === 'health') {
@@ -244,10 +273,23 @@ const LeadManagement = () => {
           lead.smoker || '-',
           lead.medical_history || 'None',
           lead.date,
-          lead.status
+          lead.status,
+          lead.policy_company_name || '-'
         ];
       }
-      return [lead.name, lead.phone, lead.email, lead.specific_plan || lead.life_cover || '-', lead.date, lead.status];
+      if (typeFilter === 'life') {
+        return [
+          lead.name,
+          lead.phone,
+          lead.email,
+          lead.specific_plan || lead.life_cover || '-',
+          lead.home_visit === 'Yes' ? `Yes (${lead.home_visit_datetime || ''})` : (lead.home_visit || '-'),
+          lead.date,
+          lead.status,
+          lead.policy_company_name || '-'
+        ];
+      }
+      return [lead.name, lead.phone, lead.email, lead.specific_plan || lead.life_cover || '-', lead.date, lead.status, lead.policy_company_name || '-'];
     });
 
     autoTable(doc, {
@@ -277,6 +319,7 @@ const LeadManagement = () => {
       MedicalHistory: lead.medical_history || '',
       Date: lead.date,
       Status: lead.status,
+      Company: lead.policy_company_name || '',
       Reminder: lead.reminder || ''
     })));
     const workbook = XLSX.utils.book_new();
@@ -412,14 +455,15 @@ const LeadManagement = () => {
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Name</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contact Info</th>
               {typeFilter === 'health' && (
-                <>
-                  <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Plan Option</th>
-                  <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Home Visit</th>
-                </>
+                <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Plan Option</th>
+              )}
+              {(typeFilter === 'health' || typeFilter === 'life') && (
+                <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Home Visit</th>
               )}
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Date</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Reminder</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</th>
+              <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Company</th>
               <th style={{ padding: '0.75rem 1rem', color: '#6b7280', fontWeight: 600, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Actions</th>
             </tr>
           </thead>
@@ -436,6 +480,7 @@ const LeadManagement = () => {
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}><div className="skeleton-box" style={{ width: '80px', height: '18px' }}></div></td>
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}><div className="skeleton-box" style={{ width: '300px', height: '30px', borderRadius: '6px' }}></div></td>
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}><div className="skeleton-box" style={{ width: '70px', height: '24px', borderRadius: '12px' }}></div></td>
+                  <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}><div className="skeleton-box" style={{ width: '90px', height: '20px', borderRadius: '6px' }}></div></td>
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}><div className="skeleton-box" style={{ width: '180px', height: '28px', margin: '0 auto', display: 'block' }}></div></td>
                 </tr>
               ))
@@ -460,7 +505,7 @@ const LeadManagement = () => {
                       />
                     )}
                   </td>
-                  <td onClick={() => setSelectedLead(lead)} style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', cursor: 'pointer' }}>
+                  <td onClick={() => { setSelectedLead(lead); setPolicyCompany(lead.policy_company_name || ''); }} style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', cursor: 'pointer' }}>
                     <div style={{ fontWeight: 500, color: 'var(--text-dark, #1f2937)' }}>{lead.name}</div>
                     {lead.type === 'health' && lead.specific_plan && (
                       <div style={{ fontSize: '0.8rem', color: 'var(--primary-color, #2e9f68)', marginTop: '0.25rem', fontWeight: 600 }}>
@@ -488,39 +533,39 @@ const LeadManagement = () => {
                     </div>
                   </td>
                   {typeFilter === 'health' && (
-                    <>
-                      <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.85rem' }}>
-                        {lead.policy_intent ? (
-                          <span style={{ 
-                            background: lead.policy_intent === 'Buy new policy' ? '#eff6ff' : '#fef3c7',
-                            color: lead.policy_intent === 'Buy new policy' ? '#1d4ed8' : '#b45309',
-                            padding: '3px 8px', borderRadius: '6px', fontWeight: 600, fontSize: '0.75rem', display: 'inline-block'
-                          }}>
-                            {lead.policy_intent}
+                    <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.85rem' }}>
+                      {lead.policy_intent ? (
+                        <span style={{ 
+                          background: lead.policy_intent === 'Buy new policy' ? '#eff6ff' : '#fef3c7',
+                          color: lead.policy_intent === 'Buy new policy' ? '#1d4ed8' : '#b45309',
+                          padding: '3px 8px', borderRadius: '6px', fontWeight: 600, fontSize: '0.75rem', display: 'inline-block'
+                        }}>
+                          {lead.policy_intent}
+                        </span>
+                      ) : (
+                        <span style={{ color: '#9ca3af' }}>-</span>
+                      )}
+                    </td>
+                  )}
+                  {(typeFilter === 'health' || typeFilter === 'life') && (
+                    <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.82rem' }}>
+                      {lead.home_visit === 'Yes' ? (
+                        <div>
+                          <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 7px', borderRadius: '6px', fontWeight: 700, fontSize: '0.75rem' }}>
+                            ✓ Yes
                           </span>
-                        ) : (
-                          <span style={{ color: '#9ca3af' }}>-</span>
-                        )}
-                      </td>
-                      <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.82rem' }}>
-                        {lead.home_visit === 'Yes' ? (
-                          <div>
-                            <span style={{ background: '#dcfce7', color: '#15803d', padding: '2px 7px', borderRadius: '6px', fontWeight: 700, fontSize: '0.75rem' }}>
-                              ✓ Yes
-                            </span>
-                            {lead.home_visit_datetime && (
-                              <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: '0.2rem', fontWeight: 500 }}>
-                                📅 {lead.home_visit_datetime}
-                              </div>
-                            )}
-                          </div>
-                        ) : lead.home_visit ? (
-                          <span style={{ color: '#6b7280' }}>{lead.home_visit}</span>
-                        ) : (
-                          <span style={{ color: '#9ca3af' }}>-</span>
-                        )}
-                      </td>
-                    </>
+                          {lead.home_visit_datetime && (
+                            <div style={{ fontSize: '0.75rem', color: '#4b5563', marginTop: '0.2rem', fontWeight: 500 }}>
+                              📅 {lead.home_visit_datetime}
+                            </div>
+                          )}
+                        </div>
+                      ) : lead.home_visit ? (
+                        <span style={{ color: '#6b7280' }}>{lead.home_visit}</span>
+                      ) : (
+                        <span style={{ color: '#9ca3af' }}>-</span>
+                      )}
+                    </td>
                   )}
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}>{lead.date}</td>
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}>
@@ -542,10 +587,30 @@ const LeadManagement = () => {
                       {lead.status}
                     </span>
                   </td>
+                  <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle', fontSize: '0.85rem' }}>
+                    {lead.policy_company_name ? (
+                      <span style={{
+                        background: '#eff6ff',
+                        color: '#1d4ed8',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        fontWeight: 600,
+                        fontSize: '0.75rem',
+                        display: 'inline-block',
+                        border: '1px solid #bfdbfe'
+                      }}>
+                        🏢 {lead.policy_company_name}
+                      </span>
+                    ) : (lead.status === 'Agreed' || lead.status === 'Closed') ? (
+                      <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '0.8rem' }}>Not specified</span>
+                    ) : (
+                      <span style={{ color: '#9ca3af' }}>-</span>
+                    )}
+                  </td>
                   <td style={{ padding: '0.75rem 1rem', verticalAlign: 'middle' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', minWidth: '160px' }}>
                       <button 
-                        onClick={() => setSelectedLead(lead)}
+                        onClick={() => { setSelectedLead(lead); setPolicyCompany(lead.policy_company_name || ''); }}
                         title="View Full Details"
                         style={{ padding: '0.5rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #2e9f68', borderRadius: '6px', background: '#2e9f68', color: 'white', cursor: 'pointer' }}
                       >
@@ -821,13 +886,58 @@ const LeadManagement = () => {
               {/* Policy Document Management */}
               {(selectedLead.status === 'Agreed' || selectedLead.status === 'Closed') && (
                 <div style={{ gridColumn: '1 / -1' }}>
-                  <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Policy Document</h4>
+                  <h4 style={{ margin: '0 0 0.75rem', color: 'var(--primary-color, #2e9f68)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Policy Document & Company Details</h4>
                   <div style={{ backgroundColor: '#f9fafb', padding: '1.5rem', borderRadius: '8px', border: '1px dashed #d1d5db', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+
+                    {/* Company Name Input */}
+                    <div style={{ width: '100%', maxWidth: '420px', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      <label style={{ fontSize: '0.85rem', fontWeight: 600, color: '#374151' }}>
+                        Insurance Company Name:
+                      </label>
+                      <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <input
+                          type="text"
+                          value={policyCompany}
+                          onChange={(e) => setPolicyCompany(e.target.value)}
+                          placeholder="e.g. Star Health, HDFC ERGO, LIC, Tata AIG"
+                          style={{
+                            flex: 1,
+                            padding: '0.5rem 0.75rem',
+                            borderRadius: '6px',
+                            border: '1px solid #d1d5db',
+                            fontSize: '0.85rem',
+                            outline: 'none',
+                            backgroundColor: 'white'
+                          }}
+                        />
+                        {selectedLead.policy_document_url && (
+                          <button
+                            type="button"
+                            onClick={() => handleUpdatePolicyCompany(selectedLead.id, policyCompany)}
+                            style={{
+                              padding: '0.5rem 1rem',
+                              backgroundColor: 'var(--primary-color, #2e9f68)',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              fontSize: '0.82rem',
+                              fontWeight: 600
+                            }}
+                          >
+                            Save
+                          </button>
+                        )}
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#6b7280' }}>
+                        Specify the insurance company issuing the policy for this customer.
+                      </span>
+                    </div>
 
                     {selectedLead.policy_document_url ? (
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%' }}>
                         <div style={{ color: 'var(--success-color, #10b981)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600 }}>
-                          <FiFileText size={20} /> Policy PDF is active
+                          <FiFileText size={20} /> Policy PDF is active {selectedLead.policy_company_name ? `(${selectedLead.policy_company_name})` : ''}
                         </div>
                         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
                           <button onClick={() => setIsPdfViewerOpen(true)} style={{ padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 500 }}>
@@ -844,7 +954,7 @@ const LeadManagement = () => {
                       </div>
                     ) : (
                       <div style={{ textAlign: 'center' }}>
-                        <p style={{ color: '#4b5563', marginBottom: '1rem', fontSize: '0.9rem' }}>Application is {selectedLead.status}. Please generate and upload the final policy PDF for the customer.</p>
+                        <p style={{ color: '#4b5563', marginBottom: '1rem', fontSize: '0.9rem' }}>Application is {selectedLead.status}. Please enter company name above and upload the policy PDF.</p>
                         <label style={{ cursor: 'pointer', padding: '0.75rem 1.5rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--primary-color, #2e9f68)', color: 'white', borderRadius: '6px', fontWeight: 600, transition: 'opacity 0.2s' }}>
                           <FiUpload /> {uploadingPdf ? 'Uploading...' : 'Upload Policy PDF'}
                           <input type="file" accept="application/pdf" style={{ display: 'none' }} disabled={uploadingPdf} onChange={(e) => { if (e.target.files && e.target.files[0]) handleUploadPolicy(selectedLead.id, e.target.files[0]) }} />

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import LeadForm from './components/LeadForm';
 
 const steps = [
@@ -226,6 +226,9 @@ const CSS = `
 function MainSite() {
   const navigate = useNavigate();
   const [stage, setStage] = useState<1 | 2>(1);
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [checkMobile, setCheckMobile] = useState('');
+  const [checkingAccount, setCheckingAccount] = useState(false);
 
   useEffect(() => {
     const hasSubmitted = sessionStorage.getItem('lead_submitted_token') === 'true';
@@ -235,17 +238,180 @@ function MainSite() {
   const handleComplete = () => navigate('/');
   const goToForm = () => { setStage(2); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
+  const handleVerifyExistingAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanPhone = checkMobile.trim().replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      toast.error('Please enter a valid 10-digit mobile number');
+      return;
+    }
+
+    setCheckingAccount(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/leads/check?phone=${encodeURIComponent(cleanPhone)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.exists) {
+          toast.success('Account found! Welcome back.');
+          sessionStorage.setItem('lead_submitted_token', 'true');
+          sessionStorage.setItem('user_phone', cleanPhone);
+          setTimeout(() => navigate('/'), 600);
+        } else {
+          toast.error('No existing account found with this mobile number. Please fill in your details.');
+        }
+      } else {
+        toast.error('Unable to verify account at this moment. Please try again.');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Server error while checking account.');
+    } finally {
+      setCheckingAccount(false);
+    }
+  };
+
+  const renderExistingAccountModal = () => {
+    if (!showAccountModal) return null;
+    return (
+      <div 
+        style={{
+          position: 'fixed',
+          inset: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.6)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1rem'
+        }}
+        onClick={() => setShowAccountModal(false)}
+      >
+        <div 
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '20px',
+            maxWidth: '440px',
+            width: '100%',
+            padding: '2rem',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+            position: 'relative'
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          <button 
+            type="button"
+            onClick={() => setShowAccountModal(false)}
+            style={{
+              position: 'absolute',
+              top: '1.25rem',
+              right: '1.25rem',
+              background: '#f1f5f9',
+              border: 'none',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              fontSize: '1rem',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#64748b'
+            }}
+          >
+            ✕
+          </button>
+
+          <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+            <div style={{ width: '56px', height: '56px', background: '#ecfdf5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '1.5rem' }}>
+              👤
+            </div>
+            <h3 style={{ margin: '0 0 0.5rem', color: '#0f172a', fontSize: '1.25rem', fontWeight: 800 }}>Already have an account?</h3>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '0.88rem' }}>Enter your registered mobile number to continue to homepage</p>
+          </div>
+
+          <form onSubmit={handleVerifyExistingAccount}>
+            <div style={{ marginBottom: '1.5rem' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: '#334155', marginBottom: '0.5rem' }}>
+                Mobile Number
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', border: '1.5px solid #cbd5e1', borderRadius: '12px', padding: '0.75rem 1rem', background: '#f8fafc' }}>
+                <span style={{ color: '#64748b', fontWeight: 600, marginRight: '0.5rem', fontSize: '0.95rem' }}>+91</span>
+                <input 
+                  type="tel"
+                  maxLength={10}
+                  placeholder="Enter 10-digit mobile"
+                  value={checkMobile}
+                  onChange={e => setCheckMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  autoFocus
+                  style={{
+                    border: 'none',
+                    outline: 'none',
+                    background: 'transparent',
+                    fontSize: '1rem',
+                    width: '100%',
+                    fontWeight: 600,
+                    letterSpacing: '0.05em'
+                  }}
+                />
+              </div>
+            </div>
+
+            <button 
+              type="submit"
+              disabled={checkingAccount}
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg,#22c55e,#16a34a)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '0.9rem',
+                fontSize: '1rem',
+                fontWeight: 700,
+                cursor: checkingAccount ? 'not-allowed' : 'pointer',
+                boxShadow: '0 4px 14px rgba(22,163,74,0.3)',
+                transition: 'all 0.2s'
+              }}
+            >
+              {checkingAccount ? 'Verifying Account...' : 'Continue to Home →'}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
   // ─── STAGE 2: Only the form ───────────────────────────────────
   if (stage === 2) {
     return (
       <div key="s2" className="stage" style={{ fontFamily: "'Inter','Segoe UI',sans-serif", backgroundColor: '#f4f6fb', color: '#1f2937', minHeight: '100vh' }}>
         <style>{CSS}</style>
+        {renderExistingAccountModal()}
         <nav className="lf-nav" style={{ background: 'rgba(255,255,255,0.92)', borderBottom: '1px solid #e5e7eb' }}>
           <div className="lf-logo">
             <img src="/logo-icon.png" alt="InsuranceShiva" />
             <div className="lf-logo-text">Insurance<span>Shiva</span></div>
           </div>
-          <button className="lf-nav-back" style={{ color: '#4b5563', background: '#f3f4f6', border: '1px solid #e5e7eb' }} onClick={() => setStage(1)}>← Back</button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <button 
+              type="button"
+              onClick={() => setShowAccountModal(true)}
+              style={{
+                background: '#eff6ff',
+                color: '#2563eb',
+                border: '1px solid #bfdbfe',
+                padding: '0.5rem 0.9rem',
+                borderRadius: '10px',
+                fontWeight: 700,
+                fontSize: '0.82rem',
+                cursor: 'pointer'
+              }}
+            >
+              Already have an account?
+            </button>
+            <button className="lf-nav-back" style={{ color: '#4b5563', background: '#f3f4f6', border: '1px solid #e5e7eb' }} onClick={() => setStage(1)}>← Back</button>
+          </div>
         </nav>
 
         <div className="lf-form-stage">
@@ -269,6 +435,7 @@ function MainSite() {
   return (
     <div key="s1" className="stage" style={{ fontFamily: "'Inter','Segoe UI',sans-serif", backgroundColor: '#ffffff', color: '#111827' }}>
       <style>{CSS}</style>
+      {renderExistingAccountModal()}
 
       {/* NAV */}
       <nav className="lf-nav">
@@ -278,6 +445,23 @@ function MainSite() {
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
           <span className="lf-nav-badge">#1 Unbiased</span>
+          <button 
+            type="button"
+            onClick={() => setShowAccountModal(true)}
+            style={{
+              background: '#eff6ff',
+              color: '#2563eb',
+              border: '1px solid #bfdbfe',
+              padding: '0.5rem 0.95rem',
+              borderRadius: '10px',
+              fontWeight: 700,
+              fontSize: '0.82rem',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Already have an account?
+          </button>
           <button className="lf-nav-cta" onClick={goToForm}>Talk to Expert</button>
         </div>
       </nav>
@@ -303,10 +487,27 @@ function MainSite() {
             </div>
             <div className="lf-cta-row">
               <button className="lf-cta" onClick={goToForm}>
-                {/* <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 11.8 19.79 19.79 0 0 1 1.61 3.19 2 2 0 0 1 3.61 1h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> */}
                 Check Premium
               </button>
               <button className="lf-ghost" onClick={goToForm}>Talk to Expert →</button>
+            </div>
+            <div style={{ marginTop: '1rem', textAlign: 'left' }}>
+              <button
+                type="button"
+                onClick={() => setShowAccountModal(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#2563eb',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: 0,
+                  textDecoration: 'underline'
+                }}
+              >
+                Already submitted before? Enter mobile number →
+              </button>
             </div>
           </div>
           <div className="lf-banner">

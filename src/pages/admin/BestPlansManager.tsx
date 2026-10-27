@@ -7,6 +7,7 @@ interface BestPlan {
   id: number;
   category: string;
   rank: number;
+  company_name?: string;
   name: string;
   badge: string;
   premium: string;
@@ -25,7 +26,7 @@ const BestPlansManager: React.FC = () => {
   const [editingPlan, setEditingPlan] = useState<BestPlan | null>(null);
 
   const [formData, setFormData] = useState({
-    category: 'term', rank: 1, name: '', badge: '', premium: '', cover: '',
+    category: 'term', rank: 1, company_name: '', name: '', badge: '', premium: '', cover: '',
     claim_ratio: '', highlight: '', plan_type: 'Term', insurer_type: 'Private'
   });
 
@@ -54,14 +55,14 @@ const BestPlansManager: React.FC = () => {
     if (plan) {
       setEditingPlan(plan);
       setFormData({
-        category: plan.category, rank: plan.rank, name: plan.name, badge: plan.badge || '',
+        category: plan.category, rank: plan.rank, company_name: plan.company_name || '', name: plan.name, badge: plan.badge || '',
         premium: plan.premium || '', cover: plan.cover || '', claim_ratio: plan.claim_ratio || '',
         highlight: plan.highlight || '', plan_type: plan.plan_type || 'Individual', insurer_type: plan.insurer_type || 'Private'
       });
     } else {
       setEditingPlan(null);
       const defaultPlanType = activeCategory === 'health' ? 'Individual' : activeCategory === 'term' ? 'Term' : 'Comprehensive / Full Insurance';
-      setFormData({ category: activeCategory, rank: plans.length + 1, name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: defaultPlanType, insurer_type: 'Private' });
+      setFormData({ category: activeCategory, rank: plans.length + 1, company_name: '', name: '', badge: '', premium: '', cover: '', claim_ratio: '', highlight: '', plan_type: defaultPlanType, insurer_type: 'Private' });
     }
     setIsModalOpen(true);
   };
@@ -112,7 +113,7 @@ const BestPlansManager: React.FC = () => {
         <table className="bpm-table">
           <thead>
             <tr>
-              <th>Rank</th><th>Product Name</th><th>Plan Type</th><th>Insurer</th>
+              <th>Rank</th><th>Company Name</th><th>Product Name</th><th>Plan Type</th><th>Insurer</th>
               <th>Badge</th><th>Premium</th><th>Cover</th><th>Claim Metric</th><th>Highlight</th>
               <th >Actions</th>
             </tr>
@@ -121,16 +122,17 @@ const BestPlansManager: React.FC = () => {
             {loading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <tr key={i} className="bpm-loading">
-                  {Array.from({ length: 10 }).map((_, j) => (
-                    <td key={j}><div className="skeleton-box" style={{ height: '20px', width: j === 1 ? '120px' : '60px' }} /></td>
+                  {Array.from({ length: 11 }).map((_, j) => (
+                    <td key={j}><div className="skeleton-box" style={{ height: '20px', width: j === 1 || j === 2 ? '120px' : '60px' }} /></td>
                   ))}
                 </tr>
               ))
             ) : plans.length === 0 ? (
-              <tr><td colSpan={10}><div className="bpm-empty"><div className="bpm-empty-icon">📋</div><p>No plans found. Click <strong>Add New Plan</strong> to get started.</p></div></td></tr>
+              <tr><td colSpan={11}><div className="bpm-empty"><div className="bpm-empty-icon">📋</div><p>No plans found. Click <strong>Add New Plan</strong> to get started.</p></div></td></tr>
             ) : plans.map(plan => (
               <tr key={plan.id}>
                 <td><span className={getRankClass(plan.rank)}>#{plan.rank}</span></td>
+                <td><span style={{ fontWeight: 600, color: '#374151' }}>{plan.company_name || '—'}</span></td>
                 <td><span style={{ fontWeight: 600, color: '#111827' }}>{plan.name}</span></td>
                 <td><span className="pill pill-blue">{plan.plan_type || 'Individual'}</span></td>
                 <td><span className={`pill ${plan.insurer_type === 'Public' ? 'pill-green' : 'pill-purple'}`}>{plan.insurer_type === 'Public' ? '🏛️' : '🏢'} {plan.insurer_type || 'Private'}</span></td>
@@ -204,15 +206,19 @@ const BestPlansManager: React.FC = () => {
                     </select>
                   </div>
                 </div>
-                <div className="bpm-form-grid-1-3">
+                <div className="bpm-form-grid-2">
                   <div className="bpm-form-group">
                     <label>Rank</label>
                     <input type="number" name="rank" value={formData.rank} onChange={handleInputChange} required className="bpm-form-control" min="1" />
                   </div>
                   <div className="bpm-form-group">
-                    <label>Product Name</label>
-                    <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="bpm-form-control" placeholder="e.g. HDFC Life Click 2 Protect" />
+                    <label>Company Name <span style={{ color: '#ef4444' }}>*</span></label>
+                    <input type="text" name="company_name" value={formData.company_name} onChange={handleInputChange} required className="bpm-form-control" placeholder="e.g. HDFC Life / Star Health / Tata AIG" />
                   </div>
+                </div>
+                <div className="bpm-form-group">
+                  <label>Product Name</label>
+                  <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="bpm-form-control" placeholder="e.g. Click 2 Protect / Optima Secure" />
                 </div>
                 <div className="bpm-form-grid-2">
                   <div className="bpm-form-group">

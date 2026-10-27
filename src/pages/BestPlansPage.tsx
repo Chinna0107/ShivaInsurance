@@ -7,6 +7,7 @@ interface BestPlan {
   id: number;
   category: string;
   rank: number;
+  company_name?: string;
   name: string;
   badge: string;
   premium: string;
@@ -96,6 +97,7 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
             <thead>
               <tr>
                 <th>Rank</th>
+                <th>Company Name</th>
                 <th>Product Name</th>
                 <th>Plan Type</th>
                 <th>Insurer</th>
@@ -108,13 +110,13 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '3rem' }}>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '3rem' }}>
                     Loading plans...
                   </td>
                 </tr>
               ) : plans.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ textAlign: 'center', padding: '3rem' }}>
+                  <td colSpan={9} style={{ textAlign: 'center', padding: '3rem' }}>
                     No plans currently available in this category.
                   </td>
                 </tr>
@@ -122,6 +124,16 @@ const BestPlansPage: React.FC<BestPlansPageProps> = ({ onBookCall, onGetQuote })
                 plans.map((plan) => (
                   <tr key={plan.id}>
                     <td className="plan-rank"># {plan.rank}</td>
+                    <td style={{ fontWeight: 700, color: '#1f2937' }}>
+                      {plan.company_name ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <span style={{ fontSize: '1.05rem' }}>🏢</span>
+                          <span>{plan.company_name}</span>
+                        </div>
+                      ) : (
+                        <span style={{ color: '#9ca3af' }}>—</span>
+                      )}
+                    </td>
                     <td className="plan-name-cell">
                       {plan.name}
                       {plan.badge && (
